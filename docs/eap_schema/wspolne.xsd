@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 (http://www.altova.com) by Szymon Ziolo (RedPill Szymon Ziolo) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:st="http://www.rcl.gov.pl/2018/10/prawo#strict" xmlns:lo="http://www.rcl.gov.pl/2018/10/prawo#loose" xmlns:ba="http://www.rcl.gov.pl/2018/10/prawo#base" xmlns:tpg="http://www.rcl.gov.pl/2018/10/eap/typografia" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.w3.org/1998/Math/MathML" schemaLocation="mathml3.xsd"/>
+	<xs:import namespace="http://www.rcl.gov.pl/2018/10/eap/typografia" schemaLocation="typografia.xsd"/>
+	
+	<xs:complexType name="MetadaneTyp">
+		<xs:annotation>
+			<xs:documentation>Metadane dokumentu. TODO odrębna schema</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:any namespace="##any" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="JednostkaRedakcyjnaTyp">
+		<xs:annotation>
+			<xs:documentation>Typ bazowy dla jednostek redakcyjnych (artykułu, paragrafu, punktu, litery, tiret, podwójnego tiret).</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="GUID" type="xs:string"/>
+		<xs:attribute name="ELI" type="xs:string"/>
+		<xs:attribute name="opinie" type="xs:string"/>
+		<xs:attribute name="cudzyslowy" type="xs:integer"/>
+		<xs:attributeGroup ref="typo"/>
+		<!--xs:anyAttribute namespace="##other" processContents="skip"/-->
+	</xs:complexType>
+	
+	<xs:attributeGroup name="typo">
+		<xs:attribute ref="tpg:margin-top"/>
+		<xs:attribute ref="tpg:margin-bottom"/>
+		<xs:attribute ref="tpg:znastepnym"/>
+		<xs:attribute ref="tpg:bezprzenoszenia"/>
+	</xs:attributeGroup>
+	
+	<xs:complexType name="JednostkaRedakcyjnaNumerowanaTyp">
+		<xs:annotation>
+			<xs:documentation>Typ bazowy dla jednostek redakcyjnych posiadających numer (artykułu, paragrafu, punktu, litery).</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:sequence>
+					<xs:element name="nr" type="ZawartoscTekstowaBezCytatuTyp">
+						<xs:annotation>
+							<xs:documentation>Numer jednostki redakcyjnej. TODO można dodatkowo ograniczyć: b, sup, odnośnik, odsyłacz </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ZawartoscTekstowaUstawaTyp" mixed="true">
+		<xs:annotation>
+			<xs:documentation>Typ elementów o zawartości tekstowej z możliwym cytatem strukturalnym z ustawy lub kodeksu.</xs:documentation>
+		</xs:annotation>
+		<xs:group ref="zawartosc-tekstowa-z-cytatem-ustawa" minOccurs="0" maxOccurs="unbounded"/>
+		<xs:attributeGroup ref="typo"/>
+	</xs:complexType>
+	
+	<xs:complexType name="ZawartoscTekstowaRozporzadzenieTyp" mixed="true">
+		<xs:annotation>
+			<xs:documentation>Typ elementów o zawartości tekstowej z możliwym cytatem strukturalnym z rozporządzenia.</xs:documentation>
+		</xs:annotation>
+		<xs:group ref="zawartosc-tekstowa-z-cytatem-rozporzadzenie" minOccurs="0" maxOccurs="unbounded"/>
+		<xs:attributeGroup ref="typo"/>
+	</xs:complexType>
+	
+	<xs:complexType name="ZawartoscTekstowaBezCytatuTyp" mixed="true">
+		<xs:annotation>
+			<xs:documentation>Typ elementów o zawartości tekstowej bez cytatów strukturalnych.</xs:documentation>
+		</xs:annotation>
+		<xs:group ref="zawartosc-tekstowa-bez-cytatu" minOccurs="0" maxOccurs="unbounded"/>
+		<xs:attributeGroup ref="typo"/>
+	</xs:complexType>
+	
+	<xs:complexType name="JednostkaTekstowaTyp" mixed="true">
+		<xs:annotation>
+			<xs:documentation>Typ jednostki redakcyjnej lub systematyzacyjnej, która nie może zawierać cytatu strukturalnego.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent mixed="true">
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:group ref="zawartosc-tekstowa-bez-cytatu" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="JednostkaRedakcyjnaTekstowaTyp">
+		<xs:annotation>
+			<xs:documentation>Typ jednostki składającej się z pojedynczego akapitu tekstowego (np. części wspólne).</xs:documentation>
+		</xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="JednostkaRedakcyjnaTyp">
+          <xs:sequence>
+            <xs:element name="p" type="ZawartoscTekstowaBezCytatuTyp"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="JednostkaSystematyzacyjnaTyp">
+		<xs:annotation>
+			<xs:documentation>Typ nagłówka jednostki systematyzacyjnej posiadającej numer (tytułu, działu, rozdziału, oddziału).</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:sequence>
+					<xs:element name="p" type="ZawartoscTekstowaBezCytatuTyp"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:group name="zawartosc-tekstowa-bez-cytatu">
+		<xs:annotation>
+			<xs:documentation>Elementy używane w zawartości tekstowej (w modelu mieszanym).</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="b" type="ZawartoscTekstowaBezCytatuTyp">
+				<xs:annotation>
+					<xs:documentation>Wytłuszczenie.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="i" type="ZawartoscTekstowaBezCytatuTyp">
+				<xs:annotation>
+					<xs:documentation>Kursywa.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sup" type="ZawartoscTekstowaBezCytatuTyp">
+				<xs:annotation>
+					<xs:documentation>Indeks górny.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sub" type="ZawartoscTekstowaBezCytatuTyp">
+				<xs:annotation>
+					<xs:documentation>Indeks dolny.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="wersaliki" type="ZawartoscTekstowaBezCytatuTyp">
+				<xs:annotation>
+					<xs:documentation>Wersaliki.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="rozstrzelone" type="ZawartoscTekstowaBezCytatuTyp">
+				<xs:annotation>
+					<xs:documentation>Rozstrzelenie.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="petit" type="ZawartoscTekstowaBezCytatuTyp">
+				<xs:annotation>
+					<xs:documentation>Zmniejszenie czcionki.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="h" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Hiperłącze (w załącznikach i w hiperłączach).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="odnosnik">
+				<xs:annotation>
+					<xs:documentation>Odnosnik. Treść odnosnika jest umieszczana w zawartości elementu.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="JednostkaRedakcyjnaTyp">
+							<xs:group ref="tresc-odnosnika"/>
+							<xs:attribute name="id-odnosnika" type="xs:token">
+								<xs:annotation>
+									<xs:documentation>Identyfikator pozwalający na umieszczanie kolejnych odwołań do tego samego odnośnika oraz odsyłaczy do odnośnika.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="symbol" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Identyfikator pozwalający na umieszczanie niestandardowego oznaczenia odnośnika.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="super" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Identyfikator określający czy odnośnik jest odnośnikiem do odnośnika.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="odsylacz-do-odnosnika">
+				<xs:annotation>
+					<xs:documentation>Powtórzenie lub odwołanie do odnośnika (w treści aktu lub w innym odnośniku).</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id-odnosnika" type="xs:token" use="required">
+						<xs:annotation>
+							<xs:documentation>Wartość atrybutu id-odnośnika elementu odnośnik, do którego się odwołujemy. </xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="symbol" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Identyfikator pozwalający na umieszczanie niestandardowego oznaczenia odnośnika.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="super" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Identyfikator określający czy odnośnik jest odnośnikiem do odnośnika.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="pole">
+				<xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Pole do wprowadzania danych.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="nazwa" type="xs:string"/>
+							<xs:attribute name="metadane" type="xs:string"/>
+							<xs:attribute name="styl" type="xs:string"/>
+							<xs:attribute name="kod" type="xs:string"/>
+							<xs:attribute name="data" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="tpg:typografia"/>
+		</xs:choice>
+	</xs:group>
+	
+	<xs:attributeGroup name="cytat">
+		<xs:annotation>
+			<xs:documentation>Atrybuty cytatu fragmentu innego aktu prawnego.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="cudzyslowy">
+			<xs:annotation>
+				<xs:documentation>Czy cytat powinien być wyświetlany w cudzysłowach.</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="3"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:attributeGroup>
+	
+	<xs:group name="cytat-wspolne">
+		<xs:choice>
+			<xs:element ref="sankcja-karna"/>
+			<xs:element ref="slubowanie"/>
+			<xs:element ref="fragment"/>
+			<xs:group ref="grupa-tabeli"/>
+			<xs:element ref="grafika"/>
+			<xs:element ref="grafika-wektorowa"/>
+			<xs:element ref="wzor-mat"/>
+			<xs:element ref="czesc-wspolna-punkt"/>
+			<xs:element ref="czesc-wspolna-litera"/>
+			<xs:element ref="czesc-wspolna-tiret"/>
+			<xs:element ref="czesc-wspolna-podw-tiret"/>
+			<xs:element ref="odnosnik-cyt" maxOccurs="unbounded"/>
+			<xs:element ref="punkt-odnosnik" maxOccurs="unbounded"/>
+			<xs:element ref="fragment-odnosnik" maxOccurs="unbounded"/>
+			<xs:element ref="litera-odnosnik" maxOccurs="unbounded"/>
+			<xs:element ref="tiret-odnosnik"  maxOccurs="unbounded"/>
+			<xs:element ref="czesc-wspolna-punkt-odnosnik"/>
+			<xs:element ref="czesc-wspolna-litera-odnosnik"/>
+			<xs:element ref="czesc-wspolna-tiret-odnosnik"/>
+		</xs:choice>
+	</xs:group>
+	
+	<xs:group name="zawartosc-tekstowa-z-cytatem-ustawa">
+		<xs:choice>
+			<xs:group ref="zawartosc-tekstowa-bez-cytatu" maxOccurs="unbounded"/>
+			<xs:element name="cytat-strukt">
+				<xs:annotation>
+					<xs:documentation>Przytoczenie fragmentu struktury innej ustawy lub kodeksu.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice maxOccurs="unbounded"> 
+								<xs:group ref="jednostka-systematyzacyjna"/>
+								<xs:element name="artykul" type="ArtykulUstawyLubKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:element ref="preambula"/>
+						<xs:element name="ustep" type="UstepTyp" maxOccurs="unbounded"/>
+						<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTyp" maxOccurs="unbounded"/>
+						<xs:element name="punkt" type="PunktUstawyTyp" maxOccurs="unbounded"/>
+						<xs:element name="litera" type="LiteraUstawyTyp" maxOccurs="unbounded"/>
+						<xs:element name="tiret" type="TiretUstawyTyp" maxOccurs="unbounded"/>
+						<xs:element name="podw-tiret" type="PodwTiretUstawyTyp" maxOccurs="unbounded"/>
+						<xs:group ref="cytat-wspolne"/>
+					</xs:choice>
+					<xs:attributeGroup ref="cytat"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:group>
+	
+	<xs:group name="zawartosc-tekstowa-z-cytatem-rozporzadzenie">
+		<xs:choice>
+			<xs:group ref="zawartosc-tekstowa-bez-cytatu"/>
+			<xs:element name="cytat-strukt">
+				<xs:annotation>
+					<xs:documentation>Przytoczenie fragmentu struktury innego asktu wykonawczego.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice maxOccurs="unbounded"> 
+								<xs:group ref="jednostka-systematyzacyjna"/>
+								<xs:element name="paragraf" type="ParagrafRozporzadzeniaBezCytatuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:element name="ustep" type="UstepTyp" maxOccurs="unbounded"/>
+						<xs:element name="punkt" type="PunktBezCytatuTyp" maxOccurs="unbounded"/>
+						<xs:element name="litera" type="LiteraBezCytatuTyp" maxOccurs="unbounded"/>
+						<xs:element name="tiret" type="TiretBezCytatuTyp" maxOccurs="unbounded"/>
+						<xs:element name="podw-tiret" type="PodwTiretBezCytatuTyp" maxOccurs="unbounded"/>
+						<xs:group ref="cytat-wspolne"/>
+					</xs:choice>
+					<xs:attributeGroup ref="cytat"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:group>
+	
+	<xs:group name="grupa-tabeli">
+		<xs:sequence>
+			<xs:element ref="tytul-tabeli" minOccurs="0"/>
+			<xs:element ref="tabela"/>
+			<xs:sequence minOccurs="0">
+				<xs:element ref="odstep-tabeli"/>
+				<xs:element ref="tabela"/>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:element name="odstep-tabeli" type="ZawartoscTekstowaBezCytatuTyp"/>
+	
+	<xs:element name="tytul-tabeli" type="JednostkaTekstowaTyp"/>
+	
+	<xs:group name="akapit-w-ustawie">
+		<xs:annotation>
+			<xs:documentation>Pojedynczy akapit.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="p" type="ZawartoscTekstowaUstawaTyp"/>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sankcja-karna"/>
+				<xs:element ref="slubowanie"/>
+				<xs:element ref="fragment"/>
+				<xs:group ref="grupa-tabeli"/>
+				<xs:element ref="grafika"/>
+				<xs:element ref="grafika-wektorowa"/>
+				<xs:element ref="wzor-mat"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:group name="akapit-w-rozporzadzeniu">
+		<xs:annotation>
+			<xs:documentation>Pojedynczy akapit.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="p" type="ZawartoscTekstowaRozporzadzenieTyp"/>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sankcja-karna"/>
+				<xs:element ref="slubowanie"/>
+				<xs:element ref="fragment"/>
+				<xs:group ref="grupa-tabeli"/>
+				<xs:element ref="grafika"/>
+				<xs:element ref="grafika-wektorowa"/>
+				<xs:element ref="wzor-mat"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:group name="akapit-bez-cytatu">
+		<xs:annotation>
+			<xs:documentation>Pojedynczy akapit.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="p" type="ZawartoscTekstowaBezCytatuTyp"/>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sankcja-karna"/>
+				<xs:element ref="slubowanie"/>
+				<xs:element ref="fragment"/>
+				<xs:group ref="grupa-tabeli"/>
+				<xs:element ref="grafika"/>
+				<xs:element ref="grafika-wektorowa"/>
+				<xs:element ref="wzor-mat"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:group name="jednostka-systematyzacyjna">
+		<xs:choice>
+			<xs:element ref="czesc"/>
+			<xs:element ref="ksiega"/>
+			<xs:element ref="tyt"/>
+			<xs:element ref="dzial"/>
+			<xs:element ref="rozdzial"/>
+			<xs:element ref="oddzial"/>
+		</xs:choice>
+	</xs:group>
+	
+	<xs:group name = "podpisy">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="organ-wydajacy" type ="JednostkaTekstowaTyp"/>
+				<xs:element name="tekst-w-porozumieniu" type ="JednostkaTekstowaTyp"/>
+				<xs:element name="organ-w-porozumieniu" type ="JednostkaTekstowaTyp"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:group name="tresc-odnosnika">
+		<xs:sequence>
+			<xs:element name="p" type="ZawartoscTekstowaBezCytatuTyp"/>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="punkt-odnosnik"/>
+				<xs:element ref="fragment-odnosnik"/>
+				<xs:element ref="czesc-wspolna-punkt-odnosnik"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:element name="punkt-odnosnik">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+					<xs:sequence>
+						<xs:element name="p" type="ZawartoscTekstowaBezCytatuTyp"/>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element ref="litera-odnosnik"/>
+							<xs:element ref="czesc-wspolna-litera-odnosnik"/>
+						</xs:choice>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="litera-odnosnik">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+					<xs:sequence>
+						<xs:element name="p" type="ZawartoscTekstowaBezCytatuTyp"/>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element ref="tiret-odnosnik"/>
+							<xs:element ref="czesc-wspolna-tiret-odnosnik"/>
+						</xs:choice>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="fragment-odnosnik" type="JednostkaRedakcyjnaTekstowaTyp"/>
+	
+	<xs:element name="tiret-odnosnik" type="JednostkaRedakcyjnaTekstowaTyp"/>
+	
+	<xs:element name="czesc-wspolna-punkt-odnosnik" type="JednostkaRedakcyjnaTekstowaTyp"/>
+	
+	<xs:element name="czesc-wspolna-litera-odnosnik" type="JednostkaRedakcyjnaTekstowaTyp"/>
+	
+	<xs:element name="czesc-wspolna-tiret-odnosnik" type="JednostkaRedakcyjnaTekstowaTyp"/>
+
+	<xs:element name="preambula" type="JednostkaTekstowaTyp"/>
+
+	<xs:element name="podstawa-prawna" type="JednostkaTekstowaTyp"/>
+	
+	<xs:element name="czesc" type="JednostkaTekstowaTyp">
+		<xs:annotation>
+			<xs:documentation>Nagłówek części. Zawiera pełny tytuł części, wraz ze słowem "Część".</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="ksiega" type="JednostkaTekstowaTyp">
+		<xs:annotation>
+			<xs:documentation>Nagłówek księgi. Zawiera pełny tytuł księgi, wraz ze słowem "Księga".</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="tyt" type="JednostkaSystematyzacyjnaTyp">
+		<xs:annotation>
+			<xs:documentation>Nagłówek jednostki systematyzacyjnej tytuł.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="dzial" type="JednostkaSystematyzacyjnaTyp">
+		<xs:annotation>
+			<xs:documentation>Nagłówek działu.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="rozdzial" type="JednostkaSystematyzacyjnaTyp">
+		<xs:annotation>
+			<xs:documentation>Nagłówek rozdziału.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="oddzial" type="JednostkaSystematyzacyjnaTyp">
+		<xs:annotation>
+			<xs:documentation>Nagłówek oddziału.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="slubowanie" type="JednostkaTekstowaTyp"/>
+	
+	<xs:element name="fragment" type="JednostkaTekstowaTyp"/>
+	
+	<xs:element name="sankcja-karna" type="JednostkaTekstowaTyp"/>
+	
+	<xs:element name="odnosnik-cyt">
+		<xs:annotation>
+			<xs:documentation>Cytowany odnośnik. Składnia jak normalnego odnośnika, bez wydzielania numeru.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="JednostkaRedakcyjnaTyp">
+					<xs:group ref="tresc-odnosnika"/>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="czesc-wspolna-punkt" type="JednostkaRedakcyjnaTekstowaTyp">
+		<xs:annotation>
+			<xs:documentation>Część wspólna podsumowująca wyliczenie punktów.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+  <xs:element name="czesc-wspolna-litera" type="JednostkaRedakcyjnaTekstowaTyp">
+    <xs:annotation>
+      <xs:documentation>Część wspólna podsumowująca wyliczenie liter.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  
+  <xs:element name="czesc-wspolna-tiret" type="JednostkaRedakcyjnaTekstowaTyp">
+    <xs:annotation>
+      <xs:documentation>Część wspólna podsumowująca wyliczenie tiretów.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  
+  <xs:element name="czesc-wspolna-podw-tiret" type="JednostkaRedakcyjnaTekstowaTyp">
+    <xs:annotation>
+      <xs:documentation>Część wspólna podsumowująca wyliczenie podwójnych tiretów.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  	
+	<xs:attributeGroup name="referencja">
+		<xs:annotation>
+			<xs:documentation>Atrybuty opisujące odwołanie do zewnętrznego pliku binarnego dla grafiki.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="href" type="xs:anyURI" use="required"/>
+    <xs:attribute name="skrot" type="xs:string" />
+	</xs:attributeGroup>
+	
+	<xs:element name="grafika">
+		<xs:annotation>
+			<xs:documentation>Odwołanie do zewnętrznego pliku zawierającego grafikę rastrową.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="JednostkaRedakcyjnaTyp">
+					<xs:attributeGroup ref="referencja"/>
+          <xs:attribute name="width" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Szerokość do jakiej ma być przeskalowany obrazek.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="height" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Wysokość do jakiej ma być przeskalowany obrazek.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+					<xs:attribute name="alt" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Tekstowy opis grafiki.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="grafika-wektorowa">
+		<xs:annotation>
+			<xs:documentation>Grafika wektorowa zapisana w formacie SVG.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="JednostkaRedakcyjnaTyp">
+					<xs:sequence>
+						<xs:any namespace="http://www.w3.org/2000/svg" processContents="skip"/>
+					</xs:sequence>
+					<xs:attribute name="href" type="xs:anyURI">
+						<xs:annotation>
+						  <xs:documentation>Opcjonalna referencja do grafiki rastrowej reprezentującej rysunek.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+          <xs:attribute name="width" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Szerokość do jakiej ma być przeskalowany rysunek.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="height" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Wysokość do jakiej ma być przeskalowany rysunek.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+					<xs:attribute name="skrot" type="xs:string">
+						<xs:annotation>
+						  <xs:documentation>Skrót opcjonalnej grafiki rastrowej reprezentującej rysunek.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="wzor-mat">
+		<xs:annotation>
+			<xs:documentation>Wzór matematyczny zapisany w języku MathML wraz z objaśnieniami symboli.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="JednostkaRedakcyjnaTyp">
+					<xs:sequence>
+						<xs:element ref="mml:math"/>
+						<xs:element name="opis" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Opis pojedynczego symbolu użytego we wzorze.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:choice minOccurs="0">
+										<xs:element name="symbol-txt" type="ZawartoscTekstowaBezCytatuTyp">
+											<xs:annotation>
+												<xs:documentation>Opisywany symbol przedstawiony w formie tekstowej.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="symbol-mat">
+											<xs:annotation>
+												<xs:documentation>Opisywany symbol przedstawiony jako wyrażenie w języku MathML.</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element ref="mml:math"/>
+												</xs:sequence>
+												<xs:attribute name="grafika" type="xs:anyURI">
+													<xs:annotation>
+														<xs:documentation>Opcjonalna referencja do grafiki reprezentującej symbol matematyczny.</xs:documentation>
+													</xs:annotation>
+												</xs:attribute>
+												<xs:attribute name="skrot" type="xs:string">
+												  <xs:annotation>
+													<xs:documentation>Skrót opcjonalnej grafiki reprezentującej symbol matematyczny.</xs:documentation>
+												  </xs:annotation>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+									<xs:element name="objasnienie">
+										<xs:annotation>
+											<xs:documentation>Objaśnienie znaczenia symbolu.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:group ref="tresc-akapitowa"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="grafika" type="xs:anyURI">
+						<xs:annotation>
+							<xs:documentation>Opcjonalna referencja do grafiki reprezentującej wzór matematyczny.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+          <xs:attribute name="skrot" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Skrót opcjonalnej grafiki reprezentującej symbol matematyczny.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<!--*********** Model tabel oparty na HTML-u  ***********-->
+	<xs:attributeGroup name="tabele-pion">
+		<xs:annotation>
+			<xs:documentation>Ułożenie pionowe zawartości komórek.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="vertical-align">
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="top"/>
+					<xs:enumeration value="middle"/>
+					<xs:enumeration value="bottom"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:attributeGroup>
+	
+	<xs:attributeGroup name="tabele-ramki">
+		<xs:attribute name="border-bottom-style" type="xs:string" />
+		<xs:attribute name="border-bottom-width" type="xs:string" />
+		<xs:attribute name="border-left-style" type="xs:string" />
+		<xs:attribute name="border-left-width" type="xs:string" />
+		<xs:attribute name="border-right-style" type="xs:string" />
+		<xs:attribute name="border-right-width" type="xs:string" />
+		<xs:attribute name="border-top-style" type="xs:string" />
+		<xs:attribute name="border-top-width" type="xs:string" />
+		<xs:attribute name="border-tl2br-style" type="xs:string" />
+		<xs:attribute name="border-tl2br-width" type="xs:string" />
+	</xs:attributeGroup>
+	
+	<xs:element name="tabela1">
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:any namespace="##any" processContents="skip"/>
+			</xs:sequence>
+			<xs:anyAttribute namespace="##any" processContents="skip"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="tabela">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="tbody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="tr" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="eapid" type="xs:string"/>
+			<xs:attribute name="style" type="xs:string"/>
+			<xs:attribute name="width" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="tr">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="td" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="naglowek" type="xs:string"/>
+			<xs:attribute name="niedzielic" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="td">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="fragment"/>
+					<xs:element ref="liczba"/>
+					<xs:element ref="tytul-kolumny"/>
+					<xs:group ref="punkty-w-tabeli"/>
+				</xs:choice>
+				<!--xs:any namespace="##any" processContents="skip" minOccurs="0" maxOccurs="unbounded"/-->
+			</xs:sequence>
+			<xs:attributeGroup ref="tabele-pion"/>
+			<xs:attributeGroup ref="tabele-ramki"/>
+			<xs:attribute name="colspan" type="xs:string"/>
+			<xs:attribute name="rowspan" type="xs:string"/>
+			<xs:attribute name="width" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="liczba" type="JednostkaTekstowaTyp"/>
+	<xs:element name="tytul-kolumny" type="JednostkaTekstowaTyp"/>
+
+</xs:schema>

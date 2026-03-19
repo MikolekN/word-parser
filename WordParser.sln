@@ -1,0 +1,54 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordParser", "WordParser\WordParser.csproj", "{C9401C5A-52A4-B508-4B1E-7B35EEBF0F28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordParserCore", "WordParserCore\WordParserCore.csproj", "{1DB0680F-D6B3-4EEA-AD60-D66C5606114F}"
+EndProject
+#Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordParserApi", "WordParserApi\WordParserApi.csproj", "{71BD3909-2176-49CA-912A-27D071B20EBB}"
+#EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelDto", "ModelDto\ModelDto.csproj", "{A5B9E7F2-1C3D-4E5F-9A2B-8D7C6F5E4D3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordParserCore.Tests", "WordParserCore.Tests\WordParserCore.Tests.csproj", "{4B7DEB92-1B6C-4A86-8C2F-2AE6761C6F12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordParserWeb", "WordParserWeb\WordParserWeb.csproj", "{B5C62F7E-5D49-4D1A-9D6F-34FEC2F1E2A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9401C5A-52A4-B508-4B1E-7B35EEBF0F28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9401C5A-52A4-B508-4B1E-7B35EEBF0F28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9401C5A-52A4-B508-4B1E-7B35EEBF0F28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9401C5A-52A4-B508-4B1E-7B35EEBF0F28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DB0680F-D6B3-4EEA-AD60-D66C5606114F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DB0680F-D6B3-4EEA-AD60-D66C5606114F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DB0680F-D6B3-4EEA-AD60-D66C5606114F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DB0680F-D6B3-4EEA-AD60-D66C5606114F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71BD3909-2176-49CA-912A-27D071B20EBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71BD3909-2176-49CA-912A-27D071B20EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71BD3909-2176-49CA-912A-27D071B20EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71BD3909-2176-49CA-912A-27D071B20EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5B9E7F2-1C3D-4E5F-9A2B-8D7C6F5E4D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5B9E7F2-1C3D-4E5F-9A2B-8D7C6F5E4D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5B9E7F2-1C3D-4E5F-9A2B-8D7C6F5E4D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5B9E7F2-1C3D-4E5F-9A2B-8D7C6F5E4D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B7DEB92-1B6C-4A86-8C2F-2AE6761C6F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B7DEB92-1B6C-4A86-8C2F-2AE6761C6F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B7DEB92-1B6C-4A86-8C2F-2AE6761C6F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B7DEB92-1B6C-4A86-8C2F-2AE6761C6F12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5C62F7E-5D49-4D1A-9D6F-34FEC2F1E2A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5C62F7E-5D49-4D1A-9D6F-34FEC2F1E2A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5C62F7E-5D49-4D1A-9D6F-34FEC2F1E2A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5C62F7E-5D49-4D1A-9D6F-34FEC2F1E2A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E819466-E646-41FA-98E1-A7434C3C447E}
+	EndGlobalSection
+EndGlobal

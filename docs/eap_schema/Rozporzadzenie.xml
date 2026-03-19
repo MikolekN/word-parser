@@ -1,0 +1,940 @@
+<?xml version='1.0' encoding='UTF-8'?><?xml-stylesheet type="text/xsl" href="prawo2xhtml.xsl"?>
+<rozporzadzenie xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:tpg="http://www.rcl.gov.pl/2018/10/eap/typografia" xmlns:md="http://www.rcl.gov.pl/2018/10/metadane" xmlns:e="http://www.rcl.gov.pl/2018/10/eap" xmlns:uzas="http://www.rcl.gov.pl/2018/10/eap/uzasadnienie" xmlns:op="http://www.rcl.gov.pl/2018/10/eap/opinie" xmlns="http://www.rcl.gov.pl/2018/10/prawo#strict" xmlns:zal="http://www.rcl.gov.pl/2018/10/prawo#base" xmlns:now="http://www.mg.gov.pl/prawo/nowelizacje">
+  <metadane>
+    <md:Tytul>Rozporządzenie Ministra Obrony Narodowej oraz Ministra Spraw Wewnętrznych z dnia  r. w sprawie sposobu i metodologii prowadzenia i aktualizacji krajowego rejestru urzędowego podmiot&amp;#243;w gospodarki narodowej, wzor&amp;#243;w wniosk&amp;#243;w, ankiet i zaświadczeń</md:Tytul>
+    <md:Temat>Temat</md:Temat>
+    <md:Autor>Jarosław Deminet</md:Autor>
+    <md:Opis>Szablon aktu prawnego jest dziełem chronionym przez prawo autorskie.</md:Opis>
+    <md:Kategoria></md:Kategoria>
+    <md:SlowaKluczowe></md:SlowaKluczowe>
+    <md:Instytucja>Rządowe Centrum Legislacji</md:Instytucja>
+    <md:Pozycja> </md:Pozycja>
+    <md:DataOgloszenia></md:DataOgloszenia>
+    <md:Dziennik> </md:Dziennik>
+    <md:Rodzaj>Rozporządzenie</md:Rodzaj>
+    <md:DataWydania></md:DataWydania>
+    <md:Przedmiot>w sprawie sposobu i metodologii prowadzenia i aktualizacji krajowego rejestru urzędowego podmiot&amp;#243;w gospodarki narodowej, wzor&amp;#243;w wniosk&amp;#243;w, ankiet i zaświadczeń</md:Przedmiot>
+    <md:Sygnatura>sygnatura</md:Sygnatura>
+    <md:ELI>http://eli.gov.pl/eli/</md:ELI>
+    <md:RodzajTJ />
+    <md:DataWydaniaTJ />
+    <md:PrzedmiotTJ />
+    <md:ELITJ />
+    <Organy xmlns="http://www.rcl.gov.pl/2018/10/metadane">
+      <Organ xmlns="http://www.rcl.gov.pl/2018/10/metadane" GUID="{3709D13B-EB18-4D62-961B-E02A06ADC457}">
+        <Nazwa>Minister Obrony Narodowej</Nazwa>
+        <OrganPodpisujacy>Minister Obrony Narodowej</OrganPodpisujacy>
+        <Uwagi xml:space="preserve"> </Uwagi>
+        <OsobaPodpisujaca></OsobaPodpisujaca>
+      </Organ>
+      <Organ xmlns="http://www.rcl.gov.pl/2018/10/metadane" GUID="{991769C3-D415-407D-AD35-A405167FAF68}">
+        <Nazwa>Minister Spraw Wewnętrznych</Nazwa>
+        <OrganPodpisujacy>Minister Spraw Wewnętrznych</OrganPodpisujacy>
+        <Uwagi xml:space="preserve"> </Uwagi>
+        <OsobaPodpisujaca></OsobaPodpisujaca>
+      </Organ>
+      <Organ xmlns="http://www.rcl.gov.pl/2018/10/metadane" GUID="{E2242AEF-0785-44F4-840E-A0CC66F05E80}" uwagi="w porozumieniu">
+        <OrganPodpisujacy>Minister Zdrowia</OrganPodpisujacy>
+        <Uwagi xml:space="preserve"> </Uwagi>
+        <OsobaPodpisujaca></OsobaPodpisujaca>
+      </Organ>
+      <Organ xmlns="http://www.rcl.gov.pl/2018/10/metadane" GUID="{818B64C1-FFFF-457B-825A-185684C323BF}" uwagi="inny">
+        <OrganPodpisujacy>Sekretarz Rady Ministrów</OrganPodpisujacy>
+        <Uwagi xml:space="preserve"> </Uwagi>
+        <OsobaPodpisujaca></OsobaPodpisujaca>
+      </Organ>
+      <Organ xmlns="http://www.rcl.gov.pl/2018/10/metadane" GUID="{0C6896F2-27D3-4C70-A5F5-15CA30994D94}" uwagi="inny">
+        <OrganPodpisujacy>Dyrektor Departamentu Rady Ministrów</OrganPodpisujacy>
+        <Uwagi xml:space="preserve"> </Uwagi>
+        <OsobaPodpisujaca></OsobaPodpisujaca>
+      </Organ>
+    </Organy>
+    <Opinie xmlns="http://www.rcl.gov.pl/2018/10/eap/opinie" />
+  </metadane>
+  <oznaczenie>Projekt z <pole kod="" data="d MMMM yyyy">2 listopada 2018</pole> r.</oznaczenie>
+  <rodzaj-aktu>Rozporządzenie</rodzaj-aktu>
+  <rodzaj-aktu>Ministra Obrony Narodowej oraz Ministra Spraw Wewnętrznych<odnosnik id-odnosnika="1"><p>Minister Spraw Wewnętrznych kieruje działem administracji rządowej – ..., na podstawie ... rozporządzenia Prezesa Rady Ministrów z dnia ... r. w sprawie szczegółowego zakresu działania Ministra Spraw Wewnętrznych (Dz. U. poz. ...).</p></odnosnik></rodzaj-aktu>
+  <data>z dnia <pole nazwa="Data wydania" metadane="md:DataWydania" /> r.</data>
+  <tytul>w sprawie sposobu i metodologii prowadzenia i aktualizacji krajowego rejestru urzędowego podmiotów gospodarki narodowej, wzorów wniosków, ankiet i zaświadczeń</tytul>
+  <podstawa-prawna>Na podstawie art. 46 ustawy z dnia 29 czerwca 1995 r. o statystyce publicznej (Dz. U. z 2012 r. poz. 591, z późn. zm.<odnosnik id-odnosnika="2"><p>Zmiany tekstu jednolitego wymienionej ustawy zostały ogłoszone w Dz. U. z 2013 r. poz. 2, z 2014 r. poz. 1161 i 1662 oraz z 2015 r. poz. 855, 1240 i 1893.</p></odnosnik>) zarządza się, co następuje:</podstawa-prawna>
+  <paragraf ELI="par=1">
+    <nr>1</nr>
+    <p>Krajowy rejestr urzędowy podmiotów gospodarki narodowej, zwany dalej „rejestrem REGON”, jest prowadzony w systemie teleinformatycznym.</p>
+  </paragraf>
+  <paragraf tpg:znastepnym="1" ELI="par=2">
+    <nr>2</nr>
+    <p>Rejestr REGON jest aktualizowany w zakresie wpisu informacji, zmiany informacji objętych wpisem oraz skreślenia informacji, na podstawie:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>danych z wniosku o wpis do Centralnej Ewidencji i Informacji o Działalności Gospodarczej, zwanej dalej „CEIDG”, przekazywanych z CEIDG zgodnie z przepisami o działalności gospodarczej – w przypadku przedsiębiorców będących osobami fizycznymi;</p>
+      <slubowanie>„Treść ślubowania”;</slubowanie>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>danych objętych treścią wpisu w Krajowym Rejestrze Sądowym oraz danych uzupełniających, o których mowa w art. 42 ust. 3a ustawy z dnia 29 czerwca 1995 r. o statystyce publicznej, zwanej dalej „ustawą”, przekazywanych odpowiednio z Krajowego Rejestru Sądowego oraz z Centralnego Rejestru Podmiotów – Krajowej Ewidencji Podatników – w przypadku podmiotów podlegających wpisowi do Krajowego Rejestru Sądowego, z wyłączeniem rejestru dłużników niewypłacalnych i podmiotów, o których mowa w art. 49a ust. 1 ustawy z dnia 20 sierpnia 1997 r. o Krajowym Rejestrze Sądowym (Dz. U. z 2015 r. poz. 1142, 1893 i 1923);</p>
+      <sankcja-karna>podlega karze;</sankcja-karna>
+    </punkt>
+    <punkt ELI="pkt=3">
+      <nr>3</nr>
+      <p>danych przekazywanych z bazy danych Systemu Informacji Oświatowej, zwanego dalej „SIO” – w przypadku przedszkoli, szkół, placówek i innych jednostek organizacyjnych, o których mowa w art. 2 ustawy z dnia 7 września 1991 r. o systemie oświaty (Dz. U. z 2004 r. Nr 256, poz. 2572, z późn. zm.<odnosnik id-odnosnika="3"><p>Zmiany tekstu jednolitego wymienionej ustawy zostały ogłoszone w Dz. U. z 2004 r. Nr 273, poz. 2703 i Nr 281, poz. 2781, z 2005 r. Nr 17, poz. 141, Nr 94, poz. 788, Nr 122, poz. 1020, Nr 131, poz. 1091, Nr 167, poz. 1400 i Nr 249, poz. 2104, z 2006 r. Nr 144, poz. 1043, Nr 208, poz. 1532 i Nr 227, poz. 1658, z 2007 r. Nr 42, poz. 273, Nr 80, poz. 542, Nr 115, poz. 791, Nr 120, poz. 818, Nr 180, poz. 1280 i Nr 181, poz. 1292, z 2008 r. Nr 70, poz. 416, Nr 145, poz. 917, Nr 216, poz. 1370 i Nr 235, poz. 1618, z 2009 r. Nr 6, poz. 33, Nr 31, poz. 206, Nr 56, poz. 458, Nr 157, poz. 1241 i Nr 219, poz. 1705, z 2010 r. Nr 44, poz. 250, Nr 54, poz. 320, Nr 127, poz. 857 i Nr 148, poz. 991, z 2011 r. Nr 106, poz. 622, Nr 112, poz. 654, Nr 139, poz. 814, Nr 149, poz. 887 i Nr 205, poz. 1206, z 2012 r. poz. 941 i 979, z 2013 r. poz. 87, 827, 1191, 1265, 1317 i 1650, z 2014 r. poz. 7, 290, 538, 598, 642, 811, 1146, 1198 i 1877 oraz z 2015 r. poz. 357, 1045, 1240, 1418, 1607, 1629 i 1640.</p></odnosnik>), i ich zespołów;</p>
+    </punkt>
+    <punkt tpg:znastepnym="1" ELI="pkt=4">
+      <nr>4</nr>
+      <p>informacji z wniosków podmiotów gospodarki narodowej:</p>
+      <litera tpg:znastepnym="1" ELI="lit=a">
+        <nr>a</nr>
+        <p>RG-OP – Wniosek o wpis do krajowego rejestru urzędowego podmiotów gospodarki narodowej, o zmianę cech objętych wpisem, o skreślenie wpisu osoby prawnej, jednostki organizacyjnej niemającej osobowości prawnej lub ich jednostki lokalnej – w przypadku osób prawnych i jednostek organizacyjnych niemających osobowości prawnej:</p>
+        <tiret>
+          <p>niewymienionych w pkt 2 i 3,</p>
+        </tiret>
+        <tiret tpg:znastepnym="1">
+          <p>wymienionych w pkt 3 w zakresie cech nieobjętych obowiązkiem wpisu do Rejestru Szkół i Placówek Oświatowych,</p>
+        </tiret>
+        <czesc-wspolna-tiret>
+          <p>według wzoru określonego w załączniku nr 1 do rozporządzenia,</p>
+        </czesc-wspolna-tiret>
+      </litera>
+      <litera tpg:znastepnym="1" ELI="lit=b">
+        <nr>b</nr>
+        <p>RG-OF – Wniosek o wpis do krajowego rejestru urzędowego podmiotów gospodarki narodowej, o zmianę cech objętych wpisem, o skreślenie wpisu osoby fizycznej prowadzącej działalność gospodarczą lub jej jednostki lokalnej niepodlegających wpisowi do CEIDG – w przypadku osób fizycznych:</p>
+        <tiret>
+          <p>niebędących przedsiębiorcami,</p>
+        </tiret>
+        <tiret tpg:znastepnym="1">
+          <p>będących przedsiębiorcami w zakresie:</p>
+          <podw-tiret>
+            <p>cech nieobjętych obowiązkiem wpisu do CEIDG,</p>
+          </podw-tiret>
+          <podw-tiret>
+            <p>dotyczącym jednostek lokalnych niepodlegających wpisowi do CEIDG,</p>
+          </podw-tiret>
+        </tiret>
+        <czesc-wspolna-tiret>
+          <p>według wzoru określonego w załączniku nr 2 do rozporządzenia;</p>
+        </czesc-wspolna-tiret>
+      </litera>
+    </punkt>
+    <punkt ELI="pkt=5">
+      <nr>5</nr>
+      <p>informacji przekazanych urzędom statystycznym przez organ, który prowadził ewidencję działalności gospodarczej;</p>
+    </punkt>
+    <punkt ELI="pkt=6">
+      <nr>6</nr>
+      <p>przepisów, z których wynika likwidacja podmiotu;</p>
+    </punkt>
+    <punkt ELI="pkt=7">
+      <nr>7</nr>
+      <p>informacji z odpisu skróconego aktu zgonu osoby fizycznej prowadzącej działalność gospodarczą wpisanej do rejestru REGON, przekazanego urzędowi statystycznemu;</p>
+    </punkt>
+    <punkt ELI="pkt=8">
+      <nr>8</nr>
+      <p>informacji o zgonach osób fizycznych prowadzących działalność gospodarczą wpisanych do rejestru REGON uzyskanych z Powszechnego Elektronicznego Systemu Ewidencji Ludności;</p>
+    </punkt>
+    <punkt ELI="pkt=9">
+      <nr>9</nr>
+      <p>informacji z ankiety aktualizacyjnej;</p>
+    </punkt>
+    <punkt tpg:znastepnym="1" ELI="pkt=10">
+      <nr>10</nr>
+      <p>zmian:</p>
+      <litera ELI="lit=a">
+        <nr>a</nr>
+        <p>krajowego rejestru urzędowego podziału terytorialnego kraju (TERYT),</p>
+      </litera>
+      <litera ELI="lit=b">
+        <nr>b</nr>
+        <p>Polskiej Klasyfikacji Działalności (PKD),</p>
+      </litera>
+      <litera ELI="lit=c">
+        <nr>c</nr>
+        <p>kodów szczególnych form prawnych, o których mowa w § 7;</p>
+      </litera>
+    </punkt>
+    <punkt ELI="pkt=11">
+      <nr>11</nr>
+      <p>informacji pozyskanych na podstawie art. 15 ust. 2 pkt 7 ustawy z dnia 13 października 1995 r. o zasadach ewidencji i identyfikacji podatników i płatników (Dz. U. z 2012 r. poz. 1314, z późn. zm.<odnosnik id-odnosnika="4"><p>Zmiany tekstu jednolitego wymienionej ustawy zostały ogłoszone w Dz. U. z 2013 r. poz. 2, z 2014 r. poz. 1161 oraz z 2015 r. poz. 1224, 1269, 1649, 1893, 1923 i 1932.</p></odnosnik>).</p>
+    </punkt>
+  </paragraf>
+  <paragraf tpg:znastepnym="1" ELI="par=3">
+    <nr>3</nr>
+    <p>Rejestr REGON jest aktualizowany w zakresie wpisu informacji, zmiany informacji objętych wpisem oraz skreślenia informacji w przypadku jednostki lokalnej podmiotu, na podstawie:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>informacji z wniosku RG-OP albo RG-OF złożonego przez podmiot gospodarki narodowej;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>informacji z wniosku o wpis do CEIDG;</p>
+    </punkt>
+    <punkt ELI="pkt=3">
+      <nr>3</nr>
+      <p>danych przekazanych z bazy danych SIO.</p>
+    </punkt>
+  </paragraf>
+  <paragraf ELI="par=4">
+    <nr>4</nr>
+    <ustep ELI="ust=1">
+      <nr>1</nr>
+      <p>Do rejestru REGON są wpisywane informacje o osobach prawnych, jednostkach organizacyjnych niemających osobowości prawnej i osobach fizycznych prowadzących działalność gospodarczą, określone w art. 42 ust. 3 ustawy.</p>
+    </ustep>
+    <ustep tpg:znastepnym="1" ELI="ust=2">
+      <nr>2</nr>
+      <p>Jednostka lokalna podmiotu gospodarki narodowej, o której mowa w art. 42 ust. 4 ustawy, jest wpisywana do rejestru REGON na podstawie wniosku podmiotu gospodarki narodowej, z tym że:</p>
+      <punkt ELI="pkt=1">
+        <nr>1</nr>
+        <p>zakłady zlokalizowane pod tym samym adresem, jeżeli samodzielnie sporządzają sprawozdanie finansowe;</p>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>organizacyjne części podmiotów, jeżeli są objęte odrębną rejestracją prawną;</p>
+      </punkt>
+      <punkt ELI="pkt=3">
+        <nr>3</nr>
+        <p>przedsiębiorstwa podmiotu leczniczego, jeżeli są wymienione w przepisach o działalności leczniczej.</p>
+      </punkt>
+    </ustep>
+    <ustep tpg:znastepnym="1" ELI="ust=3">
+      <nr>3</nr>
+      <p>Jednostki lokalne prowadzące działalność w zakresie:</p>
+      <punkt ELI="pkt=1">
+        <nr>1</nr>
+        <p>transportu – wpisuje się do rejestru REGON według miejsc, z których są wydawane polecenia lub w których jest organizowana praca;</p>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>budownictwa – wpisuje się do rejestru REGON według miejsc, w których są przyjmowane zlecenia na wykonawstwo robót budowlanych i pomocniczych albo są wykonywane prace zarządu, albo jest prowadzona organizacja pracy budowlanej i pomocniczej; place budów (miejsca realizacji poszczególnych budów) nie są jednostkami lokalnymi.</p>
+      </punkt>
+    </ustep>
+    <ustep ELI="ust=4">
+      <nr>4</nr>
+      <p>Indywidualne gospodarstwo rolne, stanowiące własność albo znajdujące się w posiadaniu osoby fizycznej, jest wpisywane do rejestru REGON na podstawie wniosku podmiotu gospodarki narodowej o wpis indywidualnego gospodarstwa rolnego.</p>
+    </ustep>
+  </paragraf>
+  <paragraf ELI="par=5">
+    <nr>5</nr>
+    <p>Nazwę podmiotu, w tym nazwę skróconą, o ile podmiot ją posiada, wpisuje się odpowiednio na podstawie danych z wniosku o wpis do CEIDG, danych przekazanych z Krajowego Rejestru Sądowego, danych przekazanych z bazy danych SIO albo na podstawie aktu potwierdzającego powstanie albo podjęcie działalności przez podmiot, a jeżeli nie jest to możliwe – przyjmuje się nazwę podaną przez podmiot gospodarki narodowej we wniosku RG-OP albo RG-OF.</p>
+  </paragraf>
+  <paragraf ELI="par=6">
+    <nr>6</nr>
+    <ustep ELI="ust=1">
+      <nr>1</nr>
+      <p>Adres wpisuje się na podstawie danych z wniosku o wpis do CEIDG, danych przekazanych z Krajowego Rejestru Sądowego, danych przekazanych z bazy danych SIO albo informacji z wniosku RG-OP albo RG-OF. </p>
+    </ustep>
+    <ustep tpg:znastepnym="1" ELI="ust=2">
+      <nr>2</nr>
+      <p>Adres wpisuje się, zamieszczając: województwo, powiat, gminę oraz kod pocztowy i miejscowość poczty, miejscowość, ulicę, numer porządkowy i numer lokalu:</p>
+      <punkt ELI="pkt=1">
+        <nr>1</nr>
+        <p>siedziby podmiotu na terytorium Rzeczypospolitej Polskiej,</p>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>miejsca zamieszkania osoby fizycznej prowadzącej działalność gospodarczą, a w przypadku osób mających miejsce zamieszkania za granicą: kraj, miejscowość, ulicę, numer nieruchomości i numer lokalu, </p>
+      </punkt>
+      <punkt tpg:znastepnym="1" ELI="pkt=3">
+        <nr>3</nr>
+        <p>miejsca na terytorium Rzeczypospolitej Polskiej, do którego należy kierować korespondencję (w tym skrytkę pocztową) </p>
+      </punkt>
+      <czesc-wspolna-punkt>
+        <p>–	oraz dodatkowo opis nietypowego miejsca lokalizacji, jeżeli występuje.</p>
+      </czesc-wspolna-punkt>
+    </ustep>
+    <ustep tpg:znastepnym="1" ELI="ust=3">
+      <nr>3</nr>
+      <p>W przypadku adresu siedziby wpisuje się odpowiednio:</p>
+      <punkt ELI="pkt=1">
+        <nr>1</nr>
+        <p>adres siedziby organu zarządzającego – dla osoby prawnej oraz jednostki organizacyjnej niemającej osobowości prawnej; </p>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>wskazany przez osobę fizyczną adres prowadzenia działalności gospodarczej, a w razie braku możliwości takiego wskazania – miejsce zamieszkania na terytorium Rzeczypospolitej Polskiej – dla osoby fizycznej prowadzącej działalność gospodarczą;</p>
+      </punkt>
+      <punkt ELI="pkt=3">
+        <nr>3</nr>
+        <p>adres podany we wniosku RG-OP – dla wspólnoty mieszkaniowej.</p>
+      </punkt>
+    </ustep>
+  </paragraf>
+  <paragraf tpg:znastepnym="1" ELI="par=7">
+    <nr>7</nr>
+    <p>Formę prawną podmiotu gospodarki narodowej wpisuje się jako:</p>
+    <punkt tpg:znastepnym="1" ELI="pkt=1">
+      <nr>1</nr>
+      <p>podstawową formę prawną (kod jednoznakowy):</p>
+      <litera ELI="lit=a">
+        <nr>a</nr>
+        <p>osoba prawna (kod 1),</p>
+      </litera>
+      <litera ELI="lit=b">
+        <nr>b</nr>
+        <p>jednostka organizacyjna niemająca osobowości prawnej (kod 2),</p>
+      </litera>
+      <litera ELI="lit=c">
+        <nr>c</nr>
+        <p>osoba fizyczna prowadząca działalność gospodarczą (kod 9);</p>
+      </litera>
+    </punkt>
+    <punkt tpg:znastepnym="1" ELI="pkt=2">
+      <nr>2</nr>
+      <p>szczególną formę prawną (kod trzyznakowy), wskazując, czy podmiot jest zaklasyfikowany do jednej z następujących grup:</p>
+      <litera ELI="lit=a">
+        <nr>a</nr>
+        <p>spółki cywilne prowadzące działalność na podstawie umowy zawartej zgodnie z ustawą z dnia 23 kwietnia 1964 r. – Kodeks cywilny (Dz. U. z 2014 r. poz. 121, z późn. zm.<odnosnik id-odnosnika="5"><p>Zmiany tekstu jednolitego wymienionej ustawy zostały ogłoszone w Dz. U. z 2014 r. poz. 827 oraz z 2015 r. poz. 4, 397, 539, 1137, 1311, 1433, 1830 i 1844.</p></odnosnik>) (kod 019),</p>
+      </litera>
+      <litera ELI="lit=b">
+        <nr>b</nr>
+        <p>spółki, o których mowa w przepisach innych ustaw niż w ustawie z dnia 15 września 2000 r. – Kodeks spółek handlowych (Dz. U. z 2013 r. poz. 1030, z późn. zm.<odnosnik id-odnosnika="6"><p>Zmiany tekstu jednolitego wymienionej ustawy zostały ogłoszone w Dz. U. z 2014 r. poz. 265 i 1161 oraz z 2015 r. poz. 4, 978, 1333 i 1830.</p></odnosnik>) i ustawie z dnia 23 kwietnia 1964 r. – Kodeks cywilny lub formy prawne, do których stosuje się przepisy o spółkach (kod 023),</p>
+      </litera>
+      <litera ELI="lit=c">
+        <nr>c</nr>
+        <p>uczelnie (kod 044),</p>
+      </litera>
+      <litera ELI="lit=d">
+        <nr>d</nr>
+        <p>fundusze (kod 049),</p>
+      </litera>
+      <litera ELI="lit=e">
+        <nr>e</nr>
+        <p>Kościół Katolicki (kod 050),</p>
+      </litera>
+      <litera ELI="lit=f">
+        <nr>f</nr>
+        <p>pozostałe kościoły albo związki wyznaniowe (kod 051),</p>
+      </litera>
+      <litera ELI="lit=g">
+        <nr>g</nr>
+        <p>europejskie ugrupowanie współpracy terytorialnej (kod 053),</p>
+      </litera>
+      <litera ELI="lit=h">
+        <nr>h</nr>
+        <p>stowarzyszenia niewpisane do KRS (kod 055),</p>
+      </litera>
+      <litera ELI="lit=i">
+        <nr>i</nr>
+        <p>organizacje społeczne oddzielnie niewymienione niewpisane do KRS (kod 060),</p>
+      </litera>
+      <litera ELI="lit=j">
+        <nr>j</nr>
+        <p>partie polityczne (kod 070),</p>
+      </litera>
+      <litera ELI="lit=k">
+        <nr>k</nr>
+        <p>samorządy gospodarcze i zawodowe niewpisane do KRS (kod 076),</p>
+      </litera>
+      <litera ELI="lit=l">
+        <nr>l</nr>
+        <p>przedstawicielstwa zagraniczne (kod 080),</p>
+      </litera>
+      <litera ELI="lit=m">
+        <nr>m</nr>
+        <p>wspólnoty mieszkaniowe (kod 085),</p>
+      </litera>
+      <litera ELI="lit=n">
+        <nr>n</nr>
+        <p>osoby fizyczne prowadzące działalność gospodarczą (kod 099),</p>
+      </litera>
+      <litera ELI="lit=o">
+        <nr>o</nr>
+        <p>europejskie zgrupowania interesów gospodarczych (kod 114),</p>
+      </litera>
+      <litera ELI="lit=p">
+        <nr>p</nr>
+        <p>spółki akcyjne (kod 116),</p>
+      </litera>
+      <litera ELI="lit=q">
+        <nr>q</nr>
+        <p>spółki z ograniczoną odpowiedzialnością (kod 117),</p>
+      </litera>
+      <litera ELI="lit=r">
+        <nr>r</nr>
+        <p>spółki jawne (kod 118),</p>
+      </litera>
+      <litera ELI="lit=s">
+        <nr>s</nr>
+        <p>spółki partnerskie (kod 115),</p>
+      </litera>
+      <litera ELI="lit=t">
+        <nr>t</nr>
+        <p>spółki komandytowe (kod 120),</p>
+      </litera>
+      <litera ELI="lit=u">
+        <nr>u</nr>
+        <p>spółki komandytowo-akcyjne (kod 121),</p>
+      </litera>
+      <litera ELI="lit=v">
+        <nr>v</nr>
+        <p>spółki europejskie (kod 122),</p>
+      </litera>
+      <litera ELI="lit=w">
+        <nr>w</nr>
+        <p>przedsiębiorstwa państwowe (kod 124),</p>
+      </litera>
+      <litera ELI="lit=x">
+        <nr>x</nr>
+        <p>towarzystwa ubezpieczeń wzajemnych (kod 126),</p>
+      </litera>
+      <litera ELI="lit=y">
+        <nr>y</nr>
+        <p>instytucje gospodarki budżetowej (kod 132),</p>
+      </litera>
+      <litera ELI="lit=z">
+        <nr>z</nr>
+        <p>związki zawodowe rolników indywidualnych (kod 133),</p>
+      </litera>
+      <litera ELI="lit=za">
+        <nr>za</nr>
+        <p>towarzystwa reasekuracji wzajemnej (kod 134),</p>
+      </litera>
+      <litera ELI="lit=zb">
+        <nr>zb</nr>
+        <p>główne oddziały zagranicznych zakładów reasekuracji (kod 135),</p>
+      </litera>
+      <litera ELI="lit=zc">
+        <nr>zc</nr>
+        <p>główne oddziały zagranicznych oddziałów ubezpieczeń (kod 136),</p>
+      </litera>
+      <litera ELI="lit=zd">
+        <nr>zd</nr>
+        <p>ogólnokrajowe zrzeszenia międzybranżowe (kod 137),</p>
+      </litera>
+      <litera ELI="lit=ze">
+        <nr>ze</nr>
+        <p>ogólnokrajowe związki międzybranżowe (kod 138),</p>
+      </litera>
+      <litera ELI="lit=zf">
+        <nr>zf</nr>
+        <p>spółdzielnie (kod 140),</p>
+      </litera>
+      <litera ELI="lit=zg">
+        <nr>zg</nr>
+        <p>spółdzielnie europejskie (kod 142),</p>
+      </litera>
+      <litera ELI="lit=zh">
+        <nr>zh</nr>
+        <p>związki rolników, kółek i organizacji rolniczych (kod 143),</p>
+      </litera>
+      <litera ELI="lit=zi">
+        <nr>zi</nr>
+        <p>związki rolniczych zrzeszeń branżowych (kod 145),</p>
+      </litera>
+      <litera ELI="lit=zj">
+        <nr>zj</nr>
+        <p>samodzielne publiczne zakłady opieki zdrowotnej (kod 146),</p>
+      </litera>
+      <litera ELI="lit=zk">
+        <nr>zk</nr>
+        <p>cechy rzemieślnicze (kod 147),</p>
+      </litera>
+      <litera ELI="lit=zl">
+        <nr>zl</nr>
+        <p>fundacje (kod 148),</p>
+      </litera>
+      <litera ELI="lit=zm">
+        <nr>zm</nr>
+        <p>izby rzemieślnicze (kod 152),</p>
+      </litera>
+      <litera ELI="lit=zn">
+        <nr>zn</nr>
+        <p>Związek Rzemiosła Polskiego (kod 154),</p>
+      </litera>
+      <litera ELI="lit=zo">
+        <nr>zo</nr>
+        <p>stowarzyszenia (kod 155),</p>
+      </litera>
+      <litera ELI="lit=zp">
+        <nr>zp</nr>
+        <p>związki stowarzyszeń (kod 156),</p>
+      </litera>
+      <litera ELI="lit=zq">
+        <nr>zq</nr>
+        <p>stowarzyszenia kultury fizycznej (kod 157),</p>
+      </litera>
+      <litera ELI="lit=zr">
+        <nr>zr</nr>
+        <p>związki sportowe (kod 158),</p>
+      </litera>
+      <litera ELI="lit=zs">
+        <nr>zs</nr>
+        <p>polskie związki sportowe (kod 159),</p>
+      </litera>
+      <litera ELI="lit=zt">
+        <nr>zt</nr>
+        <p>inne organizacje społeczne lub zawodowe (kod 160),</p>
+      </litera>
+      <litera ELI="lit=zu">
+        <nr>zu</nr>
+        <p>kolumny transportu sanitarnego (kod 161),</p>
+      </litera>
+      <litera ELI="lit=zv">
+        <nr>zv</nr>
+        <p>stowarzyszenia kultury fizycznej o zasięgu ogólnokrajowym (kod 162),</p>
+      </litera>
+      <litera ELI="lit=zw">
+        <nr>zw</nr>
+        <p>zrzeszenia handlu i usług (kod 163),</p>
+      </litera>
+      <litera ELI="lit=zx">
+        <nr>zx</nr>
+        <p>zrzeszenia transportu (kod 164),</p>
+      </litera>
+      <litera ELI="lit=zy">
+        <nr>zy</nr>
+        <p>instytuty badawcze (kod 165),</p>
+      </litera>
+      <litera ELI="lit=zz">
+        <nr>zz</nr>
+        <p>jednostki badawczo-rozwojowe (kod 141),</p>
+      </litera>
+      <litera ELI="lit=zza">
+        <nr>zza</nr>
+        <p>ogólnokrajowe reprezentacje zrzeszeń handlu i usług (kod 166),</p>
+      </litera>
+      <litera ELI="lit=zzb">
+        <nr>zzb</nr>
+        <p>ogólnokrajowe reprezentacje zrzeszeń transportu (kod 167),</p>
+      </litera>
+      <litera ELI="lit=zzc">
+        <nr>zzc</nr>
+        <p>inne organizacje podmiotów gospodarczych (kod 168),</p>
+      </litera>
+      <litera ELI="lit=zzd">
+        <nr>zzd</nr>
+        <p>izby gospodarcze (kod 169),</p>
+      </litera>
+      <litera ELI="lit=zze">
+        <nr>zze</nr>
+        <p>przedsiębiorstwa zagraniczne (kod 171),</p>
+      </litera>
+      <litera ELI="lit=zzf">
+        <nr>zzf</nr>
+        <p>związki zawodowe (kod 172),</p>
+      </litera>
+      <litera ELI="lit=zzg">
+        <nr>zzg</nr>
+        <p>związki pracodawców (kod 174),</p>
+      </litera>
+      <litera ELI="lit=zzh">
+        <nr>zzh</nr>
+        <p>federacje/konfederacje związków pracodawców (kod 175),</p>
+      </litera>
+      <litera ELI="lit=zzi">
+        <nr>zzi</nr>
+        <p>kółka rolnicze (kod 177),</p>
+      </litera>
+      <litera ELI="lit=zzj">
+        <nr>zzj</nr>
+        <p>rolnicze zrzeszenia branżowe (kod 178),</p>
+      </litera>
+      <litera ELI="lit=zzk">
+        <nr>zzk</nr>
+        <p>oddziały zagranicznych przedsiębiorców (kod 179),</p>
+      </litera>
+      <litera ELI="lit=zzl">
+        <nr>zzl</nr>
+        <p>spółdzielcze kasy oszczędnościowo-kredytowe (kod 180),</p>
+      </litera>
+      <litera ELI="lit=zzm">
+        <nr>zzm</nr>
+        <p>stowarzyszenia ogrodowe (kod 181),</p>
+      </litera>
+      <litera ELI="lit=zzn">
+        <nr>zzn</nr>
+        <p>związki stowarzyszeń ogrodowych (kod 182),</p>
+      </litera>
+      <litera ELI="lit=zzo">
+        <nr>zzo</nr>
+        <p>jednostki terenowe stowarzyszeń posiadające osobowość prawną (kod 183),</p>
+      </litera>
+      <litera ELI="lit=zzp">
+        <nr>zzp</nr>
+        <p>jednostki organizacyjne związków zawodowych posiadające osobowość prawną (kod 184),</p>
+      </litera>
+      <litera ELI="lit=zzq">
+        <nr>zzq</nr>
+        <p>przedszkola publiczne (kod 381),</p>
+      </litera>
+      <litera ELI="lit=zzr">
+        <nr>zzr</nr>
+        <p>przedszkola niepubliczne (kod 382),</p>
+      </litera>
+      <litera ELI="lit=zzs">
+        <nr>zzs</nr>
+        <p>publiczne szkoły podstawowe (kod 383),</p>
+      </litera>
+      <litera ELI="lit=zzt">
+        <nr>zzt</nr>
+        <p>publiczne gimnazja (kod 384),</p>
+      </litera>
+      <litera ELI="lit=zzu">
+        <nr>zzu</nr>
+        <p>publiczne szkoły ponadgimnazjalne (kod 386),</p>
+      </litera>
+      <litera ELI="lit=zzv">
+        <nr>zzv</nr>
+        <p>publiczne szkoły artystyczne (kod 387),</p>
+      </litera>
+      <litera ELI="lit=zzw">
+        <nr>zzw</nr>
+        <p>niepubliczne szkoły podstawowe (kod 388),</p>
+      </litera>
+      <litera ELI="lit=zzx">
+        <nr>zzx</nr>
+        <p>niepubliczne gimnazja (kod 389),</p>
+      </litera>
+      <litera ELI="lit=zzy">
+        <nr>zzy</nr>
+        <p>niepubliczne szkoły ponadgimnazjalne (kod 391),</p>
+      </litera>
+      <litera ELI="lit=zzz">
+        <nr>zzz</nr>
+        <p>niepubliczne szkoły artystyczne (kod 392),</p>
+      </litera>
+      <litera ELI="lit=zzza">
+        <nr>zzza</nr>
+        <p>publiczne placówki systemu oświaty (kod 393),</p>
+      </litera>
+      <litera ELI="lit=zzzb">
+        <nr>zzzb</nr>
+        <p>niepubliczne placówki systemu oświaty (kod 394),</p>
+      </litera>
+      <litera ELI="lit=zzzc">
+        <nr>zzzc</nr>
+        <p>inne publiczne jednostki organizacyjne systemu oświaty (kod 395),</p>
+      </litera>
+      <litera ELI="lit=zzzd">
+        <nr>zzzd</nr>
+        <p>inne niepubliczne jednostki organizacyjne systemu oświaty (kod 396),</p>
+      </litera>
+      <litera ELI="lit=zzze">
+        <nr>zzze</nr>
+        <p>publiczne zespoły szkół i placówek systemu oświaty (kod 397),</p>
+      </litera>
+      <litera ELI="lit=zzzf">
+        <nr>zzzf</nr>
+        <p>niepubliczne zespoły szkół i placówek systemu oświaty (kod 398),</p>
+      </litera>
+      <litera ELI="lit=zzzg">
+        <nr>zzzg</nr>
+        <p>organy władzy, administracji rządowej (kod 401),</p>
+      </litera>
+      <litera ELI="lit=zzzh">
+        <nr>zzzh</nr>
+        <p>organy kontroli państwowej i ochrony prawa (kod 402),</p>
+      </litera>
+      <litera ELI="lit=zzzi">
+        <nr>zzzi</nr>
+        <p>wspólnoty samorządowe (kod 403),</p>
+      </litera>
+      <litera ELI="lit=zzzj">
+        <nr>zzzj</nr>
+        <p>sądy i trybunały (kod 406),</p>
+      </litera>
+      <litera ELI="lit=zzzk">
+        <nr>zzzk</nr>
+        <p>Skarb Państwa (kod 409),</p>
+      </litera>
+      <litera ELI="lit=zzzl">
+        <nr>zzzl</nr>
+        <p>państwowe jednostki organizacyjne (kod 428),</p>
+      </litera>
+      <litera ELI="lit=zzzm">
+        <nr>zzzm</nr>
+        <p>gminne samorządowe jednostki organizacyjne (kod 429),</p>
+      </litera>
+      <litera ELI="lit=zzzn">
+        <nr>zzzn</nr>
+        <p>powiatowe samorządowe jednostki organizacyjne (kod 430),</p>
+      </litera>
+      <litera ELI="lit=zzzo">
+        <nr>zzzo</nr>
+        <p>wojewódzkie samorządowe jednostki organizacyjne (kod 431),</p>
+      </litera>
+      <litera ELI="lit=zzzp">
+        <nr>zzzp</nr>
+        <p>inne państwowe lub samorządowe osoby prawne w rozumieniu art. 9 pkt 14 ustawy z dnia 27 sierpnia 2009 r. o finansach publicznych (Dz. U. z 2013 r. poz. 885, z późn. zm.<odnosnik id-odnosnika="7"><p>Zmiany tekstu jednolitego wymienionej ustawy zostały ogłoszone w Dz. U. z 2013 r. poz. 938 i 1646, z 2014 r. poz. 379, 911, 1146, 1626 i 1877 oraz z 2015 r. poz. 238, 532, 1045, 1117, 1130, 1189, 1190, 1269, 1358, 1513 i 1830.</p></odnosnik>) (kod 439),</p>
+      </litera>
+      <litera ELI="lit=zzzq">
+        <nr>zzzq</nr>
+        <p>bez szczególnej formy prawnej (kod 999).</p>
+      </litera>
+    </punkt>
+  </paragraf>
+  <paragraf tpg:znastepnym="1" ELI="par=8">
+    <nr>8</nr>
+    <p>Forma własności jest wpisywana na podstawie informacji o procentowym udziale własności:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>Skarbu Państwa,</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>państwowych osób prawnych,</p>
+    </punkt>
+    <punkt ELI="pkt=3">
+      <nr>3</nr>
+      <p>jednostek samorządu terytorialnego lub samorządowych osób prawnych,</p>
+    </punkt>
+    <punkt ELI="pkt=4">
+      <nr>4</nr>
+      <p>krajowych osób fizycznych,</p>
+    </punkt>
+    <punkt ELI="pkt=5">
+      <nr>5</nr>
+      <p>pozostałych krajowych jednostek prywatnych,</p>
+    </punkt>
+    <punkt tpg:znastepnym="1" ELI="pkt=6">
+      <nr>6</nr>
+      <p>osób zagranicznych</p>
+    </punkt>
+    <czesc-wspolna-punkt>
+      <p>–	w ogólnej wartości kapitału. </p>
+    </czesc-wspolna-punkt>
+  </paragraf>
+  <paragraf ELI="par=9">
+    <nr>9</nr>
+    <ustep ELI="ust=1">
+      <nr>1</nr>
+      <p>Wykonywaną działalność wpisuje się w postaci wykazu rodzajów działalności kodowanych według Polskiej Klasyfikacji Działalności (PKD) na poziomie działu, grupy, klasy lub podklasy, a rodzaj przeważającej działalności na poziomie podklasy.</p>
+    </ustep>
+    <ustep tpg:znastepnym="1" ELI="ust=2">
+      <nr>2</nr>
+      <p>Rodzaj przeważającej działalności ustala się odpowiednio, w przypadku:</p>
+      <punkt ELI="pkt=1">
+        <nr>1</nr>
+        <p>osób prawnych i jednostek organizacyjnych niemających osobowości prawnej, których celem jest osiąganie zysku, zakładów działalności gospodarczej: stowarzyszeń, organizacji społecznych, fundacji, związków zawodowych, kościołów – na podstawie procentowego udziału poszczególnych rodzajów działalności w ogólnej wartości przychodów ze sprzedaży lub, jeżeli nie jest możliwe zastosowanie tego miernika – na podstawie udziału pracujących, wykonujących poszczególne rodzaje działalności, w ogólnej liczbie pracujących;</p>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>jednostek i zakładów budżetowych, fundacji, związków zawodowych, stowarzyszeń, organizacji społecznych, kościołów i związków wyznaniowych, z wyłączeniem zakładów działalności gospodarczej, o których mowa w pkt 1 – na podstawie określonego w statucie rodzaju działalności, do której zostały utworzone;</p>
+      </punkt>
+      <punkt tpg:znastepnym="1" ELI="pkt=3">
+        <nr>3</nr>
+        <p>osób fizycznych prowadzących działalność gospodarczą odrębnie dla:</p>
+        <litera ELI="lit=a">
+          <nr>a</nr>
+          <p>działalności wpisanej do CEIDG,</p>
+        </litera>
+        <litera ELI="lit=b">
+          <nr>b</nr>
+          <p>działalności rolniczej,</p>
+        </litera>
+        <litera tpg:znastepnym="1" ELI="lit=c">
+          <nr>c</nr>
+          <p>pozostałej działalności, niewymienionej w lit. a i b, prowadzonej na własny rachunek w celu osiągnięcia zysku</p>
+        </litera>
+        <czesc-wspolna-litera>
+          <p>–	na podstawie procentowego udziału poszczególnych rodzajów działalności w ogólnej wartości przychodów ze sprzedaży lub, jeżeli nie jest możliwe zastosowanie tego miernika, na podstawie udziału pracujących, wykonujących poszczególne rodzaje działalności, w ogólnej liczbie pracujących;</p>
+        </czesc-wspolna-litera>
+      </punkt>
+      <punkt ELI="pkt=4">
+        <nr>4</nr>
+        <p>jednostek lokalnych – odpowiednio na podstawie jednego z mierników, o których mowa w pkt 1–3;</p>
+      </punkt>
+      <punkt ELI="pkt=5">
+        <nr>5</nr>
+        <p>przedszkoli, szkół, placówek i innych jednostek organizacyjnych, o których mowa w art.  2 ustawy z dnia 7 września 1991 r. o systemie oświaty, i ich zespołów – na podstawie danych przekazanych z bazy danych SIO.</p>
+      </punkt>
+    </ustep>
+  </paragraf>
+  <paragraf tpg:znastepnym="1" ELI="par=10">
+    <nr>10</nr>
+    <p>W przypadku informacji, o których mowa w art. 42 ust. 3 pkt 5 ustawy, wpisuje się odpowiednio daty:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>powstania podmiotu – datę wpisu do rejestru lub ewidencji w organie rejestrowym lub ewidencyjnym albo datę powołania lub rozpoczęcia działalności w przypadku podmiotu niepodlegającego wpisowi do rejestru lub ewidencji;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>rozpoczęcia działalności – datę dokonania pierwszej czynności w zakresie działalności, dla której prowadzenia podmiot powstał lub został powołany;</p>
+    </punkt>
+    <punkt ELI="pkt=3">
+      <nr>3</nr>
+      <p>zawieszenia działalności – datę, z którą ustaje na czas określony działalność podmiotu;</p>
+    </punkt>
+    <punkt ELI="pkt=4">
+      <nr>4</nr>
+      <p>wznowienia działalności – datę, od której została podjęta przez podmiot działalność uprzednio zawieszona;</p>
+    </punkt>
+    <punkt tpg:znastepnym="1" ELI="pkt=5">
+      <nr>5</nr>
+      <p>zakończenia działalności:</p>
+      <litera ELI="lit=a">
+        <nr>a</nr>
+        <p>datę skreślenia z rejestru lub ewidencji – dla podmiotów podlegających wpisowi do rejestru lub ewidencji, z wyjątkiem osób fizycznych wpisanych do CEIDG,</p>
+      </litera>
+      <litera ELI="lit=b">
+        <nr>b</nr>
+        <p>datę zaprzestania prowadzenia działalności podaną we wniosku o wykreślenie wpisu w CEIDG lub datę wykreślenia z CEIDG – w przypadku gdy wykreślenie nastąpiło z urzędu,</p>
+      </litera>
+      <litera ELI="lit=c">
+        <nr>c</nr>
+        <p>datę podaną w akcie likwidującym podmiot – dla podmiotów niepodlegających wpisowi do rejestru lub ewidencji,</p>
+      </litera>
+      <litera ELI="lit=d">
+        <nr>d</nr>
+        <p>datę zgonu osoby fizycznej wpisanej w rejestrze podmiotów,</p>
+      </litera>
+      <litera ELI="lit=e">
+        <nr>e</nr>
+        <p>datę podaną przez podmiot we wniosku RG-OP albo RG-OF – w pozostałych przypadkach.</p>
+      </litera>
+    </punkt>
+  </paragraf>
+  <paragraf ELI="par=11">
+    <nr>11</nr>
+    <p>Wpisu informacji do rejestru REGON dokonuje się z użyciem znaków pisarskich ujętych w tablicy znaków pisarskich, która stanowi załącznik nr 3 do rozporządzenia. W przypadku wystąpienia w imieniu, nazwisku lub nazwie znaku pisarskiego niewystępującego w tablicy znaków pisarskich, wpisu dokonuje się w sposób, który jest określony w załączniku nr 3 do rozporządzenia.</p>
+  </paragraf>
+  <paragraf ELI="par=12">
+    <nr>12</nr>
+    <ustep ELI="ust=1">
+      <nr>1</nr>
+      <p>Numer identyfikacyjny, o którym mowa w art. 42 ust. 10 ustawy, zwany dalej „numerem identyfikacyjnym REGON”, jest nadawany dla każdego podmiotu gospodarki narodowej wpisanego w rejestrze REGON oraz jego jednostki lokalnej.</p>
+    </ustep>
+    <ustep ELI="ust=2">
+      <nr>2</nr>
+      <p>Numer identyfikacyjny REGON podmiotu gospodarki narodowej skreślonego z rejestru REGON jest przechowywany w zbiorze historycznym i nie jest wykorzystywany do identyfikacji innego podmiotu.</p>
+    </ustep>
+    <ustep ELI="ust=3">
+      <nr>3</nr>
+      <p>Numer identyfikacyjny REGON podmiotu gospodarki narodowej składa się z dziewięciu cyfr, które nie mogą mieć ukrytego lub jawnego charakteru znaczącego, określającego pewne cechy podmiotu, przy czym osiem pierwszych cyfr stanowi liczbę porządkową, a dziewiąta – cyfrę kontrolną.</p>
+    </ustep>
+    <ustep ELI="ust=4">
+      <nr>4</nr>
+      <p>Numer identyfikacyjny REGON podmiotu gospodarki narodowej pozostaje niezmieniony w czasie istnienia podmiotu i nie przechodzi na następcę prawnego.</p>
+    </ustep>
+    <ustep ELI="ust=5">
+      <nr>5</nr>
+      <p>Zmiany cech podmiotu objętych wpisem do rejestru REGON nie powodują nadania nowego numeru identyfikacyjnego REGON, z zastrzeżeniem ust. 6.</p>
+    </ustep>
+    <ustep ELI="ust=6">
+      <nr>6</nr>
+      <p>Zmiana szczególnej formy prawnej podmiotu powoduje skreślenie go z rejestru REGON oraz ponowny wpis do rejestru REGON z nadaniem nowego numeru identyfikacyjnego REGON, z zastrzeżeniem ust. 7.</p>
+    </ustep>
+    <ustep tpg:znastepnym="1" ELI="ust=7">
+      <nr>7</nr>
+      <p>Nowy numer identyfikacyjny REGON nie jest nadawany w przypadku:</p>
+      <punkt tpg:znastepnym="1" ELI="pkt=1">
+        <nr>1</nr>
+        <p>przekształcenia:</p>
+        <litera ELI="lit=a">
+          <nr>a</nr>
+          <p>przedsiębiorstwa państwowego w jednoosobową spółkę Skarbu Państwa,</p>
+        </litera>
+        <litera ELI="lit=b">
+          <nr>b</nr>
+          <p>spółki handlowej w inną spółkę handlową,</p>
+        </litera>
+        <litera ELI="lit=c">
+          <nr>c</nr>
+          <p>spółki cywilnej w spółkę handlową,</p>
+        </litera>
+        <litera ELI="lit=d">
+          <nr>d</nr>
+          <p>państwowej jednostki organizacyjnej w samorządową jednostkę organizacyjną,</p>
+        </litera>
+        <litera ELI="lit=e">
+          <nr>e</nr>
+          <p>samorządowej jednostki organizacyjnej w państwową jednostkę organizacyjną,</p>
+        </litera>
+        <litera ELI="lit=f">
+          <nr>f</nr>
+          <p>samorządowej jednostki organizacyjnej w inną samorządową jednostkę organizacyjną, </p>
+        </litera>
+        <litera ELI="lit=g">
+          <nr>g</nr>
+          <p>spółdzielni pracy w spółkę handlową,</p>
+        </litera>
+        <litera ELI="lit=h">
+          <nr>h</nr>
+          <p>samodzielnego publicznego zakładu opieki zdrowotnej w spółkę kapitałową;</p>
+        </litera>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>likwidacji i ponownego podjęcia działalności gospodarczej przez osobę fizyczną;</p>
+      </punkt>
+      <punkt ELI="pkt=3">
+        <nr>3</nr>
+        <p>zmiany szczególnej formy prawnej wynikającej ze zmiany kodów szczególnych form prawnych, o których mowa w § 7.</p>
+      </punkt>
+    </ustep>
+    <ustep ELI="ust=8">
+      <nr>8</nr>
+      <p>Numer identyfikacyjny REGON jednostki lokalnej składa się z czternastu cyfr, przy czym dziewięć pierwszych cyfr jest tożsame z numerem identyfikacyjnym REGON osoby prawnej, jednostki organizacyjnej niemającej osobowości prawnej lub osoby fizycznej prowadzącej działalność gospodarczą, cztery kolejne cyfry są liczbą porządkową przypisaną jednostce lokalnej, a czternasta cyfra – cyfrą kontrolną.</p>
+    </ustep>
+  </paragraf>
+  <paragraf ELI="par=13">
+    <nr>13</nr>
+    <ustep ELI="ust=1">
+      <nr>1</nr>
+      <p>Zaświadczenia o nadanym numerze identyfikacyjnym REGON, o których mowa w art. 43 ust. 3 ustawy, są wydawane według wzorów określonych w załącznikach nr 4–13 do rozporządzenia.</p>
+    </ustep>
+    <ustep ELI="ust=2">
+      <nr>2</nr>
+      <p>Ankietę aktualizacyjną stanowi wniosek RG-OP albo RG-OF, zawierający treść wpisu o podmiocie gospodarki narodowej w rejestrze REGON aktualną na dzień jej wygenerowania przez system teleinformatyczny.</p>
+    </ustep>
+  </paragraf>
+  <paragraf ELI="par=14">
+    <nr>14</nr>
+    <p>Wnioski RG-OP „Wniosek o wpis do krajowego rejestru urzędowego podmiotów gospodarki narodowej, o zmianę cech objętych wpisem, o skreślenie wpisu osoby prawnej, jednostki organizacyjnej niemającej osobowości prawnej lub jej jednostki lokalnej” i RG-OF „Wniosek o wpis do krajowego rejestru urzędowego podmiotów gospodarki narodowej, o zmianę cech objętych wpisem, o skreślenie wpisu osoby fizycznej prowadzącej działalność gospodarczą lub jej jednostki lokalnej niepodlegających wpisowi do CEIDG”, złożone i nierozpatrzone przed dniem wejścia w życie niniejszego rozporządzenia, stanowią podstawę dokonania wpisu lub odmowy wpisu w krajowym rejestrze urzędowym podmiotów gospodarki narodowej.</p>
+  </paragraf>
+  <paragraf tpg:znastepnym="1" ELI="par=14">
+    <nr>14</nr>
+    <p>W istniejącym rozporządzeniu wprowadza się następujące zmiany:</p>
+    <punkt tpg:znastepnym="1" ELI="pkt=1">
+      <nr>1</nr>
+      <p>pkt 2 otrzymuje brzmienie:<cytat-strukt cudzyslowy="3"><punkt ELI="pkt=2"><nr>2</nr><p>nowe brzmienie</p></punkt></cytat-strukt>;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>uchyla się pkt 3.</p>
+    </punkt>
+  </paragraf>
+  <paragraf ELI="par=15">
+    <nr>15</nr>
+    <p>Rozporządzenie wchodzi w życie z dniem 1 grudnia 2015 r.<odnosnik id-odnosnika="8"><p>Niniejsze rozporządzenie było poprzedzone rozporządzeniem Rady Ministrów z dnia 27 lipca 1999 r. w sprawie sposobu i metodologii prowadzenia i aktualizacji rejestru podmiotów gospodarki narodowej, w tym wzorów wniosków, ankiet i zaświadczeń, oraz szczegółowych warunków i trybu współdziałania służb statystyki publicznej z innymi organami prowadzącymi urzędowe rejestry i systemy informacyjne administracji publicznej (Dz. U. Nr 69, poz. 763, z 2001 r. Nr 12, poz. 99, z 2003 r. Nr 221, poz. 2195, z 2008 r. Nr 168, poz. 1041, z 2010 r. Nr 84, poz. 545, z 2011 r. Nr 237, poz. 1406, z 2012 r. poz. 822 oraz z 2014 r. poz. 1353), które na podstawie art. 11 ust. 2 ustawy z dnia 26 czerwca 2014 r. o zmianie ustawy o Krajowym Rejestrze Sądowym oraz o zmianie niektórych innych ustaw (Dz. U. poz. 1161) traci moc z dniem wejścia w życie niniejszego rozporządzenia.</p></odnosnik>.</p>
+  </paragraf>
+  <organ-wydajacy>
+    <pole nazwa="Podpis" metadane="md:Organy/md:Organ[@GUID='{3709D13B-EB18-4D62-961B-E02A06ADC457}']/md:OrganPodpisujacy" />:<pole nazwa="Uwagi" metadane="md:Organy/md:Organ[@GUID='{3709D13B-EB18-4D62-961B-E02A06ADC457}']/md:Uwagi" /><pole styl="i" nazwa="Osoba" metadane="md:Organy/md:Organ[@GUID='{3709D13B-EB18-4D62-961B-E02A06ADC457}']/md:OsobaPodpisujaca" /></organ-wydajacy>
+  <organ-wydajacy>
+    <pole nazwa="Podpis" metadane="md:Organy/md:Organ[@GUID='{991769C3-D415-407D-AD35-A405167FAF68}']/md:OrganPodpisujacy" />:<pole nazwa="Uwagi" metadane="md:Organy/md:Organ[@GUID='{991769C3-D415-407D-AD35-A405167FAF68}']/md:Uwagi" /><pole styl="i" nazwa="Osoba" metadane="md:Organy/md:Organ[@GUID='{991769C3-D415-407D-AD35-A405167FAF68}']/md:OsobaPodpisujaca" /></organ-wydajacy>
+  <tekst-w-porozumieniu>W porozumieniu:</tekst-w-porozumieniu>
+  <organ-w-porozumieniu>
+    <pole nazwa="Podpis" metadane="md:Organy/md:Organ[@GUID='{E2242AEF-0785-44F4-840E-A0CC66F05E80}']/md:OrganPodpisujacy" />:<pole styl="b" nazwa="Uwagi" metadane="md:Organy/md:Organ[@GUID='{E2242AEF-0785-44F4-840E-A0CC66F05E80}']/md:Uwagi" /><pole styl="i" nazwa="Osoba" metadane="md:Organy/md:Organ[@GUID='{E2242AEF-0785-44F4-840E-A0CC66F05E80}']/md:OsobaPodpisujaca" /></organ-w-porozumieniu>
+  <organ-w-porozumieniu>
+    <pole nazwa="Podpis" metadane="md:Organy/md:Organ[@GUID='{818B64C1-FFFF-457B-825A-185684C323BF}']/md:OrganPodpisujacy" />:<pole nazwa="Uwagi" metadane="md:Organy/md:Organ[@GUID='{818B64C1-FFFF-457B-825A-185684C323BF}']/md:Uwagi" /><pole styl="i" nazwa="Osoba" metadane="md:Organy/md:Organ[@GUID='{818B64C1-FFFF-457B-825A-185684C323BF}']/md:OsobaPodpisujaca" /></organ-w-porozumieniu>
+  <organ-w-porozumieniu>
+    <pole nazwa="Podpis" metadane="md:Organy/md:Organ[@GUID='{0C6896F2-27D3-4C70-A5F5-15CA30994D94}']/md:OrganPodpisujacy" />:<pole nazwa="Uwagi" metadane="md:Organy/md:Organ[@GUID='{0C6896F2-27D3-4C70-A5F5-15CA30994D94}']/md:Uwagi" /><pole styl="i" nazwa="Osoba" metadane="md:Organy/md:Organ[@GUID='{0C6896F2-27D3-4C70-A5F5-15CA30994D94}']/md:OsobaPodpisujaca" /></organ-w-porozumieniu>
+  <zal:zalacznik>
+    <zal:segment-zalacznika orientacja="pionowa">
+      <zalacznik-do>Załączniki do rozporządzenia Ministra Obrony Narodowej oraz Ministra Spraw Wewnętrznych z dnia <pole nazwa="Data wydania" metadane="md:DataWydania" /> r. (poz. <pole nazwa="Pozycja" metadane="md:Pozycja" />)</zalacznik-do>
+      <zalacznik-nr ELI="1">
+        <nr>1</nr>
+      </zalacznik-nr>
+      <zalacznik-binarny href="1.1 Załącznik nr 1 RG-OP.pdf" skala="80" przesuniecie="50" />
+      <zalacznik-binarny href="1.2 Załącznik RG-RD do Załącznika nr 1 RG-OP.pdf" skala="90" />
+      <zalacznik-binarny href="1.3 Załącznik RG-SC do Załącznika nr 1 RG-OP.pdf" skala="90" />
+    </zal:segment-zalacznika>
+    <zal:segment-zalacznika orientacja="pionowa">
+      <zalacznik-nr ELI="2">
+        <nr>2</nr>
+      </zalacznik-nr>
+      <zalacznik-binarny href="2.1 Załącznik nr 2 RG-OF.pdf" skala="90" />
+      <zalacznik-binarny href="2.2 Załącznik RG-RD do Załącznika nr 2 RG-OF.pdf" skala="90" />
+    </zal:segment-zalacznika>
+    <zal:segment-zalacznika orientacja="pionowa">
+      <zalacznik-nr ELI="3">
+        <nr>3</nr>
+      </zalacznik-nr>
+      <zalacznik-binarny href="3 Załącznik nr 3.pdf" skala="90" />
+    </zal:segment-zalacznika>
+  </zal:zalacznik>
+  <uzas:uzasadnienie>
+    <zal:segment-zalacznika orientacja="pionowa" nowa-strona="tak">
+      <tytul-zalacznika>Uzasadnienie</tytul-zalacznika>
+      <podstawa-prawna>No jakieś uasadnienie powinno być.</podstawa-prawna>
+      <organ-w-porozumieniu />
+    </zal:segment-zalacznika>
+  </uzas:uzasadnienie>
+</rozporzadzenie>

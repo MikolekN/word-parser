@@ -1,0 +1,50 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+title DTO Supporting and Value Objects
+
+class EntityNumber {
+  +string Value
+  +string RawValue
+  +int NumericPart
+  +string LexicalPart
+  +string Superscript
+}
+
+class ValidationMessage {
+  +ValidationLevel Level
+  +string Message
+  +DateTime CreatedAt
+  +string ToString()
+}
+
+enum ValidationLevel {
+  Info
+  Warning
+  Error
+  Critical
+}
+
+class CommonPart {
+  +CommonPartType Type
+  +string ParentEId
+  +int? SourceSegmentOrder
+  +string TypeDisplayLabel
+}
+
+enum CommonPartType {
+  Intro
+  WrapUp
+}
+
+class TextSegment {
+  +TextSegmentType Type
+  +string Text
+  +int Order
+  +string Role
+}
+
+enum TextSegmentType {
+  Sentence
+}
+@enduml

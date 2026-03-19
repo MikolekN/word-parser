@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<legalDocument type="Statute">
+  <documentTitle />
+  <sourceJournal year="" positions="" sourceString="" />
+    <article id="art_1" number="1" displayLabel="art.">
+                <journals>
+                  <journal year="2024" positions="1458" sourceString="Dz. U. z 2024 r. poz. 1458" />
+                </journals>
+                <paragraph id="art_1__ust_1" number="1" displayLabel="ust.">
+                  <contentText>W ustawie z dnia 22 marca 2018 r. o komornikach sadowych (Dz. U. z 2024 r. poz. 1458) wprowadza sie nastepujace zmiany:</contentText>
+                  <point id="art_1__ust_1__pkt_1" number="1" displayLabel="pkt">
+                    <contentText>w art. 11 w ust. 4 uchyla sie pkt 4;</contentText>
+                    <amendments>
+                      <amendment operationType="Repeal">
+                        <targetLegalAct year="2024" positions="1458" />
+                        <targets>
+                          <target article="11" paragraph="4" point="4" rawText="1458|2024|art. 11|ust. 4" />
+                        </targets>
+                      </amendment>
+                    </amendments>
+                  </point>
+                  <point id="art_1__ust_1__pkt_2" number="2" displayLabel="pkt">
+                    <contentText>art. 16 otrzymuje brzmienie:</contentText>
+                    <amendments>
+                      <amendment operationType="Modification">
+                        <targetLegalAct year="2024" positions="1458" />
+                        <targets>
+                          <target article="16" rawText="1458|2024" />
+                        </targets>
+                        <content objectType="Article">
+                          <plainText>Art. 16. Wniosek o powolanie na stanowisko komornika mozna zlozyc w terminie 5 lat od ustania zatrudnienia na stanowisku asesora.</plainText>
+                        </content>
+                      </amendment>
+                    </amendments>
+                  </point>
+                  <point id="art_1__ust_1__pkt_3" number="3" displayLabel="pkt">
+                    <contentText>w art. 19 w ust. 1 pkt 2 otrzymuje brzmienie:</contentText>
+                    <amendments>
+                      <amendment operationType="Modification">
+                        <targetLegalAct year="2024" positions="1458" />
+                        <targets>
+                          <target article="19" paragraph="1" rawText="1458|2024|art. 19|ust. 1" />
+                        </targets>
+                        <content objectType="Point">
+                          <plainText>2) ukonczyl 70. rok zycia;</plainText>
+                        </content>
+                      </amendment>
+                    </amendments>
+                  </point>
+                  <point id="art_1__ust_1__pkt_4" number="4" displayLabel="pkt">
+                    <contentText>w art. 131 uchyla sie ust. 2;</contentText>
+                    <amendments>
+                      <amendment operationType="Repeal">
+                        <targetLegalAct year="2024" positions="1458" />
+                        <targets>
+                          <target article="131" paragraph="2" rawText="1458|2024|art. 131" />
+                        </targets>
+                      </amendment>
+                    </amendments>
+                  </point>
+                  <point id="art_1__ust_1__pkt_5" number="5" displayLabel="pkt">
+                    <contentText>art. 132 otrzymuje brzmienie:</contentText>
+                    <amendments>
+                      <amendment operationType="Modification">
+                        <targetLegalAct year="2024" positions="1458" />
+                        <targets>
+                          <target article="132" rawText="1458|2024" />
+                        </targets>
+                        <content objectType="Article">
+                          <plainText>Art. 132. Prezes wlasciwego sadu apelacyjnego odmawia powolania na stanowisko asesora osoby, ktora nie spelnia wymogow, o ktorych mowa w art. 129, lub ktorej wniosek o powolanie na stanowisko asesora zostal zlozony po uplywie terminu, o ktorym mowa w art. 130 ust. 2.</plainText>
+                        </content>
+                      </amendment>
+                    </amendments>
+                  </point>
+                  <point id="art_1__ust_1__pkt_6" number="6" displayLabel="pkt">
+                    <contentText>w art. 144 w ust. 1:</contentText>
+                    <letter id="art_1__ust_1__pkt_6__lit_a" number="a" displayLabel="lit">
+                      <contentText>pkt 4 otrzymuje brzmienie:</contentText>
+                      <amendments>
+                        <amendment operationType="Modification">
+                          <targetLegalAct year="2024" positions="1458" />
+                          <targets>
+                            <target article="144" paragraph="1" point="4" rawText="1458|2024|art. 144|ust. 1" />
+                          </targets>
+                          <content objectType="Point">
+                            <plainText>4) ukonczyl 70. rok zycia;</plainText>
+                          </content>
+                        </amendment>
+                      </amendments>
+                    </letter>
+                    <letter id="art_1__ust_1__pkt_6__lit_b" number="b" displayLabel="lit">
+                      <contentText>uchyla sie pkt 5;</contentText>
+                      <amendments>
+                        <amendment operationType="Repeal">
+                          <targetLegalAct year="2024" positions="1458" />
+                          <targets>
+                            <target article="144" paragraph="1" point="5" rawText="1458|2024|art. 144|ust. 1" />
+                          </targets>
+                        </amendment>
+                      </amendments>
+                    </letter>
+                  </point>
+                  <point id="art_1__ust_1__pkt_7" number="7" displayLabel="pkt">
+                    <contentText>uchyla sie art. 281.</contentText>
+                    <amendments>
+                      <amendment operationType="Repeal">
+                        <targetLegalAct year="2024" positions="1458" />
+                        <targets>
+                          <target article="281" rawText="1458|2024" />
+                        </targets>
+                      </amendment>
+                    </amendments>
+                  </point>
+                </paragraph>
+  </article>
+  <article id="art_2" number="2" displayLabel="art.">
+                <paragraph id="art_2__ust_1" number="1" displayLabel="ust.">
+                  <contentText>Do postepowan w przedmiocie odwolania ze stanowiska komornika sadowego na podstawie art. 19 ust. 1 pkt 2 ustawy zmienianej w art. 1 w brzmieniu dotychczasowym, wszczetych i niezakonczonych przed dniem wejscia w zycie niniejszej ustawy, stosuje sie przepisy ustawy zmienianej w art. 1 w brzmieniu nadanym niniejsza ustawa.</contentText>
+                </paragraph>
+                <paragraph id="art_2__ust_2" number="2" displayLabel="ust.">
+                  <contentText>Do postepowan w przedmiocie odwolania ze stanowiska asesora komorniczego na podstawie art. 144 ust. 1 pkt 4 ustawy zmienianej w art. 1 w brzmieniu dotychczasowym, wszczetych i niezakonczonych przed dniem wejscia w zycie niniejszej ustawy, stosuje sie przepisy ustawy zmienianej w art. 1 w brzmieniu nadanym niniejsza ustawa.</contentText>
+                </paragraph>
+  </article>
+  <article id="art_3" number="3" displayLabel="art.">
+                <paragraph id="art_3__ust_1" number="1" displayLabel="ust.">
+                  <contentText>Komornik sadowy, ktory przed dniem wejscia w zycie niniejszej ustawy zostal odwolany z zajmowanego stanowiska na podstawie art. 19 ust. 1 pkt 2 ustawy zmienianej w art. 1 w brzmieniu dotychczasowym, moze zostac ponownie powolany na stanowisko komornika sadowego, nie pozniej jednak niz do dnia ukonczenia 70. roku zycia.</contentText>
+                </paragraph>
+                <paragraph id="art_3__ust_2" number="2" displayLabel="ust.">
+                  <contentText>Asesor komorniczy, ktory przed dniem wejscia w zycie niniejszej ustawy zostal odwolany z zajmowanego stanowiska na podstawie art. 144 ust. 1 pkt 4 ustawy zmienianej w art. 1 w brzmieniu dotychczasowym, moze zostac ponownie powolany na stanowisko asesora komorniczego, nie pozniej jednak niz do dnia ukonczenia 70. roku zycia.</contentText>
+                </paragraph>
+  </article>
+  <article id="art_4" number="4" displayLabel="art.">
+                <paragraph id="art_4__ust_1" number="1" displayLabel="ust.">
+                  <contentText>Ustawa wchodzi w zycie po uplywie 14 dni od dnia ogloszenia.</contentText>
+                </paragraph>
+  </article>
+</legalDocument>

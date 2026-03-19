@@ -1,0 +1,38 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+title DTO Document and Metadata
+
+class LegalDocument {
+  +Guid Guid
+  +LegalActType Type
+  +string Title
+  +JournalInfo SourceJournal
+  +Part RootPart
+  +IEnumerable<Article> Articles
+  +DateTime CreatedAt
+  +DateTime UpdatedAt
+  +string GetMainUnitLabel()
+  +string GetSubUnitLabel()
+}
+
+class JournalInfo {
+  +int Year
+  +List<int> Positions
+  +string SourceString
+  +string ToString()
+  +string ToStringLong()
+}
+
+enum LegalActType {
+  Statute
+  Bill
+  Regulation
+  Code
+  Ordinance
+  RegulatoryImpactAssessment
+}
+
+LegalDocument *-- Part : RootPart
+LegalDocument o-- JournalInfo : SourceJournal
+@enduml

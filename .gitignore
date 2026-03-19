@@ -1,0 +1,42 @@
+# === Narzędzia deweloperskie / środowisko (nie wersjonowane) ===
+.claude/
+.mcp.json
+.devcontainer/
+.vscode/
+
+# === Docker i budowanie obrazu ===
+Dockerfile
+build.sh
+build.number
+build.number.lock
+*.dockerignore
+
+# === Logi ===
+logs/
+*.log
+
+# === Build artifacts .NET ===
+obj/
+bin/
+
+# === Stare repozytoria podprojektów (zachowane jako backup) ===
+**/.git.bak/
+
+# === Per-projektowe .gitignore (nie potrzebne w monorepo) ===
+ModelDto/.gitignore
+WordParser/.gitignore
+WordParserCore/.gitignore
+WordParserApi/.gitignore
+
+# === Pozostałe ===
+*.bat
+kopie*/
+810*/
+*Example*.cs
+docs.*.md
+
+# === Tymczasowe pliki Word ===
+~$*
+
+# === Repozytorium dokumentów roboczych ===
+DocRepo/

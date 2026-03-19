@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8'?><?xml-stylesheet type="text/xsl" href="prawo2xhtml.xsl"?>
+<ustawa xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:tpg="http://www.rcl.gov.pl/2018/10/eap/typografia" xmlns:md="http://www.rcl.gov.pl/2018/10/metadane" xmlns:e="http://www.rcl.gov.pl/2018/10/eap" xmlns:uzas="http://www.rcl.gov.pl/2018/10/eap/uzasadnienie" xmlns:op="http://www.rcl.gov.pl/2018/10/eap/opinie" xmlns="http://www.rcl.gov.pl/2018/10/prawo#strict" xmlns:zal="http://www.rcl.gov.pl/2018/10/prawo#base" xmlns:now="http://www.mg.gov.pl/prawo/nowelizacje">
+  <metadane>
+    <md:Tytul>Ustawa z dnia 15&amp;#160;maja 2015 r. Prawo restrukturyzacyjne</md:Tytul>
+    <md:Temat>Temat</md:Temat>
+    <md:Autor>Jarosław Deminet</md:Autor>
+    <md:Opis>Szablon aktu prawnego jest dziełem chronionym przez prawo autorskie.</md:Opis>
+    <md:Kategoria></md:Kategoria>
+    <md:SlowaKluczowe></md:SlowaKluczowe>
+    <md:Instytucja>Rządowe Centrum Legislacji</md:Instytucja>
+    <md:Pozycja> </md:Pozycja>
+    <md:DataOgloszenia></md:DataOgloszenia>
+    <md:Dziennik> </md:Dziennik>
+    <md:Rodzaj>Ustawa</md:Rodzaj>
+    <md:DataWydania>2015-05-15</md:DataWydania>
+    <md:Przedmiot>Prawo restrukturyzacyjne</md:Przedmiot>
+    <md:Sygnatura>JD-15</md:Sygnatura>
+    <md:ELI>http://eli.gov.pl/eli/</md:ELI>
+    <md:RodzajTJ />
+    <md:DataWydaniaTJ />
+    <md:PrzedmiotTJ />
+    <md:ELITJ />
+    <Organy xmlns="http://www.rcl.gov.pl/2018/10/metadane">
+      <Organ xmlns="http://www.rcl.gov.pl/2018/10/metadane" GUID="{B92BA44E-797F-40D8-A438-A25435AD2DFB}" uwagi="tylko podpis">
+        <OrganPodpisujacy>Prezydent Rzeczypospolitej Polskiej</OrganPodpisujacy>
+        <Uwagi xml:space="preserve"> </Uwagi>
+        <OsobaPodpisujaca></OsobaPodpisujaca>
+      </Organ>
+    </Organy>
+    <Opinie xmlns="http://www.rcl.gov.pl/2018/10/eap/opinie" />
+  </metadane>
+  <rodzaj-aktu>Ustawa</rodzaj-aktu>
+  <data>z dnia <pole nazwa="Data wydania" metadane="md:DataWydania" /> r.</data>
+  <tytul tpg:margin-top="9.70pt" tpg:margin-bottom="9.70pt">
+    <tpg:typografia tpg:nieprzenosic="" />Prawo restrukturyzacyjne<tpg:typografia /></tytul>
+  <tyt tpg:margin-top="12.95pt" ELI="I">
+    <nr>I</nr>
+    <p tpg:margin-top="2.45pt">
+      <tpg:typografia tpg:nieprzenosic="" />Przepisy ogólne o postępowaniach restrukturyzacyjnych i ich skutkach<tpg:typografia /><odnosnik id-odnosnika="1"><p>Przepisy niniejszej ustawy:</p><punkt-odnosnik ELI="pkt=1"><nr>1</nr><p>wdrażają postanowienia:</p><litera-odnosnik ELI="lit=a"><nr>a</nr><p>dyrektywy pierwszej,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>dyrektywy drugiej;</p></litera-odnosnik></punkt-odnosnik><punkt-odnosnik ELI="pkt=2"><nr>2</nr><p>wykonują postanowienia:</p><litera-odnosnik ELI="lit=a"><nr>a</nr><p>rozporządzenia pierwszego,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>rozporządzenia drugiego.</p></litera-odnosnik></punkt-odnosnik><fragment-odnosnik><p>Treść rozporządzeń według wydania specjalnego. Treść rozporządzeń według wydania specjalnego. Treść rozporządzeń według wydania specjalnego. Treść rozporządzeń według wydania specjalnego.</p></fragment-odnosnik><fragment-odnosnik><p>W pkt 1:</p></fragment-odnosnik><punkt-odnosnik ELI="pkt=1"><nr>1</nr><p>lit. a uchylona;</p></punkt-odnosnik><punkt-odnosnik ELI="pkt=2"><nr>2</nr><p>lit. b dodana.</p></punkt-odnosnik><fragment-odnosnik><p>W pkt 2:</p></fragment-odnosnik><punkt-odnosnik ELI="pkt=1"><nr>1</nr><p>lit. a uchylona;</p></punkt-odnosnik><punkt-odnosnik ELI="pkt=2"><nr>2</nr><p>lit. b dodana.</p></punkt-odnosnik></odnosnik></p>
+  </tyt>
+  <dzial tpg:margin-top="12.95pt" ELI="I">
+    <nr>I</nr>
+    <p tpg:margin-top="2.45pt">
+      <tpg:typografia tpg:nieprzenosic="" />Przepisy ogólne<tpg:typografia /></p>
+  </dzial>
+  <rozdzial ELI="1">
+    <nr>1</nr>
+    <p>Przepisy wstępne</p>
+  </rozdzial>
+  <artykul ELI="art=1_2">
+    <nr>1<sup>2</sup></nr>
+    <p>Ustawa reguluje:</p>
+    <punkt tpg:znastepnym="1" tpg:bezprzenoszenia="1" ELI="pkt=1_3">
+      <nr>1<sup>3</sup></nr>
+      <p>zawieranie<odnosnik id-odnosnika="2" symbol="*"><p>Odnośnik z gwiazdką.</p></odnosnik> przez dłużnika <wersaliki>niewypłacalnego</wersaliki> lub <petit>zagrożonego </petit><rozstrzelone>niewypłacalnością</rozstrzelone> układu z wierzycielami oraz skutki układu;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>wprowadzenie:<cytat-strukt cudzyslowy="1"><punkt ELI="pkt=1"><nr>1</nr><p>wprowadzenie<cytat-strukt cudzyslowy="1"><tytul-tabeli>Tytuł tabeli</tytul-tabeli><tabela eapid="1" style="ZZTabelaRCL" width="101%"><tbody><tr><td width="33%" border-tl2br-style="solid" border-tl2br-width="thin"><tytul-kolumny>Nagłówek</tytul-kolumny></td><td width="33%" vertical-align="middle"><tytul-kolumny>Nagłówek</tytul-kolumny></td><td width="33%" vertical-align="bottom"><tytul-kolumny>Nagłówek</tytul-kolumny></td></tr></tbody></tabela><odstep-tabeli /><tabela eapid="2" style="ZZTabelaRCL" width="101%"><tbody><tr naglowek="" niedzielic=""><td width="25%"><tytul-kolumny>Nagłówek</tytul-kolumny></td><td width="42%" border-bottom-style="solid" border-bottom-width="thin" colspan="3"><tytul-kolumny>Nagłówek</tytul-kolumny></td><td width="33%"><tytul-kolumny>Nagłówek</tytul-kolumny></td></tr><tr naglowek="" niedzielic=""><td width="25%" border-right-style="solid" border-right-width="thin" rowspan="2"><czesc-wspolna-punkt><p>Tekst zwykły</p></czesc-wspolna-punkt></td><td width="42%" border-top-style="solid" border-top-width="thin" border-left-style="solid" border-left-width="thin" border-bottom-style="solid" border-bottom-width="thin" border-right-style="solid" border-right-width="thin" vertical-align="middle" colspan="3" rowspan="2"><czesc-wspolna-punkt><p>Tekst zwykły</p></czesc-wspolna-punkt><czesc-wspolna-punkt><p>Tekst zwykły</p></czesc-wspolna-punkt></td><td width="33%" border-left-style="solid" border-left-width="thin"><fragment>Tekst centr</fragment><fragment>Tekst centr</fragment></td></tr><tr naglowek="" niedzielic=""><td width="33%" border-left-style="solid" border-left-width="thin" rowspan="3"><czesc-wspolna-punkt><p>Tekst 1</p></czesc-wspolna-punkt><punkt ELI="pkt=1"><nr>1</nr><p>tekst2</p><litera ELI="lit=2"><nr>2</nr><p>tekst3</p></litera><litera ELI="lit=2"><nr>2</nr><p>tekst3</p></litera><czesc-wspolna-litera><p>Koniec 2</p></czesc-wspolna-litera></punkt><punkt ELI="pkt=1"><nr>1</nr><p>tekst2</p></punkt><czesc-wspolna-punkt><p>Koniec 1</p></czesc-wspolna-punkt><czesc-wspolna-punkt><p>Koniec 1</p></czesc-wspolna-punkt></td></tr><tr><td width="39%" border-bottom-style="none" colspan="3"><fragment>Tekst centr</fragment></td><td width="28%"><fragment>Tekst</fragment></td></tr><tr><td width="29%" border-top-style="none" border-left-style="none" border-bottom-style="none" border-right-style="none" colspan="2"><czesc-wspolna-punkt><p>Tekst 1</p></czesc-wspolna-punkt><punkt ELI="pkt=1"><nr>1</nr><p>tekst2</p></punkt><punkt ELI="pkt=1"><nr>1</nr><p>tekst2</p><litera ELI="lit=2"><nr>2</nr><p>tekst3</p></litera><litera ELI="lit=2"><nr>2</nr><p>tekst3</p></litera></punkt><czesc-wspolna-punkt><p>Zwykły tekst</p></czesc-wspolna-punkt><czesc-wspolna-punkt><p>Zwykły tekst</p></czesc-wspolna-punkt></td><td width="37%" border-left-style="none" border-bottom-style="solid" border-bottom-width="medium" colspan="2"><czesc-wspolna-punkt><p>Tekst 1</p></czesc-wspolna-punkt></td></tr><tr><td width="29%" border-top-style="none" colspan="2"><liczba>Tekst 2</liczba></td><td width="37%" border-tl2br-style="solid" border-tl2br-width="medium" colspan="2"><czesc-wspolna-punkt><p>Tekst 2</p></czesc-wspolna-punkt></td><td width="0%" border-bottom-style="solid" border-bottom-width="thin" /></tr><tr><td width="29%" colspan="2"><fragment>Liczba</fragment></td><td width="37%" border-right-style="solid" border-right-width="thin" colspan="2"><liczba>Liczba</liczba></td><td width="33%" border-top-style="solid" border-top-width="thin" border-left-style="solid" border-left-width="thin" border-bottom-style="solid" border-bottom-width="thin" border-right-style="solid" border-right-width="thin"><liczba>Liczba””</liczba></td></tr></tbody></tabela></cytat-strukt></p></punkt></cytat-strukt></p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>przeprowadzanie działań sanacyjnych.<cytat-strukt cudzyslowy="0"><grafika href="grafika-1.jpeg" width="115.75pt" height="77.15pt" /></cytat-strukt></p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>przeprowadzanie działań sanacyjnych.<cytat-strukt cudzyslowy="2"><grafika href="grafika-2.jpeg" width="115.75pt" height="77.15pt" /></cytat-strukt>.</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>przeprowadzanie działań sanacyjnych.<cytat-strukt cudzyslowy="1"><litera ELI="lit=a"><nr>a</nr><p>wprowadzenie</p><grafika href="grafika-3.jpeg" width="115.75pt" height="77.15pt" /></litera></cytat-strukt></p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>przeprowadzanie działań sanacyjnych.<cytat-strukt cudzyslowy="0"><grafika href="grafika-4.jpeg" width="115.75pt" height="77.15pt" /></cytat-strukt></p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>przeprowadzanie działań sanacyjnych.<cytat-strukt cudzyslowy="1"><litera ELI="lit=a"><nr>a</nr><p>wprowadzenie</p><grafika href="grafika-5.jpeg" width="115.75pt" height="77.15pt" /></litera></cytat-strukt></p>
+    </punkt>
+  </artykul>
+  <artykul ELI="art=2">
+    <nr>2</nr>
+    <p>Restrukturyzację przeprowadza się w następujących postępowaniach restrukturyzacyjnych:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>postępowaniu o zatwierdzenie układu:<cytat-strukt cudzyslowy="3"><artykul ELI="art=1"><nr>1</nr><p>Ustawa reguluje:</p><punkt ELI="pkt=1"><nr>1</nr><p>zawieranie przez dłużnika niewypłacalnego lub zagrożonego niewypłacalnością układu z wierzycielami oraz skutki układu;</p></punkt><punkt ELI="pkt=2"><nr>2</nr><p>przeprowadzanie działań sanacyjnych.</p><grafika href="grafika-6.jpeg" width="115.75pt" height="77.15pt" /></punkt></artykul><artykul ELI="art=2"><nr>2</nr><p>Restrukturyzację przeprowadza się w następujących postępowaniach restrukturyzacyjnych:<cytat-strukt cudzyslowy="3"><artykul ELI="art=1"><nr>1</nr><p>Ustawa reguluje:</p><punkt ELI="pkt=1"><nr>1</nr><p>zawieranie przez dłużnika niewypłacalnego lub zagrożonego niewypłacalnością układu z wierzycielami oraz skutki układu;</p></punkt><punkt ELI="pkt=2"><nr>2</nr><p>przeprowadzanie działań sanacyjnych.</p><grafika href="grafika-7.jpeg" width="115.75pt" height="77.15pt" /></punkt></artykul></cytat-strukt>.</p></artykul></cytat-strukt>;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>przyspieszonym postępowaniu układowym;</p>
+    </punkt>
+    <punkt ELI="pkt=3">
+      <nr>3</nr>
+      <p>postępowaniu układowym;</p>
+    </punkt>
+    <punkt ELI="pkt=4">
+      <nr>4</nr>
+      <p>postępowaniu sanacyjnym.</p>
+    </punkt>
+  </artykul>
+  <artykul ELI="art=3">
+    <nr>3<odnosnik id-odnosnika="3"><p>Artykuł w nowym brzmieniu.</p></odnosnik></nr>
+    <ustep ELI="ust=1">
+      <nr>1<odnosnik id-odnosnika="4"><p>Ustęp w nowym brzmieniu.</p></odnosnik></nr>
+      <p>Celem postępowania restrukturyzacyjnego jest uniknięcie ogłoszenia upadłości dłużnika przez umożliwienie mu restrukturyzacji w drodze zawarcia układu z wierzycielami, a w przypadku postępowania sanacyjnego – również przez przeprowadzenie działań sanacyjnych, przy zabezpieczeniu słusznych praw wierzycieli.</p>
+    </ustep>
+    <ustep ELI="ust=2">
+      <nr>2</nr>
+      <p>Postępowanie o zatwierdzenie układu:</p>
+      <punkt ELI="pkt=1">
+        <nr>1</nr>
+        <p>umożliwia zawarcie układu w wyniku samodzielnego zbierania głosów wierzycieli przez dłużnika bez udziału sądu;</p>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>może być prowadzone, jeżeli suma wierzytelności spornych uprawniających do głosowania nad układem nie przekracza 15% sumy wierzytelności uprawniających do głosowania nad układem.</p>
+      </punkt>
+    </ustep>
+    <ustep ELI="ust=3">
+      <nr>3</nr>
+      <p>Przyspieszone postępowanie układowe:</p>
+      <punkt ELI="pkt=1">
+        <nr>1</nr>
+        <p>umożliwia dłużnikowi zawarcie układu po sporządzeniu i zatwierdzeniu spisu wierzytelności w uproszczonym trybie;</p>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>może być prowadzone, jeżeli suma wierzytelności spornych uprawniających do głosowania nad układem nie przekracza 15% sumy wierzytelności uprawniających do głosowania nad układem.</p>
+      </punkt>
+      <czesc-wspolna-punkt>
+        <p>– część wspólna</p>
+      </czesc-wspolna-punkt>
+    </ustep>
+    <ustep ELI="ust=4">
+      <nr>4</nr>
+      <p>Postępowanie układowe:</p>
+      <punkt ELI="pkt=1">
+        <nr>1</nr>
+        <p>umożliwia dłużnikowi zawarcie układu po sporządzeniu i zatwierdzeniu spisu wierzytelności;</p>
+      </punkt>
+      <punkt ELI="pkt=2">
+        <nr>2</nr>
+        <p>może być prowadzone, jeżeli suma wierzytelności spornych uprawniających do głosowania nad układem przekracza 15% sumy wierzytelności uprawniających do głosowania nad układem.</p>
+      </punkt>
+    </ustep>
+    <ustep ELI="ust=5">
+      <nr>5</nr>
+      <p>Postępowanie sanacyjne umożliwia dłużnikowi przeprowadzenie działań sanacyjnych oraz zawarcie układu po sporządzeniu i zatwierdzeniu spisu wierzytelności.</p>
+    </ustep>
+    <ustep ELI="ust=6">
+      <nr>6</nr>
+      <p>Działaniami sanacyjnymi są czynności prawne i faktyczne, które zmierzają do poprawy sytuacji ekonomicznej dłużnika i mają na celu przywrócenie dłużnikowi zdolności do wykonywania zobowiązań, przy jednoczesnej ochronie przed egzekucją.</p>
+    </ustep>
+  </artykul>
+  <rozdzial ELI="3">
+    <nr>3</nr>
+    <p>Zgromadzenie wierzycieli</p>
+  </rozdzial>
+  <oddzial ELI="1">
+    <nr>1</nr>
+    <p>Przepisy ogólne</p>
+  </oddzial>
+  <artykul ELI="art=104">
+    <nr>104</nr>
+    <p>Zgromadzenie wierzycieli zwołuje sędzia­‑komisarz w:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>celu głosowania nad układem;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>przypadku, gdy rada wierzycieli podejmie uchwałę o zwołaniu zgromadzenia;</p>
+    </punkt>
+    <punkt ELI="pkt=3">
+      <nr>3</nr>
+      <p>przypadku, gdy uzna to za potrzebne.</p>
+    </punkt>
+  </artykul>
+  <artykul ELI="art=105">
+    <nr>105</nr>
+    <ustep ELI="ust=1">
+      <nr>1</nr>
+      <p>Zgromadzenie wierzycieli zwołuje się przez obwieszczenie, w którym określa się termin, miejsce i przedmiot obrad oraz sposób głosowania.</p>
+    </ustep>
+    <ustep ELI="ust=2">
+      <nr>2</nr>
+      <p>Obwieszczenia dokonuje się co najmniej na dwa tygodnie przed terminem zgromadzenia wierzycieli.</p>
+    </ustep>
+    <ustep ELI="ust=3">
+      <nr>3</nr>
+      <p>Na termin zgromadzenia wierzycieli wzywa się dłużnika, nadzorcę sądowego albo zarządcę. Ich niestawiennictwo, chociażby usprawiedliwione, nie stanowi przeszkody do odbycia zgromadzenia.</p>
+    </ustep>
+    <ustep ELI="ust=4">
+      <nr>4</nr>
+      <p>W przypadku odroczenia zgromadzenia wierzycieli, sędzia­‑komisarz podaje obecnym do wiadomości nowy termin i miejsce zgromadzenia. W takim przypadku nie dokonuje się ponownego obwieszczenia. Oddany poprzednio głos wierzyciela, który nie stawił się na odroczonym zgromadzeniu wierzycieli, zachowuje moc i jest uwzględniany przy obliczaniu wyników głosowania, jeżeli na tym zgromadzeniu poddane pod głosowanie są te same uchwały lub uchwały korzystniejsze dla wierzycieli.</p>
+    </ustep>
+  </artykul>
+  <artykul ELI="art=106">
+    <nr>106<odnosnik id-odnosnika="5"><p>Ten artykuł był kiedyś zmieniany.</p></odnosnik></nr>
+    <p>W ustawie<odnosnik id-odnosnika="6"><p>Zmiany ustawy były.</p></odnosnik> wprowadza się następujące zmiany:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>odnośnik 1 otrzymuje brzmienie:<cytat-strukt cudzyslowy="3"><odnosnik-cyt><p><sup>1)	</sup>Przepisy niniejszej ustawy:</p><punkt-odnosnik ELI="pkt=1"><nr>1</nr><p>wdrażają postanowienia:</p><litera-odnosnik ELI="lit=a"><nr>a</nr><p>dyrektywy pierwszej,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>dyrektywy drugiej;</p></litera-odnosnik><czesc-wspolna-litera-odnosnik><p>– czyli obu</p></czesc-wspolna-litera-odnosnik></punkt-odnosnik><punkt-odnosnik ELI="pkt=2"><nr>2</nr><p>wykonują postanowienia:</p><litera-odnosnik ELI="lit=a"><nr>a</nr><p>rozporządzenia pierwszego,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>rozporządzenia drugiego.</p></litera-odnosnik></punkt-odnosnik><czesc-wspolna-punkt-odnosnik><p>Treść rozporządzeń według wydania specjalnego. Treść rozporządzeń według wydania specjalnego. Treść rozporządzeń według wydania specjalnego. Treść rozporządzeń według wydania specjalnego.</p></czesc-wspolna-punkt-odnosnik></odnosnik-cyt></cytat-strukt>;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>art. 17 uchyla się.</p>
+    </punkt>
+  </artykul>
+  <artykul ELI="art=107">
+    <nr>107</nr>
+    <p>W ustawie wprowadza się następujące zmiany:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>w odnośniku nr 1 do ustawy dodaje się pkt 3 w brzmieniu:<cytat-strukt cudzyslowy="3"><punkt-odnosnik ELI="pkt=1"><nr>1</nr><p>wdrażają postanowienia:</p><litera-odnosnik ELI="lit=a"><nr>a</nr><p>dyrektywy pierwszej,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>dyrektywy drugiej;</p></litera-odnosnik><czesc-wspolna-litera-odnosnik><p>– czyli obu</p></czesc-wspolna-litera-odnosnik></punkt-odnosnik></cytat-strukt>;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>w odnośniku nr 1 do ustawy część wspólna otrzymuje brzmienie:<cytat-strukt cudzyslowy="3"><czesc-wspolna-punkt-odnosnik><p>Zgodnie z wydaniem.</p></czesc-wspolna-punkt-odnosnik></cytat-strukt>.</p>
+    </punkt>
+  </artykul>
+  <artykul ELI="art=107">
+    <nr>107</nr>
+    <p>W ustawie wprowadza się następujące zmiany:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>w odnośniku nr 1 do ustawy w pkt 3 dodaje się lit. a i b w brzmieniu:<cytat-strukt cudzyslowy="3"><litera-odnosnik ELI="lit=a"><nr>a</nr><p>dyrektywy pierwszej,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>dyrektywy drugiej;</p></litera-odnosnik></cytat-strukt>;</p>
+    </punkt>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>w odnośniku nr 1 do ustawy w pkt 3 dodaje się lit. a i b w brzmieniu:<cytat-strukt cudzyslowy="3"><litera-odnosnik ELI="lit=a"><nr>a</nr><p>dyrektywy pierwszej,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>dyrektywy drugiej;</p></litera-odnosnik></cytat-strukt>;</p>
+    </punkt>
+  </artykul>
+  <artykul ELI="art=107">
+    <nr>107</nr>
+    <p>W ustawie wprowadza się następujące zmiany:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>w odnośniku nr 1 do ustawy:</p>
+      <litera ELI="lit=a">
+        <nr>a</nr>
+        <p>pkt 1 otrzymuje brzmienie:<cytat-strukt cudzyslowy="3"><punkt-odnosnik ELI="pkt=1"><nr>1</nr><p>wdrażają postanowienia:</p><litera-odnosnik ELI="lit=a"><nr>a</nr><p>dyrektywy pierwszej,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>dyrektywy drugiej</p></litera-odnosnik><czesc-wspolna-litera-odnosnik><p>– czyli obu;</p></czesc-wspolna-litera-odnosnik></punkt-odnosnik></cytat-strukt>,</p>
+      </litera>
+      <litera ELI="lit=b">
+        <nr>b</nr>
+        <p>w pkt 2:</p>
+        <tiret>
+          <p>uchyla się lit. a,</p>
+        </tiret>
+        <tiret>
+          <p>dodaje się lit. x w brzmieniu:<cytat-strukt cudzyslowy="3"><litera-odnosnik ELI="lit=x"><nr>x</nr><p>rozporządzenia Komisji</p></litera-odnosnik></cytat-strukt>;</p>
+        </tiret>
+      </litera>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>art. 17 uchyla się.</p>
+    </punkt>
+  </artykul>
+  <artykul ELI="art=108">
+    <nr>108</nr>
+    <p>W ustawie wprowadza się następujące zmiany:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>w odnośniku nr 1 do ustawy pkt 1 otrzymuje brzmienie:<cytat-strukt cudzyslowy="3"><punkt-odnosnik ELI="pkt=1"><nr>1</nr><p>wdrażają postanowienia:</p><litera-odnosnik ELI="lit=a"><nr>a</nr><p>dyrektywy pierwszej,</p></litera-odnosnik><litera-odnosnik ELI="lit=b"><nr>b</nr><p>dyrektywy drugiej</p></litera-odnosnik><czesc-wspolna-litera-odnosnik><p>– cz wsp;</p></czesc-wspolna-litera-odnosnik></punkt-odnosnik></cytat-strukt>;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>art. 17 uchyla się.</p>
+    </punkt>
+  </artykul>
+  <artykul ELI="art=109">
+    <nr>109</nr>
+    <p>W ustawie wprowadza się następujące zmiany:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>w odnośniku nr 1 do ustawy:</p>
+      <litera ELI="lit=a">
+        <nr>a</nr>
+        <p>w pkt 1:</p>
+        <tiret>
+          <p>uchyla się lit. a i b,</p>
+        </tiret>
+        <tiret>
+          <p>dodaje się lit. x i y w brzmieniu:<cytat-strukt cudzyslowy="3"><litera-odnosnik ELI="lit=x"><nr>x</nr><p>dyrektywy Rady,</p></litera-odnosnik><litera-odnosnik ELI="lit=y"><nr>y</nr><p>dyrektywy Rady</p></litera-odnosnik></cytat-strukt>;</p>
+        </tiret>
+      </litera>
+      <litera ELI="lit=b">
+        <nr>b</nr>
+        <p>w pkt 2:</p>
+        <tiret>
+          <p>uchyla się lit. a,</p>
+        </tiret>
+        <tiret>
+          <p>dodaje się lit. x w brzmieniu:<cytat-strukt cudzyslowy="3"><litera-odnosnik ELI="lit=x"><nr>x</nr><p>rozporządzenia Komisji</p></litera-odnosnik></cytat-strukt>;</p>
+        </tiret>
+      </litera>
+      <litera ELI="lit=c">
+        <nr>c</nr>
+        <p>w pkt 2:<cytat-strukt cudzyslowy="3"><litera-odnosnik ELI="lit=x"><nr>x</nr><p>rozporządzenia Komisji</p></litera-odnosnik></cytat-strukt>;</p>
+      </litera>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>art. 17 uchyla się.</p>
+    </punkt>
+  </artykul>
+  <dzial ELI="III">
+    <nr>III</nr>
+    <p>Przepis końcowy</p>
+  </dzial>
+  <artykul ELI="art=456">
+    <nr>456</nr>
+    <p>Ustawa wchodzi w życie z dniem 1 stycznia 2016 r., z wyjątkiem:</p>
+    <punkt ELI="pkt=1">
+      <nr>1</nr>
+      <p>(uchylony)<odnosnik id-odnosnika="7"><p>Uchylony inną ustawą.</p></odnosnik>.;</p>
+    </punkt>
+    <punkt ELI="pkt=2">
+      <nr>2</nr>
+      <p>art. 148 i art. 149, które wchodzą w życie z dniem 1 września 2015 r.;</p>
+    </punkt>
+    <punkt ELI="pkt=3">
+      <nr>3</nr>
+      <p>art. 428 pkt 138 w zakresie dotyczącym art. 227, który wchodzi w życie po upływie 14 dni od dnia ogłoszenia<odnosnik id-odnosnika="8"><p>Ustawa została ogłoszona w dniu 14 lipca 2015 r.</p></odnosnik>.</p>
+    </punkt>
+  </artykul>
+  <organ-wydajacy>
+    <pole nazwa="Podpis" metadane="md:Organy/md:Organ[@GUID='{B92BA44E-797F-40D8-A438-A25435AD2DFB}']/md:OrganPodpisujacy" />:<pole nazwa="Uwagi" metadane="md:Organy/md:Organ[@GUID='{B92BA44E-797F-40D8-A438-A25435AD2DFB}']/md:Uwagi" /><pole styl="i" nazwa="Osoba" metadane="md:Organy/md:Organ[@GUID='{B92BA44E-797F-40D8-A438-A25435AD2DFB}']/md:OsobaPodpisujaca" /></organ-wydajacy>
+  <zal:zalacznik>
+    <zal:segment-zalacznika orientacja="pionowa" odnosniki="kontynuacja">
+      <zalacznik-do>Załączniki do ustawy z dnia 15 maja 2015 r.</zalacznik-do>
+      <zalacznik-nr ELI="1">
+        <nr>1<odnosnik id-odnosnika="9"><p>Zmieniony wcześniej.</p></odnosnik></nr>
+      </zalacznik-nr>
+      <tytul-zalacznika>Ogólne zasady zgodności</tytul-zalacznika>
+      <paragraf ELI="par=1">
+        <nr>1<odnosnik id-odnosnika="10"><p>To jest odnośnik do załącznika.</p></odnosnik></nr>
+        <p>Podmioty są zobowiązane do zachowania:</p>
+        <punkt ELI="pkt=1">
+          <nr>1</nr>
+          <p>zasad;</p>
+        </punkt>
+        <punkt ELI="pkt=2">
+          <nr>2</nr>
+          <p>reguł</p>
+        </punkt>
+      </paragraf>
+      <zalacznik-binarny href="Załącznik PDF.pdf" skala="25" przesuniecie="70" />
+    </zal:segment-zalacznika>
+    <zal:segment-zalacznika orientacja="pozioma">
+      <tytul-zalacznika>Tytuł drugiego załącznika</tytul-zalacznika>
+      <artykul ELI="art=1">
+        <nr>1</nr>
+        <p>Dotyczy regulaminu.</p>
+      </artykul>
+      <zalacznik-binarny href="Załącznik nr 1a.pdf" />
+      <zalacznik-binarny href="Załącznik 3.pdf" skala="75" />
+    </zal:segment-zalacznika>
+    <zal:segment-zalacznika orientacja="pionowa">
+      <podstawa-prawna>Dalszy ciąg załącznika 1a.</podstawa-prawna>
+    </zal:segment-zalacznika>
+    <zal:segment-zalacznika orientacja="pozioma" odnosniki="litery">
+      <zalacznik-nr ELI="2">
+        <nr>2<odnosnik id-odnosnika="11"><p>Zmieniony wcześniej.</p></odnosnik></nr>
+      </zalacznik-nr>
+      <tytul-zalacznika>Ogólne zasady zgodności</tytul-zalacznika>
+      <paragraf ELI="par=1">
+        <nr>1<odnosnik id-odnosnika="12"><p>To jest odnośnik do załącznika 2.</p></odnosnik></nr>
+        <p>Podmioty są zobowiązane do zachowania:</p>
+        <punkt ELI="pkt=1">
+          <nr>1</nr>
+          <p>zasad;</p>
+        </punkt>
+        <punkt ELI="pkt=2">
+          <nr>2</nr>
+          <p>reguł</p>
+        </punkt>
+      </paragraf>
+    </zal:segment-zalacznika>
+  </zal:zalacznik>
+  <uzas:uzasadnienie>
+    <zal:segment-zalacznika orientacja="pionowa" nowa-strona="tak">
+      <tytul-zalacznika>Uzasadnienie</tytul-zalacznika>
+      <specjalny>Ustawa jest potrzebna.</specjalny>
+    </zal:segment-zalacznika>
+    <zal:segment-zalacznika orientacja="pionowa">
+      <tytul-zalacznika>Ocena skutków regulacji</tytul-zalacznika>
+      <specjalny>Skutki będą pozytywne.<odnosnik id-odnosnika="13"><p>I to bardzo.</p></odnosnik></specjalny>
+      <specjalny>Dodatkowe materiały zapisane w plikach:</specjalny>
+      <specjalny>
+        <hiperlacze href="Dokumentacja.docx" nazwa="Dokumentacja" />
+      </specjalny>
+      <specjalny>
+        <hiperlacze href="Warianty traktowania załączników.docx" nazwa="Warianty traktowania załączników" />
+      </specjalny>
+      <specjalny>I jeszcze rysunek:</specjalny>
+      <grafika href="grafika-8.jpeg" width="115.75pt" height="77.15pt" />
+    </zal:segment-zalacznika>
+  </uzas:uzasadnienie>
+</ustawa>

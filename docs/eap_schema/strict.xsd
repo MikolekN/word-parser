@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 (http://www.altova.com) by Szymon Ziolo (RedPill Szymon Ziolo) -->
+<!-- wersja 2018/10 Jarosław Deminet RCL -->
+<xs:schema xmlns="http://www.rcl.gov.pl/2018/10/prawo#strict" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tpg="http://www.rcl.gov.pl/2018/10/eap/typografia" targetNamespace="http://www.rcl.gov.pl/2018/10/prawo#strict" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="wspolne.xsd"/>
+	<xs:import namespace="http://www.rcl.gov.pl/2018/10/eap/typografia" schemaLocation="typografia.xsd"/>
+	
+	<!--********** USTAWA ***********-->
+	<xs:complexType name="UstawaTyp">
+		<xs:sequence>
+			<xs:element name="metadane" type="MetadaneTyp"/>
+			<xs:element name="oznaczenie" type="JednostkaTekstowaTyp" minOccurs="0"/>
+			<xs:element name="rodzaj-aktu" type="JednostkaTekstowaTyp"/>
+			<xs:element name="data" type="JednostkaTekstowaTyp"/>
+			<xs:element name="tytul" type="JednostkaTekstowaTyp"/>
+			<xs:element ref="preambula" minOccurs="0"/>
+			<xs:choice maxOccurs="unbounded">
+				<xs:group ref="jednostka-systematyzacyjna"/>
+				<xs:element name="artykul" type="ArtykulUstawyTyp"/>
+			</xs:choice>
+			<xs:group ref="podpisy"/>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/prawo#base" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/eap/uzasadnienie" minOccurs="0" processContents="skip"/>
+			<xs:any namespace="http://www.w3.org/2000/09/xmldsig#" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+		</xs:sequence>
+		<xs:attribute name="enclaves" type="xs:string">
+		  <xs:annotation>
+			<xs:documentation>Zawiera skrót dokumentu XML zawierającego ewentualne "wyspy" aplikacji EAP.</xs:documentation>
+		  </xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	
+	<xs:element name="ustawa" type="UstawaTyp">
+		<xs:annotation>
+			<xs:documentation>Element główny - ustawa o strukturze zgodnej z zasadami techniki prawodawczej (strict)</xs:documentation>
+		</xs:annotation>
+	</xs:element> 
+	
+	<!--********** Kodeks ***********-->
+	<xs:complexType name="KodeksTyp">
+		<xs:sequence>
+			<xs:element name="metadane" type="MetadaneTyp"/>
+			<xs:element name="oznaczenie" type="JednostkaTekstowaTyp" minOccurs="0"/>
+			<xs:element name="rodzaj-aktu" type="JednostkaTekstowaTyp"/>
+			<xs:element name="data" type="JednostkaTekstowaTyp"/>
+			<xs:element name="tytul" type="JednostkaTekstowaTyp"/>
+			<xs:element ref="preambula" minOccurs="0"/>
+			<xs:choice maxOccurs="unbounded">
+				<xs:group ref="jednostka-systematyzacyjna"/>
+				<xs:element name="artykul" type="ArtykulKodeksuTyp"/>
+			</xs:choice>
+			<xs:group ref="podpisy"/>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/prawo#base" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/eap/uzasadnienie" minOccurs="0" processContents="skip"/>
+			<xs:any namespace="http://www.w3.org/2000/09/xmldsig#" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+		</xs:sequence>
+		<xs:attribute name="enclaves" type="xs:string">
+		  <xs:annotation>
+			<xs:documentation>Zawiera skrót dokumentu XML zawierającego ewentualne "wyspy" aplikacji EAP.</xs:documentation>
+		  </xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	
+	<xs:element name="ustawa-kodeks" type="KodeksTyp">
+		<xs:annotation>
+			<xs:documentation>Element główny - ustawa o strukturze kodeksu zgodnej z zasadami techniki prawodawczej (strict)</xs:documentation>
+		</xs:annotation>
+	</xs:element> 
+	
+	<!--*********** ROZPORZĄDZENIE ***********-->
+	<xs:complexType name="RozporzadzenieTyp">
+		<xs:sequence>
+			<xs:element name="metadane" type="MetadaneTyp"/>
+			<xs:element name="oznaczenie" type="JednostkaTekstowaTyp" minOccurs="0"/>
+			<xs:element name="rodzaj-aktu" type="JednostkaTekstowaTyp" minOccurs="2" maxOccurs="2"/>
+			<xs:element name="data" type="JednostkaTekstowaTyp"/>
+			<xs:element name="tytul" type="JednostkaTekstowaTyp"/>
+			<xs:element ref="podstawa-prawna"/>
+			<xs:choice maxOccurs="unbounded">
+				<xs:group ref="jednostka-systematyzacyjna"/>
+				<xs:element name="paragraf" type="ParagrafRozporzadzeniaTyp"/>
+			</xs:choice>
+			<xs:group ref="podpisy"/>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/prawo#base" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/eap/uzasadnienie" minOccurs="0" processContents="skip"/>
+			<xs:any namespace="http://www.w3.org/2000/09/xmldsig#" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+		</xs:sequence>
+		<xs:attribute name="enclaves" type="xs:string">
+		  <xs:annotation>
+			<xs:documentation>Zawiera skrót dokumentu XML zawierającego ewentualne "wyspy" aplikacji EAP.</xs:documentation>
+		  </xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	
+	<xs:element name="rozporzadzenie" type="RozporzadzenieTyp">
+		<xs:annotation>
+			<xs:documentation>Element główny - rozporządzenie o strukturze zgodnej z zasadami techniki prawodawczej (strict)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+	<!--********** OBWIESZCZENIE ***********-->
+	<xs:element name="punkt-OTJ" type="PunktOTJTyp"/>
+	
+	<xs:complexType name="PunktOTJTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:sequence minOccurs="0">
+					<xs:group ref="akapit-bez-cytatu" />
+					<xs:sequence>
+						<xs:element name="podpunkt-OTJ" type="PodpunktOTJTyp" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="czesc-wspolna-podpunkt-OTJ" type="JednostkaRedakcyjnaTekstowaTyp" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="PodpunktOTJTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:sequence>
+					<xs:element name="p">
+						<xs:complexType mixed="true">
+							<xs:sequence>
+								<xs:choice minOccurs="0" maxOccurs="unbounded">
+									<xs:group ref="zawartosc-tekstowa-bez-cytatu" maxOccurs="unbounded"/>
+									<xs:element name="cytat-strukt">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:any namespace="http://www.rcl.gov.pl/2018/10/prawo#base" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+											</xs:sequence>
+										<xs:attributeGroup ref="cytat"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:choice>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="TJUstawyTyp">
+		<xs:sequence>
+			<xs:element name="zalacznik-do" type="JednostkaTekstowaTyp"/>
+			<xs:element name="rodzaj-aktu" type="JednostkaTekstowaTyp"/>
+			<xs:element name="data" type="JednostkaTekstowaTyp"/>
+			<xs:element name="tytul" type="JednostkaTekstowaTyp"/>
+			<xs:element ref="preambula" minOccurs="0"/>
+			<xs:choice maxOccurs="unbounded">
+				<xs:group ref="jednostka-systematyzacyjna"/>
+				<xs:element name="artykul" type="ArtykulUstawyBezCytatuTyp"/>
+				<xs:element name="uchylenie-OTJ" type="JednostkaTekstowaTyp"/>
+			</xs:choice>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/prawo#base" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+		</xs:sequence>
+	</xs:complexType>	
+	
+	<xs:complexType name="TJKodeksuTyp">
+		<xs:sequence>
+			<xs:element name="zalacznik-do" type="JednostkaTekstowaTyp"/>
+			<xs:element name="rodzaj-aktu" type="JednostkaTekstowaTyp"/>
+			<xs:element name="data" type="JednostkaTekstowaTyp"/>
+			<xs:element name="tytul" type="JednostkaTekstowaTyp"/>
+			<xs:element ref="preambula" minOccurs="0"/>
+			<xs:choice maxOccurs="unbounded">
+				<xs:group ref="jednostka-systematyzacyjna"/>
+				<xs:element name="artykul" type="ArtykulKodeksuTyp"/>
+				<xs:element name="uchylenie-OTJ" type="JednostkaTekstowaTyp"/>
+			</xs:choice>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/prawo#base" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+		</xs:sequence>
+	</xs:complexType>	
+	
+	<xs:complexType name="TJRozporzadzeniaTyp">
+		<xs:sequence>
+			<xs:element name="zalacznik-do" type="JednostkaTekstowaTyp"/>
+			<xs:element name="rodzaj-aktu" type="JednostkaTekstowaTyp" minOccurs="2" maxOccurs="2"/>
+			<xs:element name="data" type="JednostkaTekstowaTyp"/>
+			<xs:element name="tytul" type="JednostkaTekstowaTyp"/>
+			<xs:element ref="podstawa-prawna" minOccurs="0"/>
+			<xs:choice maxOccurs="unbounded">
+				<xs:group ref="jednostka-systematyzacyjna"/>
+				<xs:element name="pararaf" type="ParagrafRozporzadzeniaBezCytatuTyp"/>
+				<xs:element name="uchylenie-OTJ" type="JednostkaTekstowaTyp"/>
+			</xs:choice>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/prawo#base" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+		</xs:sequence>
+	</xs:complexType>	
+	
+	<xs:complexType name="ObwieszczenieTyp">
+		<xs:sequence>
+			<xs:element name="metadane" type="MetadaneTyp"/>
+			<xs:element name="oznaczenie" type="JednostkaTekstowaTyp" minOccurs="0"/>
+			<xs:element name="rodzaj-aktu" type="JednostkaTekstowaTyp" minOccurs="2" maxOccurs="2"/>
+			<xs:element name="data" type="JednostkaTekstowaTyp"/>
+			<xs:element name="tytul" type="JednostkaTekstowaTyp"/>
+			<xs:element ref="punkt-OTJ" minOccurs="2" maxOccurs="2"/>
+			<xs:group ref="podpisy"/>
+			<xs:choice>
+				<xs:element name="ustawa" type="TJUstawyTyp"/>
+				<xs:element name="ustawa-kodeks" type="TJKodeksuTyp"/>
+				<xs:element name="rozporzadzenie" type="TJRozporzadzeniaTyp"/>
+			</xs:choice>
+			<xs:any namespace="http://www.rcl.gov.pl/2018/10/eap/uzasadnienie" minOccurs="0" processContents="skip"/>
+			<xs:any namespace="http://www.w3.org/2000/09/xmldsig#" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+		</xs:sequence>
+		<xs:attribute name="enclaves" type="xs:string">
+		  <xs:annotation>
+			<xs:documentation>Zawiera skrót dokumentu XML zawierającego ewentualne "wyspy" aplikacji EAP.</xs:documentation>
+		  </xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="odnosniki" type="xs:string"/>
+	</xs:complexType>
+	
+	<xs:element name="obwieszczenie" type="ObwieszczenieTyp">
+		<xs:annotation>
+			<xs:documentation>Element główny - obwieszczenie o strukturze zgodnej z zasadami techniki prawodawczej (strict)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+
+	<!--*********** ELEMENTY WSPÓLNE ***********-->
+	<xs:complexType name="ArtykulUstawyTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:choice>
+					<xs:element name="ustep" type="UstepTyp" minOccurs="2" maxOccurs="unbounded"/>
+					<xs:group ref="tresc-akapitowa-ustawy"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ArtykulUstawyBezCytatuTyp">
+		<xs:annotation>
+			<xs:documentation>Zastosowanie w TJ.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:choice>
+					<xs:element name="ustep" type="UstepTyp" minOccurs="2" maxOccurs="unbounded"/>
+					<xs:group ref="tresc-akapitowa-bez-cytatu"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ArtykulKodeksuTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:choice>
+					<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTyp" minOccurs="2" maxOccurs="unbounded"/>
+					<xs:group ref="tresc-akapitowa-bez-cytatu"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ArtykulUstawyLubKodeksuTyp">
+		<xs:annotation>
+			<xs:documentation>Zastosowanie w cytatach.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:choice>
+					<xs:element name="ustep" type="UstepTyp" minOccurs="2" maxOccurs="unbounded"/>
+					<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTyp" maxOccurs="unbounded"/>
+					<xs:group ref="tresc-akapitowa-ustawy"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ParagrafRozporzadzeniaTyp">
+		<xs:annotation>
+			<xs:documentation>Typ podstawowych jednostek redakcyjnych (artykułu i paragrafu).</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:choice>
+					<xs:element name="ustep" type="UstepTyp" minOccurs="2" maxOccurs="unbounded"/>
+					<xs:group ref="tresc-akapitowa-rozporzadzenia"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ParagrafRozporzadzeniaBezCytatuTyp">
+		<xs:annotation>
+			<xs:documentation>Zastosowanie w TJ.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:choice>
+					<xs:element name="ustep" type="UstepTyp" minOccurs="2" maxOccurs="unbounded"/>
+					<xs:group ref="tresc-akapitowa-bez-cytatu"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="UstepTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:group ref="tresc-akapitowa-bez-cytatu"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ParagrafKodeksuTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:group ref="tresc-akapitowa-bez-cytatu"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="PunktUstawyTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-w-ustawie"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="litera" type="LiteraUstawyTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-litera" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="PunktRozporzadzeniaTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-w-rozporzadzeniu"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="litera" type="LiteraRozporzadzeniaTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-litera" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="PunktBezCytatuTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-bez-cytatu"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="litera" type="LiteraBezCytatuTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-litera" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="LiteraUstawyTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-w-ustawie"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="tiret" type="TiretUstawyTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-tiret" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="LiteraRozporzadzeniaTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-w-rozporzadzeniu"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="tiret" type="TiretRozporzadzeniaTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-tiret" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="LiteraBezCytatuTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-bez-cytatu"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="tiret" type="TiretBezCytatuTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-tiret" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="TiretUstawyTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-w-ustawie"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="podw-tiret" type="PodwTiretUstawyTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-podw-tiret" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="TiretRozporzadzeniaTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-w-rozporzadzeniu"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="podw-tiret" type="PodwTiretRozporzadzeniaTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-podw-tiret" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="TiretBezCytatuTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-bez-cytatu"/>
+					<xs:sequence minOccurs="0">
+						<xs:element name="podw-tiret" type="PodwTiretBezCytatuTyp" minOccurs="2" maxOccurs="unbounded"/>
+						<xs:element ref="czesc-wspolna-podw-tiret" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="PodwTiretUstawyTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-w-ustawie"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="PodwTiretRozporzadzeniaTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-w-rozporzadzeniu"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="PodwTiretBezCytatuTyp">
+		<xs:complexContent>
+			<xs:extension base="JednostkaRedakcyjnaTyp">
+				<xs:sequence>
+					<xs:group ref="akapit-bez-cytatu"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:group name="tresc-akapitowa">
+		<xs:annotation>
+			<xs:documentation>Zawartość złożona z akapitów, z możliwością stosowania wyliczeń (punktów). Stosowana w grafice.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:group ref="akapit-bez-cytatu" minOccurs="0"/>
+			<xs:sequence minOccurs="0">
+				<xs:element name="punkt" type="PunktBezCytatuTyp"  minOccurs="2" maxOccurs="unbounded"/>
+				<xs:element ref="czesc-wspolna-punkt" minOccurs="0"/>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:group>
+
+	<xs:group name="tresc-akapitowa-ustawy">
+		<xs:annotation>
+			<xs:documentation>Zawartość złożona z akapitów, z możliwością stosowania wyliczeń (punktów). Co najmniej jeden akapit jest wymagany. Stosowana w artykułach, paragrafach i ustępach.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:group ref="akapit-w-ustawie"/>
+			<xs:sequence minOccurs="0">
+				<xs:element name="punkt" type="PunktUstawyTyp" minOccurs="2" maxOccurs="unbounded"/>
+				<xs:element ref="czesc-wspolna-punkt" minOccurs="0"/>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:group>
+
+	<xs:group name="tresc-akapitowa-rozporzadzenia">
+		<xs:annotation>
+			<xs:documentation>Zawartość złożona z akapitów, z możliwością stosowania wyliczeń (punktów). Co najmniej jeden akapit jest wymagany. Stosowana w artykułach, paragrafach i ustępach.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:group ref="akapit-w-rozporzadzeniu"/>
+			<xs:sequence minOccurs="0">
+				<xs:element name="punkt" type="PunktRozporzadzeniaTyp" minOccurs="2" maxOccurs="unbounded"/>
+				<xs:element ref="czesc-wspolna-punkt" minOccurs="0"/>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:group>
+
+	<xs:group name="tresc-akapitowa-bez-cytatu">
+		<xs:annotation>
+			<xs:documentation>Zawartość złożona z akapitów, z możliwością stosowania wyliczeń (punktów). Co najmniej jeden akapit jest wymagany. Stosowana w artykułach, paragrafach i ustępach.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:group ref="akapit-bez-cytatu"/>
+			<xs:sequence minOccurs="0">
+				<xs:element name="punkt" type="PunktBezCytatuTyp"  minOccurs="2" maxOccurs="unbounded"/>
+				<xs:element ref="czesc-wspolna-punkt" minOccurs="0"/>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:group name="punkty-w-tabeli">
+		<xs:annotation>
+			<xs:documentation>Zawartość złożona z punktów i części wspólnych. Stosowana w tabeli.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="czesc-wspolna-punkt"/>
+				<xs:element name="punkt" type="PunktBezCytatuTyp"  minOccurs="2" maxOccurs="unbounded"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+
+</xs:schema>

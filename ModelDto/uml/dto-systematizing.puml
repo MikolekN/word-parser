@@ -1,0 +1,80 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+title DTO Systematizing Units
+
+class BaseEntity {
+  +Guid Guid
+  +UnitType UnitType
+  +string DisplayLabel
+  +string EIdPrefix
+  +EntityNumber Number
+  +string ContentText
+  +DateTime EffectiveDate
+  +List<ValidationMessage> ValidationMessages
+  +BaseEntity Parent
+  +string Id
+}
+
+interface ISystematizingUnit {
+  +string Heading
+  +bool IsImplicit
+}
+
+class Part {
+  +string Heading
+  +bool IsImplicit
+  +List<Book> Books
+}
+
+class Book {
+  +string Heading
+  +bool IsImplicit
+  +List<Title> Titles
+}
+
+class Title {
+  +string Heading
+  +bool IsImplicit
+  +List<Division> Divisions
+}
+
+class Division {
+  +string Heading
+  +bool IsImplicit
+  +List<Chapter> Chapters
+}
+
+class Chapter {
+  +string Heading
+  +bool IsImplicit
+  +List<Subchapter> Subchapters
+}
+
+class Subchapter {
+  +string Heading
+  +bool IsImplicit
+  +List<Article> Articles
+}
+
+BaseEntity <|-- Part
+BaseEntity <|-- Book
+BaseEntity <|-- Title
+BaseEntity <|-- Division
+BaseEntity <|-- Chapter
+BaseEntity <|-- Subchapter
+
+ISystematizingUnit <|.. Part
+ISystematizingUnit <|.. Book
+ISystematizingUnit <|.. Title
+ISystematizingUnit <|.. Division
+ISystematizingUnit <|.. Chapter
+ISystematizingUnit <|.. Subchapter
+
+Part *-- Book
+Book *-- Title
+Title *-- Division
+Division *-- Chapter
+Chapter *-- Subchapter
+Subchapter *-- Article
+@enduml

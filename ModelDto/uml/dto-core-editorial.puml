@@ -1,0 +1,95 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+title DTO Core Editorial Units
+
+class BaseEntity {
+  +Guid Guid
+  +UnitType UnitType
+  +string DisplayLabel
+  +string EIdPrefix
+  +EntityNumber Number
+  +string ContentText
+  +DateTime EffectiveDate
+  +List<ValidationMessage> ValidationMessages
+  +BaseEntity Parent
+  +Article Article
+  +Paragraph Paragraph
+  +Point Point
+  +Letter Letter
+  +Tiret Tiret
+  +string Id
+}
+
+class Article {
+  +List<Paragraph> Paragraphs
+  +List<JournalInfo> Journals
+  +bool IsAmending
+}
+
+class Paragraph {
+  +List<CommonPart> CommonParts
+  +List<TextSegment> TextSegments
+  +List<Point> Points
+  +List<Amendment> Amendments
+  +string Role
+}
+
+class Point {
+  +List<CommonPart> CommonParts
+  +List<TextSegment> TextSegments
+  +List<Letter> Letters
+  +List<Amendment> Amendments
+}
+
+class Letter {
+  +List<CommonPart> CommonParts
+  +List<TextSegment> TextSegments
+  +List<Tiret> Tirets
+  +List<Amendment> Amendments
+}
+
+class Tiret {
+  +List<TextSegment> TextSegments
+  +List<Amendment> Amendments
+}
+
+interface IHasCommonParts {
+  +List<CommonPart> CommonParts
+}
+
+interface IHasTextSegments {
+  +List<TextSegment> TextSegments
+}
+
+BaseEntity <|-- Article
+BaseEntity <|-- Paragraph
+BaseEntity <|-- Point
+BaseEntity <|-- Letter
+BaseEntity <|-- Tiret
+
+IHasCommonParts <|.. Paragraph
+IHasCommonParts <|.. Point
+IHasCommonParts <|.. Letter
+
+IHasTextSegments <|.. Paragraph
+IHasTextSegments <|.. Point
+IHasTextSegments <|.. Letter
+IHasTextSegments <|.. Tiret
+
+Article *-- Paragraph
+Paragraph *-- Point
+Point *-- Letter
+Letter *-- Tiret
+
+Paragraph *-- CommonPart
+Point *-- CommonPart
+Letter *-- CommonPart
+
+Paragraph *-- TextSegment
+Point *-- TextSegment
+Letter *-- TextSegment
+Tiret *-- TextSegment
+
+Article o-- JournalInfo
+@enduml

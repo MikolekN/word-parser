@@ -1,0 +1,66 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+title DTO Amendments
+
+class Amendment {
+  +Guid Guid
+  +AmendmentOperationType OperationType
+  +AmendmentContent Content
+  +JournalInfo TargetLegalAct
+  +List<StructuralAmendmentReference> Targets
+  +DateTime? EffectiveDate
+}
+
+class AmendmentContent {
+  +AmendmentObjectType ObjectType
+  +List<Article> Articles
+  +List<Paragraph> Paragraphs
+  +List<Point> Points
+  +List<Letter> Letters
+  +List<Tiret> Tirets
+  +List<CommonPart> CommonParts
+  +string PlainText
+}
+
+class StructuralAmendmentReference {
+  +StructuralReference Structure
+  +string RawText
+}
+
+class StructuralReference {
+  +string Article
+  +string Paragraph
+  +string Point
+  +string Letter
+  +string Tiret
+  +void SetArticle(string)
+  +void SetParagraph(string)
+  +void SetPoint(string)
+  +void SetLetter(string)
+  +void SetTiret(string)
+  +StructuralReference Clone()
+}
+
+enum AmendmentOperationType {
+  Repeal
+  Insertion
+  Modification
+  Error
+}
+
+enum AmendmentObjectType {
+  Article
+  Subsection
+  Point
+  Letter
+  Tiret
+  CommonPart
+  None
+}
+
+Amendment *-- AmendmentContent
+Amendment *-- StructuralAmendmentReference
+StructuralAmendmentReference *-- StructuralReference
+Amendment o-- JournalInfo
+@enduml

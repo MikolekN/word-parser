@@ -1,0 +1,303 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+title DTO Full Model
+
+class LegalDocument {
+  +Guid Guid
+  +LegalActType Type
+  +string Title
+  +JournalInfo SourceJournal
+  +Part RootPart
+  +IEnumerable<Article> Articles
+  +DateTime CreatedAt
+  +DateTime UpdatedAt
+  +string GetMainUnitLabel()
+  +string GetSubUnitLabel()
+}
+
+class BaseEntity {
+  +Guid Guid
+  +UnitType UnitType
+  +string DisplayLabel
+  +string EIdPrefix
+  +EntityNumber Number
+  +string ContentText
+  +DateTime EffectiveDate
+  +List<ValidationMessage> ValidationMessages
+  +BaseEntity Parent
+  +Article Article
+  +Paragraph Paragraph
+  +Point Point
+  +Letter Letter
+  +Tiret Tiret
+  +string Id
+}
+
+class Article {
+  +List<Paragraph> Paragraphs
+  +List<JournalInfo> Journals
+  +bool IsAmending
+}
+
+class Paragraph {
+  +List<CommonPart> CommonParts
+  +List<TextSegment> TextSegments
+  +List<Point> Points
+  +List<Amendment> Amendments
+  +string Role
+}
+
+class Point {
+  +List<CommonPart> CommonParts
+  +List<TextSegment> TextSegments
+  +List<Letter> Letters
+  +List<Amendment> Amendments
+}
+
+class Letter {
+  +List<CommonPart> CommonParts
+  +List<TextSegment> TextSegments
+  +List<Tiret> Tirets
+  +List<Amendment> Amendments
+}
+
+class Tiret {
+  +List<TextSegment> TextSegments
+  +List<Amendment> Amendments
+}
+
+class CommonPart {
+  +CommonPartType Type
+  +string ParentEId
+  +int? SourceSegmentOrder
+  +string TypeDisplayLabel
+}
+
+class TextSegment {
+  +TextSegmentType Type
+  +string Text
+  +int Order
+  +string Role
+}
+
+class Amendment {
+  +Guid Guid
+  +AmendmentOperationType OperationType
+  +AmendmentContent Content
+  +JournalInfo TargetLegalAct
+  +List<StructuralAmendmentReference> Targets
+  +DateTime? EffectiveDate
+}
+
+class AmendmentContent {
+  +AmendmentObjectType ObjectType
+  +List<Article> Articles
+  +List<Paragraph> Paragraphs
+  +List<Point> Points
+  +List<Letter> Letters
+  +List<Tiret> Tirets
+  +List<CommonPart> CommonParts
+  +string PlainText
+}
+
+class StructuralAmendmentReference {
+  +StructuralReference Structure
+  +string RawText
+}
+
+class StructuralReference {
+  +string Article
+  +string Paragraph
+  +string Point
+  +string Letter
+  +string Tiret
+  +void SetArticle(string)
+  +void SetParagraph(string)
+  +void SetPoint(string)
+  +void SetLetter(string)
+  +void SetTiret(string)
+  +StructuralReference Clone()
+}
+
+class JournalInfo {
+  +int Year
+  +List<int> Positions
+  +string SourceString
+  +string ToString()
+  +string ToStringLong()
+}
+
+class EntityNumber {
+  +string Value
+  +string RawValue
+  +int NumericPart
+  +string LexicalPart
+  +string Superscript
+}
+
+class ValidationMessage {
+  +ValidationLevel Level
+  +string Message
+  +DateTime CreatedAt
+  +string ToString()
+}
+
+class Part {
+  +string Heading
+  +bool IsImplicit
+  +List<Book> Books
+}
+class Book {
+  +string Heading
+  +bool IsImplicit
+  +List<Title> Titles
+}
+class Title {
+  +string Heading
+  +bool IsImplicit
+  +List<Division> Divisions
+}
+class Division {
+  +string Heading
+  +bool IsImplicit
+  +List<Chapter> Chapters
+}
+class Chapter {
+  +string Heading
+  +bool IsImplicit
+  +List<Subchapter> Subchapters
+}
+class Subchapter {
+  +string Heading
+  +bool IsImplicit
+  +List<Article> Articles
+}
+
+interface ISystematizingUnit {
+  +string Heading
+  +bool IsImplicit
+}
+interface IHasCommonParts {
+  +List<CommonPart> CommonParts
+}
+interface IHasTextSegments {
+  +List<TextSegment> TextSegments
+}
+
+enum UnitType {
+  Unknown
+  Article
+  Paragraph
+  Point
+  Letter
+  Tiret
+  CommonPart
+  Part
+  Book
+  Title
+  Division
+  Chapter
+  Subchapter
+}
+
+enum LegalActType {
+  Statute
+  Bill
+  Regulation
+  Code
+  Ordinance
+  RegulatoryImpactAssessment
+}
+
+enum AmendmentOperationType {
+  Repeal
+  Insertion
+  Modification
+  Error
+}
+
+enum AmendmentObjectType {
+  Article
+  Subsection
+  Point
+  Letter
+  Tiret
+  CommonPart
+  None
+}
+
+enum CommonPartType {
+  Intro
+  WrapUp
+}
+
+enum TextSegmentType {
+  Sentence
+}
+
+enum ValidationLevel {
+  Info
+  Warning
+  Error
+  Critical
+}
+
+BaseEntity <|-- Article
+BaseEntity <|-- Paragraph
+BaseEntity <|-- Point
+BaseEntity <|-- Letter
+BaseEntity <|-- Tiret
+BaseEntity <|-- CommonPart
+BaseEntity <|-- Part
+BaseEntity <|-- Book
+BaseEntity <|-- Title
+BaseEntity <|-- Division
+BaseEntity <|-- Chapter
+BaseEntity <|-- Subchapter
+
+ISystematizingUnit <|.. Part
+ISystematizingUnit <|.. Book
+ISystematizingUnit <|.. Title
+ISystematizingUnit <|.. Division
+ISystematizingUnit <|.. Chapter
+ISystematizingUnit <|.. Subchapter
+
+IHasCommonParts <|.. Paragraph
+IHasCommonParts <|.. Point
+IHasCommonParts <|.. Letter
+
+IHasTextSegments <|.. Paragraph
+IHasTextSegments <|.. Point
+IHasTextSegments <|.. Letter
+IHasTextSegments <|.. Tiret
+
+LegalDocument *-- Part : RootPart
+Part *-- Book
+Book *-- Title
+Title *-- Division
+Division *-- Chapter
+Chapter *-- Subchapter
+Subchapter *-- Article
+
+Article *-- Paragraph
+Paragraph *-- Point
+Point *-- Letter
+Letter *-- Tiret
+
+Paragraph *-- CommonPart
+Point *-- CommonPart
+Letter *-- CommonPart
+
+Paragraph *-- TextSegment
+Point *-- TextSegment
+Letter *-- TextSegment
+Tiret *-- TextSegment
+
+Article o-- JournalInfo
+LegalDocument o-- JournalInfo : SourceJournal
+Amendment o-- JournalInfo : TargetLegalAct
+Amendment *-- AmendmentContent
+Amendment *-- StructuralAmendmentReference
+StructuralAmendmentReference *-- StructuralReference
+@enduml

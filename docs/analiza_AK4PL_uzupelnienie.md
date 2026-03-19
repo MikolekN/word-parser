@@ -1,0 +1,20 @@
+Hiszpania to doskonały i bardzo praktyczny przykład, który świetnie uzupełnia naszą architekturę! Hiszpańskie podejście do cyfryzacji prawa i dokumentów państwowych (oparte właśnie na formacie XML) jest jednym z najbardziej zaawansowanych i dojrzałych w Europie. Ich doświadczenia pokazują, jak połączyć teorię z potężną, działającą w skali całego kraju praktyką.
+Oto kluczowe lekcje z hiszpańskiego podwórka, które Polska powinna bezwzględnie włączyć do swojej strategii:
+1. Wzorowe wdrożenie standardu ELI (European Legislation Identifier)
+Podczas gdy standard taki jak Akoma Ntoso zajmuje się strukturą samego tekstu (artykuły, ustępy), Hiszpania skupiła się najpierw na perfekcyjnym opanowaniu metadanych i identyfikacji.
+Trwałe identyfikatory (URI): Od 2018 roku hiszpański dziennik urzędowy (BOE – Boletín Oficial del Estado) wdrożył unikalne adresy sieciowe dla każdego aktu prawnego, oparte na standardzie ELI. Każda ustawa czy dekret ma swój czytelny dla maszyn i ludzi adres (np. boe.es/eli/es/l/2015/10/01/40/...).
+Architektura Linked Data (Dane Powiązane): Hiszpanie wykorzystali pliki XML do stworzenia sieci powiązań między dokumentami. Ich system prawny to teraz graf. Komputer "wie", która ustawa zmienia którą, ponieważ relacje te są precyzyjnie zapisane w nagłówkach XML, bez konieczności analizowania tekstu przez człowieka.
+2. Multi-formatowość z jednego źródła (Single Source of Truth)
+Hiszpański BOE jest świetnym przykładem tego, jak ustrukturyzowany dokument powinien działać w praktyce urzędowej:
+Każdy opublikowany akt prawny ma przypisany stały identyfikator ELI i jest natychmiast dostępny do pobrania w kilku formatach wyjściowych: XML, PDF, HTML oraz ePUB.
+Co ważne: Wszystkie te formaty (nawet PDF) są generowane automatycznie z jednego bazowego dokumentu XML. Gwarantuje to absolutną spójność – eliminuje ryzyko, że wersja PDF różni się formatowaniem czy treścią od wersji na stronie WWW.
+3. XML jako fundament całego e-państwa (System Facturae i ustawa Crea y Crece)
+Mówiąc o hiszpańskich doświadczeniach z ustrukturyzowanymi dokumentami, nie można pominąć tego, jak głęboko XML wszedł tam w relacje państwo-biznes.
+Facturae: Hiszpania stworzyła własny standard oparty na XML o nazwie Facturae dla wszystkich dokumentów finansowych przesyłanych do administracji publicznej (B2G - Business to Government).
+Obecnie (m.in. na mocy ustawy Crea y Crece) Hiszpania wdraża obowiązek stosowania ustrukturyzowanych dokumentów XML we wszystkich transakcjach między firmami (B2B). System ten w czasie rzeczywistym komunikuje się z urzędem skarbowym (AEAT). Pokazuje to, że infrastruktura państwowa potrafi udźwignąć i bezbłędnie procesować miliony plików XML dziennie, o ile standaryzacja jest rygorystyczna i przemyślana.
+Zaktualizowana propozycja dla Polski (z uwzględnieniem Hiszpanii)
+Mając na uwadze wnioski z Niemiec (LegalDocML.de), Brazylii (LexML) oraz właśnie Hiszpanii (BOE / ELI), optymalny plan wdrożeniowy dla Polski powinien wyglądać następująco:
+Krok 1 (Model hiszpański - Identyfikacja): Rozpocząć od pełnego, krajowego wdrożenia standardu ELI dla Internetowego Systemu Aktów Prawnych (ISAP), Dziennika Ustaw, Monitora Polskiego oraz wszystkich wojewódzkich dzienników urzędowych. Tworzymy spójny rejestr adresów URI dla polskiego prawa.
+Krok 2 (Model niemiecki - Treść): Opracowujemy polski profil narodowy "LegalDocML.pl" oparty na Akoma Ntoso, rygorystycznie mapując polskie Zasady Techniki Prawodawczej na ustandaryzowane tagi XML.
+Krok 3 (Model hiszpański - Generowanie z jednego źródła): Budujemy systemy edycyjne dla rządu i samorządów tak, aby źródłem zapisu prawa był zawsze i wyłącznie czysty plik XML. Dopiero z niego w locie renderujemy wizualne formaty dla obywateli (PDF do druku, HTML do czytania na telefonie).
+Lekcja z Hiszpanii jest jasna: nie wystarczy mieć tylko dobrego standardu XML dla samego tekstu. Trzeba go koniecznie obudować precyzyjnym systemem identyfikatorów, aby komputery mogły te dokumenty nie tylko "czytać", ale też "rozumieć" jak jedno prawo wpływa na drugie.

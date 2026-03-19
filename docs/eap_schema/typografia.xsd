@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 (http://www.altova.com) by Szymon Ziolo (RedPill Szymon Ziolo) -->
+<!-- wersja 2018/10 Jarosław Deminet RCL -->
+<xs:schema xmlns="http://www.rcl.gov.pl/2018/10/eap/typografia" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.rcl.gov.pl/2018/10/eap/typografia" elementFormDefault="qualified" attributeFormDefault="qualified">
+	<xs:attribute name="margin-top" type="xs:string"/>
+	<xs:attribute name="margin-bottom" type="xs:string"/>
+	<xs:attribute name="znastepnym" type="xs:string"/>
+	<xs:attribute name="bezprzenoszenia" type="xs:string"/>
+	<xs:element name="typografia">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="nieprzenosic" type="xs:string"/>
+					<xs:attribute name="sciagniecie" type="xs:string"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
