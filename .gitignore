@@ -10,6 +10,7 @@ build.sh
 build.number
 build.number.lock
 *.dockerignore
+Directory.Build.props
 
 # === Logi ===
 logs/
