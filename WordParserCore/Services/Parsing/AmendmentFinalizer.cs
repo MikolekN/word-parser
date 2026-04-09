@@ -43,9 +43,9 @@ namespace WordParserCore.Services.Parsing
 			@"uchyla\s+się",
 			RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		internal static readonly Regex ModificationPattern = new(
-			@"(?:otrzymuje\s+brzmienie|otrzymują\s+brzmienie|w\s+brzmieniu|zastępuje\s+się)",
-			RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        internal static readonly Regex ModificationPattern = new(
+            @"(?:otrzymuje\s+brzmienie:|otrzymują\s+brzmienie:|w\s+brzmieniu:|zastępuje\s+się:)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		// ============================================================
 		// Główna metoda finalizacji
