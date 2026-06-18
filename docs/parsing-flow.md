@@ -21,8 +21,8 @@ LegalDocumentParser.Parse(WordprocessingDocument)
      (Part → Book → Title → Division → Chapter → Subchapter)
   3. Pobiera domyślny Subchapter (GetDefaultSubchapter)
   4. Tworzy: ParsingContext(document, subchapter)
-  5. Tworzy: ParserOrchestrator()
-  6. Iteruje po wszystkich akapitach dokumentu:
+  5. Tworzy: ParserOrchestrator() — używa domyślnego ParagraphClassifier
+  6. Iteruje po wszystkich akapitach (Descendants<Word.Paragraph>):
      → orchestrator.ProcessParagraph(paragraph, context)
   7. Po pętli: orchestrator.Finalize(context)
   8. Zwraca LegalDocument
@@ -37,91 +37,172 @@ LegalDocumentParser.Parse(WordprocessingDocument)
 Dla każdego `Paragraph` (OpenXml) sekwencja kroków:
 
 ```
-1. SANITACJA
-   - GetFullText(paragraph) → Trim → Sanitize
-   - Jeśli pusty po sanitacji → return (pomiń akapit)
+1. POBRANIE TEKSTU I SANITACJA
+   - paragraph.GetFullText().Trim()
+   - Jeśli pusty → return (pomiń akapit)
+   - .Sanitize().Trim() (normalizacja białych znaków, en-dash itp.)
+   - paragraph.StyleId() — bezpieczne pobranie StyleId (null-safe)
 
-2. KLASYFIKACJA
-   - Classify(text, styleId, context)
-   - Jeśli klasyfikator to LayeredParagraphClassifier:
-     przekazuje context.CurrentArticleTexts (historia artykułu dla AI)
-   - Zwraca ClassificationResult { Kind, StyleType, IsAmendmentContent, Confidence, ... }
+2. OBLICZENIE NUMBERING HINT (BuildNumberingHint)
+   - Zwraca hint dla najgłębszego aktywnego poziomu (Letter → Point →
+     Paragraph (jawny) → Article)
+   - Hint zawiera ExpectedKind + ExpectedNumber dla walidacji ciągłości
 
-3. AKTUALIZACJA KONTEKSTU ARTYKUŁU
-   - Jeśli Kind == Article → wyczyść CurrentArticleTexts
-   - Jeśli nie nowelizacja → dodaj tekst do CurrentArticleTexts
+3. KLASYFIKACJA
+   - _classifier.Classify(new ClassificationInput(text, styleId) { NumberingHint })
+   - Zwraca ClassificationResult { Kind, Confidence, IsAmendmentContent,
+     StyleType, Penalties }
 
-4. OBSŁUGA NOWELIZACJI (HandleAmendmentFlow)
-   - AmendmentStateManager analizuje czy jesteśmy wewnątrz nowelizacji
-   - Jeśli IsAmendmentContent=true → AmendmentCollector buforuje akapit
-   - Jeśli zwróci true → STOP (akapit pochłonięty przez nowelizację)
+4. OBSŁUGA NOWELIZACJI (HandleAmendmentFlow — metoda prywatna)
+   - AmendmentStateManager.UpdateState() aktualizuje InsideAmendment / Trigger
+   - Jeśli wyszliśmy z nowelizacji (wasInside && !nowInside) → Flush()
+   - ShouldExitForNewParentLawTrigger() — sprawdza czy bieżący akapit
+     to nowy element ustawy matki rozpoczynający się triggerem (wyjście
+     i finalizacja poprzedniej nowelizacji)
+   - Jeśli IsAmendmentContent lub InsideAmendment:
+     → AmendmentStateManager.Collect() buforuje akapit
+     → return true (akapit skonsumowany — STOP)
 
-5. OBSŁUGA WRAPUP (TryHandleWrapUp)
-   - StructureProcessor sprawdza czy to "zamknięcie" jednostki
-   - Jeśli true → STOP
+5. BUDOWANIE STRUKTURY (StructureProcessor.Process)
+   - Dispatch na podstawie classification.Kind (włącznie z WrapUp)
+   - Zwraca true jeśli akapit został skonsumowany
 
-6. BUDOWANIE STRUKTURY (StructureProcessor.Process)
-   - Dispatcher na podstawie Kind:
-     Article   → ArticleBuilder.Build()
-     Paragraph → ParagraphBuilder.Build()
-     Point     → PointBuilder.Build()   (+ EnsureForLetter jeśli brak Paragraph)
-     Letter    → LetterBuilder.Build()  (+ EnsureForPoint, EnsureForLetter)
-     Tiret     → TiretBuilder.Build()   (+ kaskada Ensure)
-   - Jeśli encja zbudowana → DetectTrigger(context, text)
-     Szuka słów kluczowych: "otrzymuje brzmienie:", "dodaje się", "uchyla się"
+6. WYKRYCIE TRIGGERA NOWELIZACJI (tylko gdy structureProcessor zwróci true)
+   - AmendmentStateManager.DetectTrigger(context, text)
+   - Wzorce: RepealPattern ("uchyla się") → natychmiastowy Amendment Repeal
+              ModificationPattern ("otrzymuje brzmienie:", "w brzmieniu:")
+              → ustawia AmendmentTriggerDetected dla kolejnych akapitów
 ```
 
 ---
 
-## Krok 3 — Klasyfikacja: warstwy
+## Krok 3 — Klasyfikacja akapitu: `ParagraphClassifier`
 
-**Pliki**: `WordParserCore/Services/Parsing/Classification/`
+**Plik**: `WordParserCore/Services/Classify/ParagraphClassifier.cs`
 
-### Legacy: `ParagraphClassifier`
-Monolityczny, regex + hybrid (styl + tekst). Wciąż używany przez orchestrator jako fallback.
+Klasyfikator jest monolityczną implementacją `IParagraphClassifier` łączącą
+wiele sygnałów: styl Word, syntaktyka (regex) i ciągłość numeracji. Konflikty
+między stylem a regexem rozstrzyga `IConflictResolver` (domyślnie
+`DefaultConflictResolver` — treść wygrywa nad stylem).
 
-### Nowy: `LayeredParagraphClassifier` implementuje `IParagraphClassifier`
-
-Orchestruje 3 warstwy w kolejności:
+### Sygnały wejściowe
 
 ```
-Warstwa 1 — StyleClassificationLayer
-  - Analizuje styleId (styl Word akapitu)
-  - Mapuje: ART→Article, UST→Paragraph, PKT→Point, LIT→Letter, TIR→Tiret
-  - Prefiksy Z/*, ZZ*, Z_* → IsAmendmentContent=true
-  - Confidence=85 (normalny styl) / 95 (nowelizacja)
-  - Zwraca null jeśli brak rozpoznanego stylu
+Sygnał 1 — Styl Word (GetStyleType)
+  - Sprawdza StyleLibraryMapper.TryGetStyleInfo dla styli nowelizacji
+    i WrapUp (CZ_WSP_*)
+  - Fallback: prefiksy "Z/", "ZZ", "Z_" → "AMENDMENT"
+  - Prefiksy ART/UST/PKT/LIT/TIR/2TIR/3TIR → odpowiedni typ
+  - MapStyleToKind: "ART"→Article, "UST"→Paragraph, "PKT"→Point,
+    "LIT"→Letter, "TIR"→Tiret
 
-Warstwa 2 — SyntacticClassificationLayer
-  - Analizuje tekst regex-ami (compiled, static readonly):
-    Art\.?\s*\d+     → Article
-    \d+[a-z]*\.\s+  → Paragraph
-    \d+[a-z]*\)\s*  → Point
-    [a-z]{1,5}\)\s* → Letter
-    \u2013+\s+       → Tiret (znak –)
-  - Wszystkie wzorce obsługują opcjonalny prefiks " (treść nowelizacji)
-  - Confidence=90 przy dopasowaniu
-  - Zwraca null jeśli brak dopasowania
+Sygnał 2 — Syntaktyka (MatchRegex, static readonly compiled)
+  - ArticlePattern:   ^"?Art\.?\s*\d+
+  - ParagraphPattern: ^"?\d+[a-zA-Z]*\.\s+
+  - PointPattern:     ^"?\d+[a-zA-Z]*\)\s*
+  - LetterPattern:    ^"?[a-zA-Z]{1,5}\)\s*
+  - TiretPattern:     ^-+\s+
+  - Wszystkie wzorce obsługują opcjonalny prefiks cytatu („ " " ‟)
+    dla treści nowelizacji (OptionalQuotePrefix)
 
-Warstwa 3 — SemanticClassificationLayer (SĘDZIA)
-  - Rozstrzyga konflikty między Style i Syntactic
-  - REGUŁA: treść wygrywa nad stylem
-  - Jeśli Style=ART ale brak sygnatury tekstowej → Kind=Unknown
-    (artykuł ZAWSZE wymaga sygnatury tekstowej)
-  - Confidence=95 (zgodne) / 70 (konflikt lub tylko styl)
-  - Generuje DiagnosticMessage przy konflikcie
-
-Warstwa 4 (opcjonalna) — AiClassificationLayer
-  - Aktywowana przez AiTriggerMode: Disabled/Always/OnUnknown/OnConflict/OnLowConfidence
-  - Deleguje do IExternalClassificationProvider
-  - Kontekst: ArticleContext = lista tekstów akapitów bieżącego artykułu
+Sygnał 3 — NumberingHint (ciągłość numeracji)
+  - Jeśli rozpoznany Kind == hint.ExpectedKind, parsujemy numer z tekstu
+    i sprawdzamy hint.IsContinuous(parsedNumber)
+  - Niezgodność → kara NumberingBreakPenalty
 ```
 
-**Wynik**: `ClassificationResult { Kind, StyleType, IsAmendmentContent, UsedFallback, StyleTextConflict, Confidence, LayerResults }`
+### Drzewo decyzyjne (BuildResult)
+
+```
+1. WrapUp (priorytet) — styl == "WRAPUP" (CZ_WSP_*)
+   → ParagraphKind.WrapUp; kary za brak półpauzy w tekście / brak stylu
+
+2. Brak obu sygnałów (styleKind == null && syntacticKind == null)
+   → Kind = Unknown, Confidence = 1
+
+3. Oba sygnały zgodne (styleKind == syntacticKind)
+   → Kind = syntacticKind, Confidence = 100
+
+4. Konflikt (styleKind != syntacticKind, oba != null)
+   → Kind = _conflictResolver.Resolve(...)
+   → kara StyleSyntaxConflictPenalty
+
+5. Tylko regex (styleKind == null)
+   → Kind = syntacticKind, kara StyleAbsentPenalty
+
+6. Tylko styl (syntacticKind == null)
+   → Reguła: Article ZAWSZE wymaga sygnatury tekstowej
+      - styleKind == Article → Kind = Unknown, Confidence = 1
+      - inny → Kind = styleKind, kara SyntaxAbsentPenalty
+
+7. Po wybraniu Kind: jeśli NumberingHint dostępne i niezgodne
+   → dodatkowa kara NumberingBreakPenalty
+```
+
+### Wynik
+
+`ClassificationResult { Kind, Confidence (1–100), IsAmendmentContent,
+StyleType, Penalties: List<ClassificationPenalty> }`
+
+Kary konfigurowane przez `ConfidencePenaltyConfig`:
+`StyleAbsentPenalty`, `SyntaxAbsentPenalty`, `StyleSyntaxConflictPenalty`,
+`NumberingBreakPenalty`.
 
 ---
 
-## Krok 4 — Buildery encji (wzorzec kaskadowy)
+## Krok 4 — Budowanie struktury: `StructureProcessor.Process`
+
+**Plik**: `WordParserCore/Services/Parsing/StructureProcessor.cs`
+
+Klasa wewnętrzna `internal sealed`. Dispatcher na `classification.Kind`:
+
+```
+Article    → ArticleBuilder.Build()
+              Czyści CurrentPoint, CurrentLetter, TiretStack;
+              ustawia CurrentArticle + CurrentParagraph (z ogona "Art. X")
+              JournalReferenceService.ParseJournalReferences(article)
+
+Unknown    → HandleUnknown() — inference-first:
+              próba TryInferKindFromText i ponowne wywołanie Process,
+              w razie braku wzorca dołącza ValidationMessage do najgłębszej encji
+
+Paragraph  → ParagraphBuilder.Build()
+              Czyści CurrentPoint, CurrentLetter, TiretStack
+
+Point      → ParagraphBuilder.EnsureForPoint() + PointBuilder.Build()
+              Przed dodaniem pierwszego Point → AttachIntroCommonPart(Paragraph)
+
+Letter     → PointBuilder.EnsureForLetter() + LetterBuilder.Build()
+              Przed pierwszą Letter → AttachIntroCommonPart(Point)
+              Jeśli utworzono niejawny Point → ValidationMessage Warning
+
+Tiret      → kaskada Ensure (Point, Letter)
+              + AttachIntroCommonPart przed pierwszym tiretem
+              + GetTiretDepth(styleId) z prefiksu stylu (TIR=1, 2TIR=2, 3TIR=3)
+              + skracanie TiretStack do depth-1, wybór parentTiret
+              + TiretBuilder.Build(... parentTiret)
+              + jeśli parentTiret != null i jego Tirets.Count == 0
+                → AttachIntroCommonPart(parentTiret)
+              + dodanie do TiretStack
+
+WrapUp     → TryHandleWrapUp(): wykrywa styl CZ_WSP_PKT/LIT/TIR i wywołuje
+              ParsingFactories.AttachWrapUpCommonPart(parent, text)
+```
+
+Po zbudowaniu każdej encji `IHasAmendments`:
+- `UpdateStructuralReference(context, entity)` — aktualizuje
+  `CurrentStructuralReference` (kaskadowe zerowanie podrzędnych poziomów)
+- `DetectAmendmentTargets(context, entity)` — parsuje treść w
+  poszukiwaniu odwołań ("w art. 5", "po ust. 2") i zapisuje do
+  `context.DetectedAmendmentTargets[entity.Guid]`. Kontekst dziedziczony
+  z encji nadrzędnej przez `FindParentAmendmentTargetReference`.
+
+Encje są też anotowane diagnostycznie przez
+`ValidationReporter.AddClassificationWarning(entity, classification, prefix)`.
+
+---
+
+## Krok 5 — Buildery encji (wzorzec kaskadowy)
 
 **Pliki**: `WordParserCore/Services/Parsing/Builders/`
 
@@ -131,60 +212,63 @@ ArticleBuilder → ParagraphBuilder → PointBuilder → LetterBuilder → Tiret
 ```
 
 ### Mechanizm kaskadowy — kluczowa zasada:
-Builder **niższego** poziomu jest odpowiedzialny za zapewnienie istnienia encji nadrzędnych.
-Wywołuje metody `EnsureFor*()` które tworzą **niejawne (implicit) encje** gdy brakuje rodziców.
+Każdy builder niższego poziomu udostępnia metodę `EnsureFor*()`, która
+tworzy **niejawną (implicit)** encję rodzica jeśli brakuje. Wywoływana
+przez `StructureProcessor` przed `Build()` na poziomie dziecka.
 
 ### ArticleBuilder
 ```
-Wejście: (Subchapter, text)
+Wejście: ArticleBuildInput(Subchapter, text)
 1. Tworzy Article, parent=Subchapter
 2. Parsuje numer: ParseArticleNumber(text) → EntityNumber
 3. Wyciąga "ogon" (tekst za "Art. X") jako pierwszy Paragraph
 4. Tworzy Paragraph (niejawny jeśli brak tekstu w ogonie)
 5. Dodaje Article do Subchapter.Articles
-6. Zwraca (Article, Paragraph)
+6. Zwraca ArticleBuildResult(Article, Paragraph)
 ```
 
 ### ParagraphBuilder
 ```
-Wejście: (Article, CurrentParagraph?, text)
+Wejście: ParagraphBuildInput(Article, CurrentParagraph?, text)
 - Jeśli CurrentParagraph jest niejawny i pusty:
   → aktualizuje go (realizuje jako jawny), zwraca go
 - W przeciwnym razie:
   → tworzy nowy Paragraph, dodaje do Article.Paragraphs
 
 EnsureForPoint(Article, CurrentParagraph?):
-  → jeśli null: tworzy niejawny Paragraph (IsImplicit=true)
+  → jeśli null lub wymaga utworzenia: zwraca pakiet z Paragraphem
+    (niejawnym gdy potrzebny)
 ```
 
 ### PointBuilder
 ```
-Wejście: (Paragraph, Article, text)
+Wejście: PointBuildInput(Paragraph, Article, text)
 1. Tworzy Point, parent=Paragraph
 2. Parsuje numer: ParsePointNumber(text) → EntityNumber
 3. Dodaje do Paragraph.Points
 
 EnsureForLetter(Paragraph?, Article, CurrentPoint?):
-  → jeśli null: tworzy niejawny Point
+  → jeśli null: tworzy niejawny Point (CreatedImplicit=true)
 ```
 
 ### LetterBuilder
 ```
-Wejście: (Point, Paragraph?, Article, text)
+Wejście: LetterBuildInput(Point, Paragraph?, Article, text)
 1. Tworzy Letter, parent=Point
-2. Parsuje numer: ParseLetterNumber(text) → EntityNumber (symbol: a, b, aa...)
+2. Parsuje numer: ParseLetterNumber(text) → EntityNumber (symbol: a, b, aa…)
 3. Dodaje do Point.Letters
 
 EnsureForTiret(Point, Paragraph?, Article, CurrentLetter?):
-  → jeśli null: tworzy niejawną Letter
+  → jeśli null: tworzy niejawną Letter (CreatedImplicit=true)
 ```
 
 ### TiretBuilder
 ```
-Wejście: (Letter, Point?, Paragraph?, Article, text, index)
-1. Tworzy Tiret, parent=Letter
+Wejście: TiretBuildInput(Letter, Point?, Paragraph?, Article, text, index,
+                        ParentTiret?)
+1. Tworzy Tiret, parent=Letter lub parent=ParentTiret (zagnieżdżony)
 2. Numer = EntityNumber { NumericPart=index } (sekwencyjny, nie parsowany)
-3. Dodaje do Letter.Tirets
+3. Dodaje do Letter.Tirets (lub ParentTiret.Tirets dla zagnieżdżonych)
 ```
 
 ### Przykład kaskady dla tiretu bez wyraźnych rodziców:
@@ -192,10 +276,11 @@ Wejście: (Letter, Point?, Paragraph?, Article, text, index)
 Dokument: Art. 5. → – (tiret)
 
 1. ArticleBuilder → Article + Paragraph(niejawny)
-2. TiretBuilder potrzebuje Letter (i Point):
+2. StructureProcessor (case Tiret):
    → pointBuilder.EnsureForLetter()  → Point(niejawny)
    → letterBuilder.EnsureForTiret()  → Letter(niejawna)
-   → tiretBuilder.Build(letter, point, paragraph, article, text, index=1)
+   → tiretBuilder.Build(letter, point, paragraph, article, text,
+                        index=1, parentTiret=null)
 
 Wynik eId: art_5__tir_1
 (niejawne jednostki pomijane w eId)
@@ -203,21 +288,29 @@ Wynik eId: art_5__tir_1
 
 ---
 
-## Krok 5 — Model danych encji
+## Krok 6 — Model danych encji
 
 **Pliki**: `ModelDto/`
 
 ### BaseEntity (baza wszystkich encji)
 ```csharp
-Guid, UnitType, DisplayLabel, EIdPrefix
-Number: EntityNumber { NumericPart, LexicalPart, Superscript, Value }
+Guid: Guid
+UnitType: UnitType
+DisplayLabel: string
+EIdPrefix: string
+Number: EntityNumber? { NumericPart, LexicalPart, Superscript, Value }
 ContentText: string
+EffectiveDate: DateTime
+ValidationMessages: List<ValidationMessage>
+
+// Hierarchia
 Parent: BaseEntity?           // bezpośredni rodzic
 Article: Article?             // skrót do artykułu (bez iteracji po hierarchii)
 Paragraph: Paragraph?         // skrót do ustępu
 Point: Point?                 // skrót do punktu
 Letter: Letter?               // skrót do litery
-ValidationMessages: List<ValidationMessage>
+Tiret: Tiret?                 // skrót do tiretu
+
 Id (virtual): string          // eId: "art_5__ust_2__pkt_3__lit_a__tir_1"
 ```
 
@@ -227,19 +320,25 @@ Article.Paragraphs: List<Paragraph>
 Paragraph.Points:   List<Point>       + IsImplicit, TextSegments, CommonParts, Amendment
 Point.Letters:      List<Letter>      + TextSegments, CommonParts, Amendment
 Letter.Tirets:      List<Tiret>       + TextSegments, CommonParts, Amendment
-Tiret.Tirets:       List<Tiret>       + TextSegments (podwójne tirety)
+Tiret.Tirets:       List<Tiret>       + TextSegments (zagnieżdżone tirety: 2TIR / 3TIR)
 ```
 
 ---
 
-## Krok 6 — Finalizacja: `Finalize`
+## Krok 7 — Finalizacja: `ParserOrchestrator.Finalize`
 
 ```
 orchestrator.Finalize(context)
-  → Jeśli dokument kończy się wewnątrz nowelizacji:
+  → Jeśli context.InsideAmendment LUB context.AmendmentCollector.IsCollecting:
     AmendmentStateManager.Flush(context)
-    → AmendmentFinalizer materializuje obiekt Amendment
-    → Przypisuje go do encji-właściciela (Paragraph/Point/Letter/Tiret.Amendment)
+      ├── AmendmentBuilder.Build(AmendmentBuildInput) → AmendmentContent
+      ├── AmendmentFinalizer.Finalize(AmendmentFinalizerInput)
+      │     → wykrywa AmendmentOperationType
+      │     → łączy z JournalInfo / DetectedAmendmentTargets
+      │     → przypisuje obiekt Amendment do encji-właściciela
+      │       (Paragraph/Point/Letter/Tiret.Amendment przez IHasAmendments)
+      └── collector.Reset(); context.AmendmentOwner = null;
+    context.InsideAmendment = false;
 ```
 
 ---
@@ -251,29 +350,43 @@ Parse(filePath)
   ↓
   WordprocessingDocument.Open()
   ↓
-  ParsingContext + ParserOrchestrator
+  ParsingContext + ParserOrchestrator (+ ParagraphClassifier)
   ↓
-  foreach Paragraph in document:
+  foreach Paragraph in document.Descendants<Paragraph>():
     ↓
-    [1] Sanitacja tekstu
+    [1] GetFullText → Trim → Sanitize → StyleId
     ↓
-    [2] Classify → ClassificationResult (Kind, StyleType, IsAmendmentContent)
-          └─ StyleLayer → SyntacticLayer → SemanticLayer [→ AiLayer]
+    [2] BuildNumberingHint(context) → NumberingHint?
     ↓
-    [3] IsAmendmentContent? → AmendmentCollector.Collect() → NEXT
+    [3] ParagraphClassifier.Classify(ClassificationInput)
+          → łączy: StyleType + regex MatchRegex + NumberingHint
+          → IConflictResolver rozstrzyga konflikty (treść > styl)
+          → ClassificationResult { Kind, Confidence, IsAmendmentContent,
+                                    StyleType, Penalties }
     ↓
-    [4] WrapUp? → finalizuj jednostkę → NEXT
+    [4] HandleAmendmentFlow():
+          ├─ AmendmentStateManager.UpdateState()
+          ├─ jeśli wyszliśmy z nowelizacji → Flush()
+          ├─ ShouldExitForNewParentLawTrigger() → ewentualny Flush
+          └─ jeśli IsAmendmentContent / InsideAmendment → Collect() + STOP
     ↓
-    [5] StructureProcessor.Process(Kind)
+    [5] StructureProcessor.Process(classification, text, styleId):
           ├─ Article   → ArticleBuilder.Build()
+          ├─ Unknown   → HandleUnknown (inference-first lub diagnostyka)
           ├─ Paragraph → ParagraphBuilder.Build()
-          ├─ Point     → [Ensure Paragraph] → PointBuilder.Build()
-          ├─ Letter    → [Ensure Point+Paragraph] → LetterBuilder.Build()
-          └─ Tiret     → [Ensure Letter+Point+Paragraph] → TiretBuilder.Build()
+          ├─ Point     → [EnsureForPoint] + PointBuilder.Build()
+          ├─ Letter    → [EnsureForLetter] + LetterBuilder.Build()
+          ├─ Tiret     → [EnsureForLetter+Tiret] + TiretBuilder.Build()
+          │              (TiretStack, parentTiret, depth z stylu)
+          └─ WrapUp    → TryHandleWrapUp → AttachWrapUpCommonPart
+          → UpdateStructuralReference + DetectAmendmentTargets
+          → ValidationReporter.AddClassificationWarning
     ↓
-    [6] DetectTrigger() → szuka "otrzymuje brzmienie:", "dodaje się", "uchyla się"
+    [6] DetectTrigger() — szuka RepealPattern / ModificationPattern
+          ("uchyla się" → natychmiastowy Amendment Repeal;
+           "otrzymuje brzmienie:" / "w brzmieniu:" → flaga triggera)
   ↓
-  Finalize() → flush nowelizacji
+  Finalize() → flush nowelizacji jeśli aktywna
   ↓
   return LegalDocument { Part > Book > Title > Division > Chapter > Subchapter > Articles }
 ```
@@ -287,22 +400,30 @@ Parse(filePath)
 | `LegalDocumentParser` | `LegalDocumentParser.cs` | Publiczny punkt wejścia |
 | `ParserOrchestrator` | `Services/Parsing/ParserOrchestrator.cs` | Główna pętla + koordynacja |
 | `ParsingContext` | `Services/Parsing/ParsingContext.cs` | Mutowalny stan parsowania |
-| `ParagraphClassifier` | `Services/Parsing/ParagraphClassifier.cs` | Legacy klasyfikator |
-| `LayeredParagraphClassifier` | `Services/Parsing/Classification/LayeredParagraphClassifier.cs` | Nowy klasyfikator warstwowy |
-| `StyleClassificationLayer` | `Classification/Layers/StyleClassificationLayer.cs` | Warstwa stylu Word |
-| `SyntacticClassificationLayer` | `Classification/Layers/SyntacticClassificationLayer.cs` | Warstwa regex |
-| `SemanticClassificationLayer` | `Classification/Layers/SemanticClassificationLayer.cs` | Sędzia konfliktów |
-| `AiClassificationLayer` | `Classification/Layers/AiClassificationLayer.cs` | Warstwa AI (opcjonalna) |
-| `ClassificationResult` | `Services/Parsing/ClassificationResult.cs` | Wynik klasyfikacji |
-| `StructureProcessor` | `Services/Parsing/StructureProcessor.cs` | Dispatcher na buildery |
+| `IParagraphClassifier` | `Services/Classify/IParagraphClassifier.cs` | Interfejs klasyfikatora (DI) |
+| `ParagraphClassifier` | `Services/Classify/ParagraphClassifier.cs` | Klasyfikator (styl + regex + numeracja) |
+| `ClassificationInput` | `Services/Classify/ClassificationInput.cs` | Wejście klasyfikatora |
+| `ClassificationResult` | `Services/Classify/ClassificationResult.cs` | Wynik klasyfikacji |
+| `ParagraphKind` | `Services/Classify/ParagraphKind.cs` | Enum typów akapitów |
+| `ClassificationPenalty` | `Services/Classify/ClassificationPenalty.cs` | Model kary |
+| `ConfidencePenaltyConfig` | `Services/Classify/ConfidencePenaltyConfig.cs` | Konfiguracja kar |
+| `NumberingHint` | `Services/Classify/NumberingHint.cs` | Walidacja ciągłości numeracji |
+| `IConflictResolver` | `Services/Classify/IConflictResolver.cs` | Interfejs rozstrzygania konfliktów |
+| `DefaultConflictResolver` | `Services/Classify/DefaultConflictResolver.cs` | Domyślna reguła: treść > styl |
+| `StructureProcessor` | `Services/Parsing/StructureProcessor.cs` | Dispatcher na buildery + WrapUp |
 | `ArticleBuilder` | `Services/Parsing/Builders/ArticleBuilder.cs` | Buduje Article + Paragraph |
 | `ParagraphBuilder` | `Services/Parsing/Builders/ParagraphBuilder.cs` | Buduje Paragraph |
 | `PointBuilder` | `Services/Parsing/Builders/PointBuilder.cs` | Buduje Point |
 | `LetterBuilder` | `Services/Parsing/Builders/LetterBuilder.cs` | Buduje Letter |
-| `TiretBuilder` | `Services/Parsing/Builders/TiretBuilder.cs` | Buduje Tiret |
-| `AmendmentStateManager` | `Services/Parsing/AmendmentStateManager.cs` | Zarządza stanem nowelizacji |
+| `TiretBuilder` | `Services/Parsing/Builders/TiretBuilder.cs` | Buduje Tiret (z parentTiret dla zagnieżdżenia) |
+| `AmendmentStateManager` | `Services/Parsing/AmendmentStateManager.cs` | UpdateState / Collect / Flush / DetectTrigger |
 | `AmendmentCollector` | `Services/Parsing/AmendmentCollector.cs` | Buforuje treść nowelizacji |
-| `AmendmentFinalizer` | `Services/Parsing/AmendmentFinalizer.cs` | Materializuje obiekt Amendment |
+| `AmendmentBuilder` | `Services/Parsing/Builders/AmendmentBuilder.cs` | Buduje AmendmentContent |
+| `AmendmentFinalizer` | `Services/Parsing/AmendmentFinalizer.cs` | Materializuje Amendment i przypisuje do owner'a |
+| `ValidationReporter` | `Services/Parsing/ValidationReporter.cs` | Diagnostyka klasyfikacji |
+| `ParsingFactories` | `Services/Parsing/ParsingFactories.cs` | Parsowanie numerów, AttachIntro/WrapUp CommonPart |
+| `LegalReferenceService` | `Services/LegalReferenceService.cs` | Wykrywanie celów nowelizacji |
+| `JournalReferenceService` | `Services/JournalReferenceService.cs` | Parsowanie publikatorów (Dz.U.) |
 | `BaseEntity` | `ModelDto/BaseEntity.cs` | Baza wszystkich encji domenowych |
 | `EntityNumber` | `ModelDto/EntityNumber.cs` | Model numeru encji |
 | `LegalDocument` | `ModelDto/LegalDocument.cs` | Korzeń dokumentu |
