@@ -452,7 +452,7 @@ Tekst: *ustawy z dnia 20 lipca 2000 r. o ogłaszaniu aktów normatywnych i niekt
     "euNumber": null,
     "journals": [
       {
-        "type": "dzU",
+        "type": "DU",
         "year": 2019,
         "positions": [1461],
         "number": null,

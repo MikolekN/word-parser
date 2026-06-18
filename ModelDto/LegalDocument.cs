@@ -10,20 +10,20 @@ namespace ModelDto
 {
     /// <summary>
     /// Model aktu prawnego - wrapper całej struktury dokumentu legislacyjnego.
-    /// 
+    ///
     /// Zawiera metadane dotyczące całego aktu oraz hierarchię jego struktury.
     /// W konstruktorze tworzona jest minimalna pełna hierarchia od części do oddziału,
     /// a jednostki nieobecne w tekście pozostają jako IsImplicit = true.
-    /// 
+    ///
     /// Przykładowa pełna hierarchia:
-    /// Część (Part) → Księga (Book) → Tytuł (Title) → Dział (Division) → 
+    /// Część (Part) → Księga (Book) → Tytuł (Title) → Dział (Division) →
     /// Rozdział (Chapter) → Oddział (Subchapter) → Artykuł (Article)
-    /// 
+    ///
     /// Struktura w LegalDocument:
     /// LegalDocument
     ///   ├─ Type: Statute/Regulation/Code (determinuje nazewnictwo jednostek)
     ///   ├─ Title: "Ustawa o ochronie pracy"
-    ///   ├─ SourceJournal: DzU 2024, poz. 123
+    ///   ├─ SourceJournal: DU 2024, poz. 123
     ///   └─ RootSystematizingUnits[]: zawsze zawiera Part (domyślną lub jawną)
     ///       └─ Book → Title → Division → Chapter → Subchapter
     ///           └─ Articles[]: artykuły w oddziale
@@ -135,28 +135,28 @@ namespace ModelDto
             {
                 case Part part:
                     foreach (var book in part.Books)
-                    foreach (var article in EnumerateArticlesFromUnit(book))
-                        yield return article;
+                        foreach (var article in EnumerateArticlesFromUnit(book))
+                            yield return article;
                     break;
                 case Book book:
                     foreach (var title in book.Titles)
-                    foreach (var article in EnumerateArticlesFromUnit(title))
-                        yield return article;
+                        foreach (var article in EnumerateArticlesFromUnit(title))
+                            yield return article;
                     break;
                 case Title title:
                     foreach (var division in title.Divisions)
-                    foreach (var article in EnumerateArticlesFromUnit(division))
-                        yield return article;
+                        foreach (var article in EnumerateArticlesFromUnit(division))
+                            yield return article;
                     break;
                 case Division division:
                     foreach (var chapter in division.Chapters)
-                    foreach (var article in EnumerateArticlesFromUnit(chapter))
-                        yield return article;
+                        foreach (var article in EnumerateArticlesFromUnit(chapter))
+                            yield return article;
                     break;
                 case Chapter chapter:
                     foreach (var subchapter in chapter.Subchapters)
-                    foreach (var article in EnumerateArticlesFromUnit(subchapter))
-                        yield return article;
+                        foreach (var article in EnumerateArticlesFromUnit(subchapter))
+                            yield return article;
                     break;
                 case Subchapter subchapter:
                     foreach (var article in subchapter.Articles)
