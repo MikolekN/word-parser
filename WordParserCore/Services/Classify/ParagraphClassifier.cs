@@ -43,8 +43,9 @@ namespace WordParserCore.Services.Classify
 		internal static readonly Regex LetterPattern = new(
 			$@"^{OptionalQuotePrefix}[a-zA-Z]{{1,5}}\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+		// Półpauza – dopuszczona dla tekstu niesanityzowanego (Sanitize normalizuje ją do dywizu)
 		internal static readonly Regex TiretPattern = new(
-			@"^-+\s+", RegexOptions.Compiled);
+			$@"^{OptionalQuotePrefix}[-–]+\s+", RegexOptions.Compiled);
 
 		/// <summary>Artykuł z grupą przechwytującą numer (do ParseArticleNumber).</summary>
 		internal static readonly Regex ArticleNumberCapture = new(
@@ -66,9 +67,9 @@ namespace WordParserCore.Services.Classify
 		internal static readonly Regex LetterNumberCapture = new(
 			$@"^{OptionalQuotePrefix}([a-zA-Z]{{1,5}})\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		/// <summary>Prefiks tiretu do usuwania (bez wymagania spacji).</summary>
+		/// <summary>Prefiks tiretu do usuwania (bez wymagania spacji; dywiz lub półpauza).</summary>
 		internal static readonly Regex TiretStripPattern = new(
-			@"^-+\s*", RegexOptions.Compiled);
+			$@"^{OptionalQuotePrefix}[-–]+\s*", RegexOptions.Compiled);
 
 		// ============================================================
 		// Implementacja IParagraphClassifier
