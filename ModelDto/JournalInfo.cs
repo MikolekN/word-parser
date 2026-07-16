@@ -1,16 +1,22 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ModelDto
 {
     /// <summary>
     /// Model informacji o publikatorze (np. Dziennik Ustaw).
     /// </summary>
-    public class JournalInfo
+    public sealed class JournalInfo
     {
+        /// <summary>
+        /// Nazwa dziennika urzędowego.
+        /// </summary>
+        public PublisherType? Publisher { get; set; }
+
         /// <summary>
         /// Rok wydania dziennika.
         /// </summary>
-        public int Year { get; set; }
+        public int? Year { get; set; }
 
         /// <summary>
         /// Numery pozycji publikatora.
@@ -22,19 +28,41 @@ namespace ModelDto
         /// </summary>
         public string SourceString { get; set; } = string.Empty;
 
+        public IEnumerable<string> GetELIStrings()
+        {
+            if (Year is null || !Positions.Any()) yield break;
+            foreach (var position in Positions)
+            {
+                yield return $"{PublisherSymbol()}/{Year}/{position}";
+            }
+        }
+
+        public string PublisherSymbol() =>
+            Publisher switch
+            {
+                PublisherType.DziennikUstaw => "DU",
+                PublisherType.MonitorPolski => "MP",
+                _ => ""
+            };
+
+        public string PublisherShort() =>
+            Publisher switch
+            {
+                PublisherType.DziennikUstaw => "Dz.U.",
+                PublisherType.MonitorPolski => "M.P.",
+                _ => ""
+            };
+
         public override string ToString()
         {
             var sb = new System.Text.StringBuilder();
             foreach (var position in Positions)
             {
-                sb.AppendLine($"DU.{Year}.{position}");
+                sb.AppendLine($"{PublisherSymbol()}.{Year}.{position}");
             }
             return sb.ToString();
         }
 
-        public string ToStringLong()
-        {
-            return $"Rok: {Year}, Pozycje: {string.Join(", ", Positions)} (Fragment źródłowy: \"{SourceString}\")";
-        }
+        public string ToStringLong() => $"Rok: {Year}, Pozycje: {string.Join(", ", Positions)} (Fragment źródłowy: \"{SourceString}\")";
     }
 }

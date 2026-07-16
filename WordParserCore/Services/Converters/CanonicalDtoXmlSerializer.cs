@@ -329,10 +329,10 @@ namespace WordParserCore.Services.Converters
 		{
 			if (journal == null)
 				return;
-			if (journal.Year == 0 && journal.Positions.Count == 0 && string.IsNullOrEmpty(journal.SourceString))
+			if ((journal.Year is null or 0) && journal.Positions.Count == 0 && string.IsNullOrEmpty(journal.SourceString))
 				return;
 
-			var el = new XElement(name, new XAttribute("year", journal.Year));
+			var el = new XElement(name, new XAttribute("year", journal.Year ?? 0));
 			if (journal.Positions.Count > 0)
 				el.Add(new XAttribute("positions", string.Join(",", journal.Positions)));
 			if (!string.IsNullOrEmpty(journal.SourceString))
