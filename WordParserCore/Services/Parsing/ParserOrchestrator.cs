@@ -1,5 +1,5 @@
 using DocumentFormat.OpenXml.Wordprocessing;
-using WordParserCore.Helpers;
+using WordParserCore.Ingest;
 using WordParserCore.Services.Classify;
 
 namespace WordParserCore.Services.Parsing
@@ -24,7 +24,14 @@ namespace WordParserCore.Services.Parsing
 		}
 
 		/// <summary>
-		/// Przetwarza pojedynczy akapit i aktualizuje stan kontekstu.
+		/// Przetwarza pojedynczy akapit OpenXml — cienki adapter na ProcessBlock,
+		/// zachowany dla wstecznej kompatybilności (testy i dotychczasowi wywołujący).
+		/// </summary>
+		public void ProcessParagraph(Paragraph paragraph, ParsingContext context)
+			=> ProcessBlock(DocxBlockReader.ToBlock(paragraph, blockIndex: null), context);
+
+		/// <summary>
+		/// Przetwarza pojedynczy blok reprezentacji pośredniej i aktualizuje stan kontekstu.
 		/// Flow:
 		/// 1. Obliczenie NumberingHint na podstawie bieżącego stanu kontekstu.
 		/// 2. Klasyfikacja akapitu (Kind + Confidence).
@@ -32,14 +39,13 @@ namespace WordParserCore.Services.Parsing
 		/// 4. Budowanie encji lub dołączanie treści nowelizacji (StructureProcessor).
 		/// 5. Wykrywanie triggerów nowelizacji po zbudowaniu encji.
 		/// </summary>
-		public void ProcessParagraph(Paragraph paragraph, ParsingContext context)
+		public void ProcessBlock(DocumentBlock block, ParsingContext context)
 		{
-			var rawText = paragraph.GetFullText().Trim();
-			if (string.IsNullOrEmpty(rawText))
+			if (block.IsEmpty)
 				return;
 
-			var text    = rawText.Sanitize().Trim();
-			var styleId = paragraph.StyleId();
+			var text    = block.Text.Sanitize().Trim();
+			var styleId = block.StyleId;
 
 			var hint           = BuildNumberingHint(context);
 			var classification = _classifier.Classify(new ClassificationInput(text, styleId)

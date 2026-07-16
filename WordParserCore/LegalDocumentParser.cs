@@ -1,10 +1,9 @@
 using System;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using Word = DocumentFormat.OpenXml.Wordprocessing;
 using ModelDto;
 using ModelDto.SystematizingUnits;
-using WordParserCore.Exceptions;
+using WordParserCore.Ingest;
 using WordParserCore.Services.Parsing;
 
 namespace WordParserCore
@@ -19,8 +18,7 @@ namespace WordParserCore
 
 		public static LegalDocument Parse(WordprocessingDocument wordDocument)
 		{
-			var mainPart = wordDocument.MainDocumentPart ??
-				throw new ParsingException("MainDocumentPart dokumentu jest null - plik moze byc uszkodzony lub pusty.");
+			var blocks = new DocxBlockReader().ReadBlocks(wordDocument);
 
 			var document = new LegalDocument();
 			var subchapter = GetDefaultSubchapter(document);
@@ -28,9 +26,9 @@ namespace WordParserCore
 			var context = new ParsingContext(document, subchapter);
 			var orchestrator = new ParserOrchestrator();
 
-			foreach (var paragraph in mainPart.Document.Descendants<Word.Paragraph>())
+			foreach (var block in blocks)
 			{
-				orchestrator.ProcessParagraph(paragraph, context);
+				orchestrator.ProcessBlock(block, context);
 			}
 
 			// Finalizacja — wypróżnienie bufora nowelizacji jeśli dokument
