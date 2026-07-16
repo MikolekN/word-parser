@@ -17,6 +17,7 @@ namespace ModelDto.EditorialUnits
         /// Oznacza ustep niejawny (tworzony na podstawie reguly, bez jawnego oznaczenia w tekscie).
         /// </summary>
         public bool IsImplicit { get; set; }
+        public bool? IsImplicitComputed => Article == null ? null : Article.Paragraphs.Count <= 1;
 
         /// <summary>
         /// Czesci wspolne na poziomie ustepu (np. intro/wrapUp wobec listy punktow).
