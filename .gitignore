@@ -43,5 +43,9 @@ docs.*.md
 # === Repozytorium dokumentów roboczych ===
 DocRepo/
 
+# === Lokalne artefakty testowe (nie wersjonowane) ===
+WordParserCore.Tests/Artifacts/*.docx
+WordParserCore.Tests/Artifacts/*.xml
+
 # === Projekty zawieszone ===
 WordParserApi/
