@@ -1,37 +1,51 @@
 using System.Xml.Linq;
 using ModelDto.EditorialUnits;
+using static WordParserCore.XLinqWrappers;
 
 namespace WordParserCore.Services.Converters
 {
     /// <summary>
-    /// Konwerter dla artykułów - transformuje ArticleDto do XML.
+    /// Konwertuje model Article na element XML.
     /// </summary>
-    public class ArticleXmlConverter
+    internal static class ArticleXmlConverter
     {
-        // public XElement ToXml(Article article, bool generateGuids = false)
-        // {
-        //     var newElement = new XElement(XmlConstants.Article,
-        //         new XAttribute("id", article.Id));
-        //     if (generateGuids) newElement.Add(new XAttribute("guid", article.Guid));
-        //     newElement.AddFirst(new XElement(XmlConstants.Number, article.Number));
+        internal static XElement ToXml(Article article)
+        {
+            var articleElement = Element(XmlConverterConstants.Contents.Article);
 
-        //     if (article.IsAmending)
-        //     {
-        //         foreach (var journal in article.Journals)
-        //         {
-        //             newElement.Add(new XElement("publication",
-        //                 new XAttribute("year", journal.Year),
-        //                 new XAttribute("positions", string.Join(",", journal.Positions))));
-        //         }
-        //     }
+            // === Atrybuty ===
+            articleElement.Add(new XAttribute(XmlConverterConstants.Contents.eId, article.Id));
+            articleElement.Add(new XAttribute(XmlConverterConstants.Contents.GUID, article.Guid.ToString()));
 
-        //     foreach (var paragraph in article.Paragraphs)
-        //     {
-        //         var paragraphConverter = new ParagraphXmlConverter();
-        //         newElement.Add(paragraphConverter.ToXml(paragraph, generateGuids));
-        //     }
+            // Data wejścia w życie jednostki (opcjonalna)
+            if (article.EffectiveDate != default)
+                articleElement.Add(new XAttribute(XmlConverterConstants.Contents.EntryIntoForce, article.EffectiveDate.ToString("yyyy-MM-dd")));
 
-        //     return newElement;
-        // }
+            // Status jednostki
+            // articleElement.Add(new XAttribute(XmlConverterConstants.Contents.UnitStatus, article.Status));
+
+            // Opinie
+            // articleElement.Add(new XAttribute(XmlConverterConstants.Contents.Opinions, article.Opinions));
+
+            // Marginesy
+            // articleElement.Add(new XAttribute(XmlConverterConstants.Contents.MarginLeft, article.MarginLeft));
+            // articleElement.Add(new XAttribute(XmlConverterConstants.Contents.MarginRight, article.MarginRight));
+
+            // === Elementy potomne ===
+
+            // Formatowanie (opcjonalne)
+            // articleElement.Add(Element(XmlConverterConstants.Contents.Formatting));
+
+            // Numer artykułu
+            articleElement.Add(Element(XmlConverterConstants.Contents.Num, article.Number == null ? "UNKNOWN" : article.Number.Value));
+
+            // Tytuł artykułu (opcjonalny)
+            // articleElement.Add(Element(XmlConverterConstants.Contents.Title, article.Title));
+
+            foreach (var paragraph in article.Paragraphs)
+                articleElement.Add(ParagraphXmlConverter.ToXml(paragraph));
+
+            return articleElement;
+        }
     }
 }
