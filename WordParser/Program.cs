@@ -6,6 +6,7 @@ using ModelDto;
 using ModelDto.EditorialUnits;
 using Serilog;
 using WordParserCore;
+using WordParserCore.Services.Converters;
 
 namespace WordParser
 {
@@ -19,12 +20,25 @@ namespace WordParser
             {
             if (args.Length < 2)
             {
-                Console.WriteLine("Użycie: WordParser --docx <nazwa-pliku>");
+                Console.WriteLine("Użycie: WordParser --docx <nazwa-pliku> [--dump <plik.xml>]");
                 return;
             }
 
             string option = args[0];
             string filePath = args[1];
+
+            // Opcjonalny kanoniczny zrzut modelu do porównań regresyjnych (diff przed/po zmianach parsera)
+            string? dumpPath = null;
+            int dumpFlagIndex = Array.IndexOf(args, "--dump", 2);
+            if (dumpFlagIndex >= 0)
+            {
+                if (dumpFlagIndex + 1 >= args.Length)
+                {
+                    Console.WriteLine("Brak ścieżki pliku po --dump. Użycie: WordParser --docx <nazwa-pliku> [--dump <plik.xml>]");
+                    return;
+                }
+                dumpPath = args[dumpFlagIndex + 1];
+            }
 
             if (!File.Exists(filePath))
             {
@@ -43,13 +57,29 @@ namespace WordParser
                 string backupFileName = Path.GetFileNameWithoutExtension(filePath) + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(filePath);
                 string backupFilePath = Path.Combine(backupDirectory, backupFileName);
 
-                File.Copy(filePath, backupFilePath);
+                // overwrite: dwa uruchomienia w tej samej sekundzie (np. skrypt diffujący --dump przed/po)
+                // dają identyczną nazwę kopii — bez nadpisania drugie kończyłoby się IOException
+                File.Copy(filePath, backupFilePath, true);
                 filePath = backupFilePath;
 
                 if (option == "--docx")
                 {
                     var document = LegalDocumentParser.Parse(filePath);
                     PrintDocument(document);
+
+                    if (dumpPath != null)
+                    {
+                        try
+                        {
+                            File.WriteAllText(dumpPath, CanonicalDtoXmlSerializer.Serialize(document));
+                            Console.WriteLine($"Zapisano kanoniczny zrzut modelu: {dumpPath}");
+                        }
+                        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
+                        {
+                            Console.WriteLine($"Nie udało się zapisać zrzutu modelu do '{dumpPath}': {ex.Message}");
+                            Environment.ExitCode = 1;
+                        }
+                    }
                 }
             
                 // using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, true))
