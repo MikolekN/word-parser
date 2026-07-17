@@ -49,3 +49,7 @@ WordParserCore.Tests/Artifacts/*.xml
 
 # === Projekty zawieszone ===
 WordParserApi/
+
+# === Artefakty ===
+Artifacts/
+docs/internal/
