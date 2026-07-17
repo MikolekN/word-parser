@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>CorpusValidator</AssemblyName>
+    <!-- Narzędzie deweloperskie — poza WordParser.sln, nie wchodzi do build-all. -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../WordParserCore/WordParserCore.csproj" />
+  </ItemGroup>
+
+</Project>

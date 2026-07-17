@@ -53,3 +53,6 @@ WordParserApi/
 # === Artefakty ===
 Artifacts/
 docs/internal/
+
+# Raporty narzędzia CorpusValidator (generowane do bieżącego katalogu)
+corpus-report.*
