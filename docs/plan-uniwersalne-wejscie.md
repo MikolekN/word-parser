@@ -81,7 +81,7 @@ Nowy namespace `WordParserCore.Ingest` (IR to wewnętrzny kontrakt potoku, nie m
 public sealed class DocumentClassificationResult
 {
     public LegalActType? ActType { get; init; }          // null gdy nie-akt
-    public bool IsNormativeAct { get; init; }
+    public bool IsLegalAct { get; init; }                // rozpoznano akt prawny znanego rodzaju
     public bool IsConsolidatedText { get; init; }        // obwieszczenie + TJ (§ 102-106)
     public bool IsAmending { get; init; }                // akt zmieniający (§ 96)
     public int Confidence { get; init; }                 // 1–100, spójne ze skalą ClassificationResult

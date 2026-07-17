@@ -19,6 +19,9 @@ namespace WordParserCore.Services.Classify.Document
 	public sealed class DocumentClassifier : IDocumentClassifier
 	{
 		private const int TitleZoneSize = 25;
+		// Formuła obwieszczenia TJ pojawia się tuż po tytule (nagłówek/organ/data/przedmiot/„1. Na podstawie…").
+		// Wąskie okno + strażnik cudzysłowu chronią przed cytowanym wzorem formuły w treści aktu zmieniającego.
+		private const int FormulaLeadZone = 12;
 		private const int ActThreshold = 40;
 		private const int AmbiguityMargin = 15;
 		private const int MinBlocks = 3;
@@ -93,14 +96,25 @@ namespace WordParserCore.Services.Classify.Document
 				}
 			}
 
-			bool seenConsolidatedTitle = false, seenDate = false, seenAmendingTitle = false, seenSubject = false, seenOrgan = false;
+			bool seenConsolidatedTitle = false, seenDate = false, seenAmendingTitle = false,
+				seenSubject = false, seenOrgan = false, seenMarshalIssuer = false;
 			foreach (var b in titleZone)
 			{
+				if (!seenMarshalIssuer && ZtpPatterns.MarshalOfSejmIssuerPattern.IsMatch(b.Text))
+				{
+					// Marszałek Sejmu wydaje teksty jednolite ustaw (§ 102) — dodatkowy sygnał obwieszczenia.
+					AddType(LegalActType.Announcement, 10, DocumentSignalKind.MarshalOfSejmIssuer, b.Index,
+						Preview(b.Text), "Organ wydający: Marszałek Sejmu — obwieszczenie/tekst jednolity ustawy (§ 102)");
+					seenMarshalIssuer = true;
+				}
 				if (!seenConsolidatedTitle && ZtpPatterns.ConsolidatedTextTitlePattern.IsMatch(b.Text))
 				{
 					AddType(LegalActType.Announcement, 25, DocumentSignalKind.ConsolidatedTextTitle, b.Index,
 						Preview(b.Text), "Tytuł: w sprawie ogłoszenia jednolitego tekstu (§ 102)");
 					isConsolidated = true;
+					// Tytuł „w sprawie ogłoszenia jednolitego tekstu" (§ 102) to definitywny sygnał
+					// strukturalny obwieszczenia TJ — sam w sobie stanowi backbone.
+					hasBackbone = true;
 					seenConsolidatedTitle = true;
 				}
 				if (!seenDate && ZtpPatterns.ActDateLinePattern.IsMatch(b.Text))
@@ -141,12 +155,20 @@ namespace WordParserCore.Services.Classify.Document
 			bool seenConsolidatedFormula = false, seenEnactment = false, seenLegalBasis = false,
 				seenEntry = false, seenAmendCmd = false, seenVoivodeship = false, seenStyleHint = false;
 
+			int corpusPos = -1;
 			foreach (var b in normalized)
 			{
+				corpusPos++;
 				repealedCount += ZtpPatterns.RepealedMarkerPattern.Matches(b.Text).Count;
 				footnoteCount += ZtpPatterns.FootnoteRefPattern.Matches(b.Text).Count;
 
-				if (!seenConsolidatedFormula && ZtpPatterns.ConsolidatedTextFormulaPattern.IsMatch(b.Text))
+				// Formuła obwieszczenia TJ stoi tuż po tytule (§ 104) i jest własną treścią obwieszczenia.
+				// Odrzucamy: (a) dopasowania poza wąską strefą wiodącą, (b) blok zaczynający się cudzysłowem
+				// otwierającym — to cytowany wzór (np. rozporządzenie zmieniające ZTP przytacza formułę),
+				// a nie formuła dokumentu; inaczej akt zmieniający udawałby tekst jednolity.
+				if (!seenConsolidatedFormula && corpusPos < FormulaLeadZone
+					&& !StartsWithOpeningQuote(b.Text)
+					&& ZtpPatterns.ConsolidatedTextFormulaPattern.IsMatch(b.Text))
 				{
 					AddType(LegalActType.Announcement, 30, DocumentSignalKind.ConsolidatedTextFormula, b.Index,
 						Preview(b.Text), "Formuła obwieszczenia TJ (art. 16 ustawy o ogłaszaniu, § 104)");
@@ -293,21 +315,23 @@ namespace WordParserCore.Services.Classify.Document
 				return new DocumentClassificationResult
 				{
 					ActType = null,
-					IsNormativeAct = false,
+					IsLegalAct = false,
 					IsConsolidatedText = isConsolidated,
-					IsAmending = isAmending,
+					// Tekst jednolity niczego nie nowelizuje — wykaz aktów zmieniających w obwieszczeniu
+					// („N) ustawą … o zmianie ustawy …") nie czyni obwieszczenia aktem zmieniającym (§ 102).
+					IsAmending = isAmending && !isConsolidated,
 					Confidence = notActConfidence,
 					Signals = SortSignals(signals),
 					Justification = !hasBackbone
-						? "Brak silnego sygnału strukturalnego (nagłówek rodzaju aktu, formuła kompetencyjna, komendy nowelizacyjne, formuła wejścia w życie) — dokument nie został uznany za normatywny akt prawny."
+						? "Brak silnego sygnału strukturalnego (nagłówek rodzaju aktu, formuła kompetencyjna, komendy nowelizacyjne, formuła wejścia w życie) — nie rozpoznano rodzaju aktu prawnego."
 						: ordered.Count == 0
-							? "Brak sygnału wskazującego rodzaj aktu — dokument nie został uznany za normatywny akt prawny."
-							: $"Najwyższy wynik ({winnerTotal}) poniżej progu {ActThreshold} — dokument nie został uznany za normatywny akt prawny.",
+							? "Brak sygnału wskazującego rodzaj aktu — nie rozpoznano rodzaju aktu prawnego."
+							: $"Najwyższy wynik ({winnerTotal}) poniżej progu {ActThreshold} — nie rozpoznano rodzaju aktu prawnego.",
 				};
 			}
 
 			var winnerType = ordered[0].Key;
-			var finalType = ResolveFinalType(winnerType, isAmending, isLocal);
+			var finalType = ResolveFinalType(winnerType, isAmending, isLocal, isConsolidated);
 
 			int confidence = Math.Clamp(winnerTotal, 1, 100);
 			bool ambiguous = (winnerTypeScore - secondTypeScore) < AmbiguityMargin;
@@ -325,9 +349,11 @@ namespace WordParserCore.Services.Classify.Document
 			return new DocumentClassificationResult
 			{
 				ActType = finalType,
-				IsNormativeAct = true,
+				IsLegalAct = true,
 				IsConsolidatedText = isConsolidated,
-				IsAmending = isAmending,
+				// Tekst jednolity niczego nie nowelizuje — wykaz aktów zmieniających w obwieszczeniu
+				// nie czyni obwieszczenia aktem zmieniającym (§ 102).
+				IsAmending = isAmending && !isConsolidated,
 				Confidence = confidence,
 				Signals = SortSignals(signals),
 				Justification = $"Rozpoznano: {finalType.ToFriendlyString()} (wynik {winnerTotal}, pewność {confidence})"
@@ -365,7 +391,7 @@ namespace WordParserCore.Services.Classify.Document
 			new()
 			{
 				ActType = null,
-				IsNormativeAct = false,
+				IsLegalAct = false,
 				IsConsolidatedText = false,
 				IsAmending = false,
 				Confidence = 90,
@@ -378,16 +404,21 @@ namespace WordParserCore.Services.Classify.Document
 						Description = $"Za mało bloków tekstu do klasyfikacji ({count} < {MinBlocks}).",
 					},
 				},
-				Justification = $"Dokument ma {count} niepustych bloków — zbyt mało, by uznać go za akt normatywny.",
+				Justification = $"Dokument ma {count} niepustych bloków — zbyt mało, by rozpoznać rodzaj aktu.",
 			};
 
 		/// <summary>
 		/// Doprecyzowanie typu po zsumowaniu punktów:
+		/// - tekst jednolity → obwieszczenie (§ 102-106), nadrzędnie wobec dominacji jednostki z załącznika
+		///   (zasada „nie przeinaczyć": TJ nie może być etykietowany jako ustawa/rozporządzenie z załącznika);
 		/// - ustawa + tytuł/komendy zmieniające → ustawa zmieniająca (§ 96);
 		/// - akt §-owy w kontekście organu JST / Dz. Urz. Woj. → akt prawa miejscowego (§ 143).
 		/// </summary>
-		private static LegalActType ResolveFinalType(LegalActType winner, bool isAmending, bool isLocal)
+		private static LegalActType ResolveFinalType(LegalActType winner, bool isAmending, bool isLocal, bool isConsolidated)
 		{
+			if (isConsolidated)
+				return LegalActType.Announcement;
+
 			if (isAmending && winner == LegalActType.Statute)
 				return LegalActType.AmendingStatute;
 
@@ -459,6 +490,10 @@ namespace WordParserCore.Services.Classify.Document
 
 		private static string Preview(string text) =>
 			text.Length <= MatchPreviewLength ? text : text[..MatchPreviewLength] + "…";
+
+		/// <summary>Czy blok zaczyna się cudzysłowem otwierającym (treść cytowana, np. przytoczony wzór/nowelizacja).</summary>
+		private static bool StartsWithOpeningQuote(string text) =>
+			text.Length > 0 && text[0] is '„' or '“' or '«' or '"';
 
 		private static IReadOnlyList<DocumentSignal> SortSignals(List<DocumentSignal> signals) =>
 			signals.OrderByDescending(s => s.Score).ToList();

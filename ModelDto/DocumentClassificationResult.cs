@@ -5,17 +5,18 @@ using System.Collections.Generic;
 namespace ModelDto
 {
     /// <summary>
-    /// Wynik klasyfikacji dokumentu: czy to normatywny akt prawny, jakiego rodzaju,
+    /// Wynik klasyfikacji dokumentu: czy rozpoznano akt prawny, jakiego rodzaju,
     /// z jaką pewnością i na podstawie jakich sygnałów (ZTP). Decyzję „czy parsować"
-    /// podejmuje wywołujący — klasyfikator wyłącznie raportuje.
+    /// podejmuje wywołujący — klasyfikator wyłącznie raportuje. Nie ocenia normatywności:
+    /// wszystkie ogłoszone akty (ustawa, rozporządzenie, obwieszczenie…) są aktami prawnymi.
     /// </summary>
     public sealed record DocumentClassificationResult
     {
-        /// <summary>Rozpoznany rodzaj aktu; null gdy dokument nie jest aktem normatywnym.</summary>
+        /// <summary>Rozpoznany rodzaj aktu; null gdy nie rozpoznano rodzaju aktu.</summary>
         public LegalActType? ActType { get; init; }
 
-        /// <summary>Czy dokument uznano za normatywny akt prawny (winner ≥ próg).</summary>
-        public bool IsNormativeAct { get; init; }
+        /// <summary>Czy rozpoznano dokument jako akt prawny znanego rodzaju (winner ≥ próg).</summary>
+        public bool IsLegalAct { get; init; }
 
         /// <summary>Czy to tekst jednolity (obwieszczenie „w sprawie ogłoszenia jednolitego tekstu").</summary>
         public bool IsConsolidatedText { get; init; }

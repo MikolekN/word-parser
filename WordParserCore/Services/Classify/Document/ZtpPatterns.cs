@@ -20,9 +20,18 @@ namespace WordParserCore.Services.Classify.Document
 		internal static readonly Regex RegulationHeaderPattern = new(
 			@"^ROZPORZĄDZENIE(?:\s+(?<organ>[A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ\s\-,\.]+))?$", RegexOptions.Compiled);
 
-		/// <summary>§ 102: „OBWIESZCZENIE" (nagłówek obwieszczenia / tekstu jednolitego).</summary>
+		/// <summary>
+		/// § 102: nagłówek obwieszczenia (w tym tekstu jednolitego). Dopuszcza wersaliki „OBWIESZCZENIE",
+		/// kapitalizację tytułową „Obwieszczenie" oraz zapis małą literą „obwieszczenie" — wszystkie trzy
+		/// warianty występują w szczotkach RCL (różne szablony; bywa renderowany wersalikami przez w:caps).
+		/// Opcjonalny organ w tej samej linii to sekwencja wyrazów rozpoczynających się WIELKĄ literą
+		/// (nazwa organu w dopełniaczu: „Ministra Rodziny, Pracy i Polityki Społecznej") plus dozwolone
+		/// spójniki małą literą (i/oraz/do/spraw…). KAŻDY wyraz małą literą spoza tej listy (np. czasownik)
+		/// unieważnia dopasowanie — to odróżnia nagłówek od zdania prozy („Obwieszczenie Ministra… wywołało…").
+		/// </summary>
 		internal static readonly Regex AnnouncementHeaderPattern = new(
-			@"^OBWIESZCZENIE\b[A-ZĄĆĘŁŃÓŚŹŻ\s\-,\.]*$", RegexOptions.Compiled);
+			@"^(?:OBWIESZCZENIE|[Oo]bwieszczenie)(?:\s+(?:[A-ZĄĆĘŁŃÓŚŹŻ][\p{L}0-9\-]*|i|oraz|do|ds|w|z|na|dla|spraw)[,\)]?)*$",
+			RegexOptions.Compiled);
 
 		// § 138a: uchwała / zarządzenie. Zakotwiczone na $ (jak pozostałe nagłówki) i tak zbudowane,
 		// by NIE łapać zwykłych zdań („Uchwała wchodzi w życie…"): forma mieszana wymaga „Nr",
@@ -42,6 +51,14 @@ namespace WordParserCore.Services.Classify.Document
 			@"^(?:MINISTRA?|PREZESA\s+RADY\s+MINISTRÓW|RADY\s+MINISTRÓW|PREZYDENTA\s+RZECZYPOSPOLITEJ\s+POLSKIEJ|KRAJOWEJ\s+RADY|MARSZAŁKA\s+SEJMU)[A-ZĄĆĘŁŃÓŚŹŻ\s\-,\.]*$",
 			RegexOptions.Compiled);
 
+		/// <summary>
+		/// § 102: organ wydający tekst jednolity ustawy — pełna urzędowa forma wiersza wydawcy
+		/// „Marszałka Sejmu Rzeczypospolitej Polskiej" (dodatkowy sygnał TJ ustawy). Wymóg pełnej formy
+		/// (a nie samego „Marszałek Sejmu") odrzuca prozę typu „Marszałek Sejmu zwołał…".
+		/// </summary>
+		internal static readonly Regex MarshalOfSejmIssuerPattern = new(
+			@"^Marszałka\s+Sejmu\s+Rzeczypospolitej\s+Polskiej\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
 		/// <summary>§ 17: data aktu (miesiąc słownie). Dopuszcza końcowy odnośnik [N)]/[N] (TJ często opatruje datę przypisem).</summary>
 		internal static readonly Regex ActDateLinePattern = new(
 			@"^z\s+dnia\s+(?<day>\d{1,2})\s+(?<month>stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia)\s+(?<year>\d{4})\s*r\.(?:\s*\[\d+\)?\])?$",
@@ -57,9 +74,13 @@ namespace WordParserCore.Services.Classify.Document
 			@"o\s+zmianie\s+ustaw(?:y|)\b|oraz\s+niektórych\s+innych\s+ustaw|zmieniając[ea]\s+(?:rozporządzenie|uchwałę|zarządzenie)\s+w\s+sprawie",
 			RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		/// <summary>§ 102: obwieszczenie o ogłoszeniu tekstu jednolitego.</summary>
+		/// <summary>
+		/// § 102: obwieszczenie o ogłoszeniu tekstu jednolitego. Zakotwiczone na początku wiersza —
+		/// to ma być samodzielny wiersz przedmiotu („w sprawie ogłoszenia jednolitego tekstu ustawy…"),
+		/// a nie wzmianka w prozie („ukaże się obwieszczenie w sprawie ogłoszenia jednolitego tekstu…").
+		/// </summary>
 		internal static readonly Regex ConsolidatedTextTitlePattern = new(
-			@"w\s+sprawie\s+ogłoszenia\s+jednolitego\s+tekstu", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			@"^w\s+sprawie\s+ogłoszenia\s+jednolitego\s+tekstu", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		// === KORPUS (§ 121, § 106, § 45, § 162, § 82-85) ===
 
@@ -71,9 +92,13 @@ namespace WordParserCore.Services.Classify.Document
 		internal static readonly Regex EnactmentFormulaPattern = new(
 			@"(?<verb>zarządza|uchwala|postanawia)\s+się,?\s+co\s+następuje\s*:", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		/// <summary>§ 104: formuła obwieszczenia tekstu jednolitego (art. 16 ustawy o ogłaszaniu).</summary>
+		/// <summary>
+		/// § 104: formuła obwieszczenia tekstu jednolitego (art. 16 ustawy o ogłaszaniu). Dowolny numer
+		/// ustępu oraz opcjonalna wstawka „zdanie pierwsze/drugie" — realne brzmienie to „art. 16 ust. 1
+		/// zdanie pierwsze ustawy z dnia 20 lipca 2000 r. …".
+		/// </summary>
 		internal static readonly Regex ConsolidatedTextFormulaPattern = new(
-			@"Na\s+podstawie\s+art\.\s*16\s+ust\.\s*[13]\s+ustawy\s+z\s+dnia\s+20\s+lipca\s+2000\s+r\.\s+o\s+ogłaszaniu\s+aktów\s+normatywnych.*?ogłasza\s+się\s+w\s+załączniku",
+			@"Na\s+podstawie\s+art\.\s*16\s+ust\.\s*\d+(?:\s+zdanie\s+\w+)?\s+ustawy\s+z\s+dnia\s+20\s+lipca\s+2000\s+r\.\s+o\s+ogłaszaniu\s+aktów\s+normatywnych.*?ogłasza\s+się\s+w\s+załączniku",
 			RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
 		/// <summary>Jednostka podstawowa „Art." (ustawa).</summary>

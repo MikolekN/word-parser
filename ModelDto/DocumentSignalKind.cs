@@ -2,7 +2,7 @@ namespace ModelDto
 {
     /// <summary>
     /// Rodzaj sygnału klasyfikacyjnego dokumentu — dowód użyty przez DocumentClassifier
-    /// do rozpoznania rodzaju aktu normatywnego wg Zasad techniki prawodawczej (ZTP).
+    /// do rozpoznania rodzaju aktu prawnego wg Zasad techniki prawodawczej (ZTP).
     /// Każdy sygnał niesie punktację i (opcjonalnie) wspierany typ aktu.
     /// </summary>
     public enum DocumentSignalKind
@@ -57,6 +57,9 @@ namespace ModelDto
 
         /// <summary>Organ JST (rada gminy, sejmik, wójt, burmistrz…) → akt prawa miejscowego.</summary>
         LocalGovernmentOrgan,
+
+        /// <summary>Organ wydający „Marszałek Sejmu" (§ 102) → obwieszczenie / tekst jednolity ustawy.</summary>
+        MarshalOfSejmIssuer,
 
         /// <summary>Gęstość odnośników w indeksie górnym [N)] (§ 163) — typowa dla tekstu jednolitego.</summary>
         FootnoteDensity,

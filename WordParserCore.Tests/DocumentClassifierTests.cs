@@ -41,7 +41,7 @@ namespace WordParserCore.Tests
 				"Art. 3. Traci moc ustawa z dnia 1 stycznia 2000 r.",
 				"Art. 4. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.Statute, result.ActType);
 			Assert.True(result.Confidence >= 75, $"Pewność: {result.Confidence}");
 			Assert.False(result.IsAmending);
@@ -60,7 +60,7 @@ namespace WordParserCore.Tests
 				"§ 2. Ilekroć w rozporządzeniu jest mowa o jednostce, rozumie się przez to podmiot.",
 				"§ 3. Rozporządzenie wchodzi w życie z dniem 1 stycznia 2024 r.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.Regulation, result.ActType);
 			Assert.True(result.Confidence >= 75, $"Pewność: {result.Confidence}");
 		}
@@ -81,7 +81,7 @@ namespace WordParserCore.Tests
 				"Art. 3. (utracił moc)",
 				"Art. 4. Przepisy stosuje się do ubezpieczonych.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.Announcement, result.ActType);
 			Assert.True(result.IsConsolidatedText);
 			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.IgnoredSecondaryHeader);
@@ -100,7 +100,7 @@ namespace WordParserCore.Tests
 				"§ 2. Program realizuje minister właściwy do spraw rozwoju.",
 				"§ 3. Uchwała wchodzi w życie z dniem następującym po dniu ogłoszenia.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.Resolution, result.ActType);
 		}
 
@@ -117,7 +117,7 @@ namespace WordParserCore.Tests
 				"§ 2. Nadzór sprawuje Szef Kancelarii.",
 				"§ 3. Zarządzenie wchodzi w życie z dniem ogłoszenia.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.ExecutiveOrder, result.ActType);
 		}
 
@@ -135,7 +135,7 @@ namespace WordParserCore.Tests
 				"§ 3. Uchwała podlega ogłoszeniu w Dzienniku Urzędowym Województwa Małopolskiego.",
 				"§ 4. Uchwała wchodzi w życie po upływie 14 dni od dnia ogłoszenia w Dz. Urz. Woj.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.LocalLegalAct, result.ActType);
 		}
 
@@ -149,13 +149,13 @@ namespace WordParserCore.Tests
 				"Art. 1. W ustawie z dnia 26 lipca 1991 r. o podatku dochodowym od osób fizycznych wprowadza się następujące zmiany:",
 				"Art. 2. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.AmendingStatute, result.ActType);
 			Assert.True(result.IsAmending);
 		}
 
 		// ============================================================
-		// Negatywy — nie akty normatywne
+		// Negatywy — nie rozpoznano rodzaju aktu
 		// ============================================================
 
 		[Fact]
@@ -168,7 +168,7 @@ namespace WordParserCore.Tests
 				"- warzywa sezonowe",
 				"Do zobaczenia w sklepie.");
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Null(result.ActType);
 		}
 
@@ -181,7 +181,7 @@ namespace WordParserCore.Tests
 				"Eksperci komentują wprowadzone zmiany jako korzystne dla obywateli.",
 				"Więcej szczegółów w kolejnym wydaniu.");
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Null(result.ActType);
 		}
 
@@ -198,7 +198,7 @@ namespace WordParserCore.Tests
 				"§ 3. Umowa wchodzi w życie z dniem podpisania.",
 				"§ 4. W sprawach nieuregulowanych stosuje się przepisy Kodeksu cywilnego.");
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Null(result.ActType);
 		}
 
@@ -207,7 +207,7 @@ namespace WordParserCore.Tests
 		{
 			var result = new DocumentClassifier().Classify(Blocks());
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Null(result.ActType);
 			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.NoTextLayer);
 		}
@@ -217,7 +217,7 @@ namespace WordParserCore.Tests
 		{
 			var result = Classify("USTAWA", "z dnia 1 stycznia 2020 r.");
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.NoTextLayer);
 		}
 
@@ -226,7 +226,7 @@ namespace WordParserCore.Tests
 		{
 			var result = Classify("USTAWA", "   ", "\t", "");
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.NoTextLayer);
 		}
 
@@ -271,7 +271,7 @@ namespace WordParserCore.Tests
 				"§ 2. Wójt sporządza sprawozdanie i przekazuje je wojewodzie.",
 				"§ 3. Rozporządzenie wchodzi w życie z dniem 1 stycznia 2024 r.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.Regulation, result.ActType);
 		}
 
@@ -288,7 +288,7 @@ namespace WordParserCore.Tests
 				"§ 2. Program obejmuje zadania nałożone na wójta każdej gminy.",
 				"§ 3. Uchwała wchodzi w życie z dniem następującym po dniu ogłoszenia.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.Resolution, result.ActType);
 		}
 
@@ -303,7 +303,7 @@ namespace WordParserCore.Tests
 				"Wkrótce ukaże się obwieszczenie w sprawie ogłoszenia jednolitego tekstu ustawy o PIT.",
 				"Zmiany skomentowali eksperci podatkowi.");
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Null(result.ActType);
 		}
 
@@ -319,7 +319,7 @@ namespace WordParserCore.Tests
 				"§ 2. Wynagrodzenie wypłaca się do 10. dnia miesiąca.",
 				"§ 3. Regulamin obowiązuje od dnia ogłoszenia.");
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Null(result.ActType);
 		}
 
@@ -333,7 +333,7 @@ namespace WordParserCore.Tests
 				"Zarządzenie zostało przyjęte jednogłośnie.",
 				"Na tym protokół zakończono.");
 
-			Assert.False(result.IsNormativeAct);
+			Assert.False(result.IsLegalAct);
 			Assert.Null(result.ActType);
 		}
 
@@ -351,7 +351,7 @@ namespace WordParserCore.Tests
 				"§ 2. Uchwała podlega ogłoszeniu w Dzienniku Urzędowym Województwa Łódzkiego.",
 				"§ 3. Uchwała wchodzi w życie po upływie 14 dni od dnia ogłoszenia w Dz. Urz. Woj.");
 
-			Assert.True(result.IsNormativeAct);
+			Assert.True(result.IsLegalAct);
 			Assert.Equal(LegalActType.LocalLegalAct, result.ActType);
 		}
 
@@ -393,6 +393,132 @@ namespace WordParserCore.Tests
 			Assert.Equal(first.Confidence, second.Confidence);
 			Assert.Equal(first.Signals.Count, second.Signals.Count);
 			Assert.Equal(first.Justification, second.Justification);
+		}
+
+		// ============================================================
+		// Regresje z korpusu aktów ogłoszonych (szczotki RCL) + przeglądu adwersaryjnego
+		// ============================================================
+
+		[Fact]
+		public void Classify_ConsolidatedTextTitleCaseHeader_IsAnnouncement_NotAnnexStatute()
+		{
+			// Realna szczotka TJ: nagłówek „Obwieszczenie" (kapitalizacja tytułowa), organ „Marszałka Sejmu",
+			// formuła „ust. 1 zdanie pierwsze", wykaz aktów zmieniających, a w załączniku pełna USTAWA.
+			// Musi wyjść OBWIESZCZENIE (nie ustawa z załącznika) — zasada „nie przeinaczyć". Tekst jednolity
+			// niczego nie nowelizuje, więc IsAmending musi być false mimo wykazu „o zmianie ustawy".
+			var result = Classify(
+				"Obwieszczenie",
+				"Marszałka Sejmu Rzeczypospolitej Polskiej",
+				"z dnia 21 czerwca 2024 r.",
+				"w sprawie ogłoszenia jednolitego tekstu ustawy – Kodeks cywilny",
+				"1. Na podstawie art. 16 ust. 1 zdanie pierwsze ustawy z dnia 20 lipca 2000 r. o ogłaszaniu aktów normatywnych i niektórych innych aktów prawnych ogłasza się w załączniku do niniejszego obwieszczenia jednolity tekst ustawy.",
+				"1) ustawą z dnia 13 lipca 2023 r. o zmianie ustawy o udostępnianiu informacji o środowisku;",
+				"USTAWA",
+				"z dnia 23 kwietnia 1964 r.",
+				"Kodeks cywilny",
+				"Art. 1. Kodeks reguluje stosunki cywilnoprawne.",
+				"Art. 2. (uchylony)",
+				"Art. 3. (utracił moc)",
+				"Art. 4. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.");
+
+			Assert.True(result.IsLegalAct);
+			Assert.Equal(LegalActType.Announcement, result.ActType);
+			Assert.True(result.IsConsolidatedText);
+			Assert.False(result.IsAmending);
+			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.ActKindHeader);
+			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.MarshalOfSejmIssuer);
+			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.IgnoredSecondaryHeader);
+		}
+
+		[Fact]
+		public void Classify_NonConsolidatedAnnouncement_TitleCaseHeader_IsAnnouncement()
+		{
+			// Obwieszczenie nie-TJ (waloryzacyjne „w sprawie wysokości…") — z formy to obwieszczenie,
+			// więc rodzaj = Announcement, ale NIE tekst jednolity.
+			var result = Classify(
+				"Obwieszczenie",
+				"Ministra Infrastruktury",
+				"z dnia 25 lipca 2025 r.",
+				"w sprawie wysokości stawki opłaty legalizacyjnej obowiązującej od dnia 1 stycznia 2026 r.",
+				"Na podstawie art. 190 ust. 9 ustawy z dnia 20 lipca 2017 r. – Prawo wodne ogłasza się, co następuje:",
+				"Stawka opłaty legalizacyjnej wynosi 5000 zł.",
+				"Minister Infrastruktury: wz. P. Koperski");
+
+			Assert.True(result.IsLegalAct);
+			Assert.Equal(LegalActType.Announcement, result.ActType);
+			Assert.False(result.IsConsolidatedText);
+		}
+
+		[Fact]
+		public void Classify_LowercaseObwieszczenieHeader_IsAnnouncement()
+		{
+			// Wariant szablonu bez stylów: nagłówek zapisany małą literą „obwieszczenie" (realne szczotki RCL),
+			// organ w osobnym wierszu. Musi być rozpoznany jako obwieszczenie.
+			var result = Classify(
+				"obwieszczenie",
+				"Ministra Edukacji",
+				"z dnia 5 września 2025 r.",
+				"w sprawie ogólnopolskiej sieci branżowych centrów umiejętności na lata 2023–2028",
+				"Na podstawie art. 8a ust. 8 ustawy z dnia 14 grudnia 2016 r. – Prawo oświatowe ogłasza się, co następuje:",
+				"Ustala się ogólnopolską sieć branżowych centrów umiejętności.",
+				"Minister Edukacji: B. Nowacka");
+
+			Assert.True(result.IsLegalAct);
+			Assert.Equal(LegalActType.Announcement, result.ActType);
+			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.ActKindHeader);
+		}
+
+		[Fact]
+		public void Classify_ProseStartingWithObwieszczenie_IsNotAnAct()
+		{
+			// „Obwieszczenie Ministra … wywołało …" to zdanie prozy (czasownik małą literą), NIE nagłówek
+			// rodzaju aktu. Gdyby nagłówek trafił, data (+10) i przedmiot (+8) przekroczyłyby próg —
+			// dlatego zaostrzona klasa znaków organu musi to odrzucić (bramka backbone/negatywów).
+			var result = Classify(
+				"Obwieszczenie Ministra Finansów wywołało reakcje rynku.",
+				"z dnia 5 maja 2024 r.",
+				"w sprawie nowych stawek podatkowych wypowiedzieli się analitycy",
+				"Więcej szczegółów w kolejnym wydaniu.");
+
+			Assert.False(result.IsLegalAct);
+			Assert.Null(result.ActType);
+		}
+
+		[Fact]
+		public void Classify_RegulationAmendingZtpQuotingConsolidationFormula_StaysRegulation()
+		{
+			// Rozporządzenie zmieniające ZTP przytacza wzór formuły TJ w CUDZYSŁOWIE, wcześnie w treści.
+			// Cytowana formuła (blok zaczyna się od „) NIE może uczynić z aktu zmieniającego tekstu jednolitego.
+			var result = Classify(
+				"Rozporządzenie",
+				"Prezesa Rady Ministrów",
+				"z dnia 26 stycznia 2026 r.",
+				"zmieniające rozporządzenie w sprawie „Zasad techniki prawodawczej”",
+				"Na podstawie art. 14 ust. 4 pkt 1 ustawy z dnia 8 sierpnia 1996 r. o Radzie Ministrów zarządza się, co następuje:",
+				"§ 1. W rozporządzeniu wprowadza się następujące zmiany:",
+				"„1. Na podstawie art. 16 ust. 1 ustawy z dnia 20 lipca 2000 r. o ogłaszaniu aktów normatywnych i niektórych innych aktów prawnych ogłasza się w załączniku do niniejszego obwieszczenia jednolity tekst.”",
+				"§ 2. Rozporządzenie wchodzi w życie z dniem 1 marca 2026 r.");
+
+			Assert.Equal(LegalActType.Regulation, result.ActType);
+			Assert.False(result.IsConsolidatedText);
+		}
+
+		[Fact]
+		public void Classify_StatuteMentioningObwieszczenieInBody_StaysStatute()
+		{
+			// Strażnik: ustawa może w treści wspominać obwieszczenie / Marszałka Sejmu — pierwszy nagłówek
+			// (USTAWA) wygrywa, wzmianka w treści nie może przekwalifikować aktu na obwieszczenie.
+			var result = Classify(
+				"USTAWA",
+				"z dnia 5 marca 2024 r.",
+				"o zmianach porządkowych",
+				"Art. 1. Ustawa porządkuje przepisy.",
+				"Art. 2. Traci moc obwieszczenie Marszałka Sejmu z dnia 1 stycznia 2020 r.",
+				"Art. 3. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.");
+
+			Assert.True(result.IsLegalAct);
+			Assert.Equal(LegalActType.Statute, result.ActType);
+			Assert.False(result.IsConsolidatedText);
 		}
 	}
 }
