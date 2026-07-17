@@ -19,7 +19,16 @@ namespace WordParserCore
 		public static LegalDocument Parse(WordprocessingDocument wordDocument)
 		{
 			var blocks = new DocxBlockReader().ReadBlocks(wordDocument);
+			return ParseBlocks(blocks);
+		}
 
+		/// <summary>
+		/// Rdzeń parsowania: buduje model z bloków reprezentacji pośredniej niezależnie od formatu
+		/// źródłowego (DOCX/TXT/PDF). Publiczna koperta wyniku (ParseResult) i routing formatów
+		/// dochodzą w Etapie 10 — do tego czasu metoda jest wewnętrzna.
+		/// </summary>
+		internal static LegalDocument ParseBlocks(IReadOnlyList<DocumentBlock> blocks)
+		{
 			var document = new LegalDocument();
 			var subchapter = GetDefaultSubchapter(document);
 
