@@ -8,6 +8,11 @@ namespace WordParserCore.Ingest
 	/// Kursywa (IsItalic) jest w tekstach jednolitych markerem aktów/przepisów,
 	/// które utraciły moc (§ 108a ZTP), oraz zlikwidowanych/przekształconych organów
 	/// (§ 108b); pogrubienie (IsBold) — przyszłych brzmień (§ 106a ust. 4).
+	///
+	/// UWAGA: IsBold/IsItalic/FontSizeHalfPoints odzwierciedlają wyłącznie BEZPOŚREDNIE
+	/// formatowanie runów (w:rPr), NIE formatowanie dziedziczone ze stylu akapitu/znaku
+	/// (na poziomie IR nie rozwiązujemy hierarchii stylów). Detektory § 106a/§ 108
+	/// muszą to uwzględnić — blok pogrubiony wyłącznie przez styl da tu IsBold=null.
 	/// </summary>
 	public sealed record BlockLayoutInfo
 	{
