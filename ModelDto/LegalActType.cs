@@ -50,7 +50,35 @@ namespace ModelDto
         /// Ocena skutków regulacji (forma legislacyjna)
         /// - Struktura i nazewnictwo do doprecyzowania
         /// </summary>
-        RegulatoryImpactAssessment
+        RegulatoryImpactAssessment,
+
+        /// <summary>
+        /// Ustawa zmieniająca (§ 96 ZTP) — „o zmianie ustawy…".
+        /// Struktura i nazewnictwo jak ustawa; treść to komendy nowelizacyjne.
+        /// </summary>
+        AmendingStatute,
+
+        /// <summary>
+        /// Obwieszczenie o ogłoszeniu tekstu jednolitego (§ 102-106 ZTP).
+        /// Zawiera w załączniku pełny akt bazowy z markerami „(uchylony)" itp.
+        /// </summary>
+        Announcement,
+
+        /// <summary>
+        /// Uchwała (§ 138a-139 ZTP) — jednostka podstawowa „§".
+        /// </summary>
+        Resolution,
+
+        /// <summary>
+        /// Zarządzenie (§ 138a-139 ZTP) — jednostka podstawowa „§".
+        /// </summary>
+        ExecutiveOrder,
+
+        /// <summary>
+        /// Akt prawa miejscowego (§ 143 ZTP) — jednostka podstawowa „§";
+        /// wydawany przez organy JST, publikowany w Dz. Urz. Woj.
+        /// </summary>
+        LocalLegalAct
     }
 
     /// <summary>
@@ -67,6 +95,10 @@ namespace ModelDto
                 LegalActType.Statute => "art.",
                 LegalActType.Regulation => "§",
                 LegalActType.Code => "art.",
+                LegalActType.AmendingStatute => "art.",
+                LegalActType.Resolution => "§",
+                LegalActType.ExecutiveOrder => "§",
+                LegalActType.LocalLegalAct => "§",
                 _ => "art."
             };
 
@@ -96,6 +128,11 @@ namespace ModelDto
                 LegalActType.Bill => "projekt ustawy",
                 LegalActType.Ordinance => "ordynancja",
                 LegalActType.RegulatoryImpactAssessment => "OSR ex post",
+                LegalActType.AmendingStatute => "ustawa zmieniająca",
+                LegalActType.Announcement => "obwieszczenie (tekst jednolity)",
+                LegalActType.Resolution => "uchwała",
+                LegalActType.ExecutiveOrder => "zarządzenie",
+                LegalActType.LocalLegalAct => "akt prawa miejscowego",
                 _ => "nieznany"
             };
     }
