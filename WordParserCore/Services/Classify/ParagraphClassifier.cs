@@ -31,17 +31,23 @@ namespace WordParserCore.Services.Classify
 		/// <summary>Opcjonalny prefiks cytatu otwierającego („ " ") w tekście akapitu.</summary>
 		internal const string OptionalQuotePrefix = "(?:[\"\\u201E\\u201C\\u201D]\\s*)?";
 
+		/// <summary>
+		/// Opcjonalny indeks górny numeru jednostki w notacji [x] (§ 89 ust. 6 ZTP; kanał GetFullText).
+		/// Celowo tylko cyfry — odnośniki przypisów mają postać [N)] i nie mogą tu wpadać.
+		/// </summary>
+		internal const string OptionalSuperscript = @"(?:\[\d+\])?";
+
 		internal static readonly Regex ArticlePattern = new(
 			$@"^{OptionalQuotePrefix}Art\.?\s*\d+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		internal static readonly Regex ParagraphPattern = new(
-			$@"^{OptionalQuotePrefix}\d+[a-zA-Z]*\.\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			$@"^{OptionalQuotePrefix}\d+[a-zA-Z]*{OptionalSuperscript}\.\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		internal static readonly Regex PointPattern = new(
-			$@"^{OptionalQuotePrefix}\d+[a-zA-Z]*\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			$@"^{OptionalQuotePrefix}\d+[a-zA-Z]*{OptionalSuperscript}\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		internal static readonly Regex LetterPattern = new(
-			$@"^{OptionalQuotePrefix}[a-zA-Z]{{1,5}}\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			$@"^{OptionalQuotePrefix}[a-zA-Z]{{1,5}}{OptionalSuperscript}\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		// Półpauza – dopuszczona dla tekstu niesanityzowanego (Sanitize normalizuje ją do dywizu)
 		internal static readonly Regex TiretPattern = new(
@@ -49,23 +55,23 @@ namespace WordParserCore.Services.Classify
 
 		/// <summary>Artykuł z grupą przechwytującą numer (do ParseArticleNumber).</summary>
 		internal static readonly Regex ArticleNumberCapture = new(
-			$@"^{OptionalQuotePrefix}Art\.?\s*(\d+[a-zA-Z]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			$@"^{OptionalQuotePrefix}Art\.?\s*(\d+[a-zA-Z]*{OptionalSuperscript})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>Artykuł z przechwyceniem ogona (do GetArticleTail).</summary>
 		internal static readonly Regex ArticleTailCapture = new(
-			$@"^{OptionalQuotePrefix}Art\.?\s*\d+[a-zA-Z]*\.?\s*(.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			$@"^{OptionalQuotePrefix}Art\.?\s*\d+[a-zA-Z]*{OptionalSuperscript}\.?\s*(.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>Numer ustępu z grupą przechwytującą (do ParseParagraphNumber).</summary>
 		internal static readonly Regex ParagraphNumberCapture = new(
-			$@"^{OptionalQuotePrefix}(\d+[a-zA-Z]*)\.\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			$@"^{OptionalQuotePrefix}(\d+[a-zA-Z]*{OptionalSuperscript})\.\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>Numer punktu z grupą przechwytującą (do ParsePointNumber).</summary>
 		internal static readonly Regex PointNumberCapture = new(
-			$@"^{OptionalQuotePrefix}(\d+[a-zA-Z]*)\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			$@"^{OptionalQuotePrefix}(\d+[a-zA-Z]*{OptionalSuperscript})\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>Numer litery z grupą przechwytującą (do ParseLetterNumber).</summary>
 		internal static readonly Regex LetterNumberCapture = new(
-			$@"^{OptionalQuotePrefix}([a-zA-Z]{{1,5}})\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			$@"^{OptionalQuotePrefix}([a-zA-Z]{{1,5}}{OptionalSuperscript})\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>Prefiks tiretu do usuwania (bez wymagania spacji; dywiz lub półpauza).</summary>
 		internal static readonly Regex TiretStripPattern = new(

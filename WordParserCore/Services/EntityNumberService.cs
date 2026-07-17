@@ -10,10 +10,17 @@ namespace WordParserCore.Services
     public class EntityNumberService
     {
         private static readonly Regex NumericPrefix = new(@"^(\d+)(.*)$", RegexOptions.Compiled);
+
+        // Indeks górny na końcu numeru — dwa kanały zapisu:
+        //   "5a^1"  — separator '^' (zapis historyczny),
+        //   "5a[1]" — nawiasy kwadratowe (kanał GetFullText; notacja § 89 ust. 6 ZTP)
+        private static readonly Regex SuperscriptSuffix = new(
+            @"^(?<base>.*?)(?:\^(?<sup>\w+)|\[(?<sup>\w+)\])\s*\.?\s*$", RegexOptions.Compiled);
+
         /// <summary>
         /// Parsuje ciąg znaków na EntityNumberDto, wyodrębniając komponenty numeru.
         /// </summary>
-        /// <param name="rawValue">Oryginalna wartość numeru (np. "5a¹" lub "5a^1")</param>
+        /// <param name="rawValue">Oryginalna wartość numeru (np. "5a[1]" lub "5a^1")</param>
         /// <returns>EntityNumberDto z wypełnionymi polami</returns>
         public EntityNumber Parse(string? rawValue)
         {
@@ -27,12 +34,12 @@ namespace WordParserCore.Services
 
             var v = rawValue.Trim();
 
-            // Wyodrębnij indeks górny (separator '^' lub Unicode superscript)
-            var parts = v.Split('^');
-            if (parts.Length > 1)
+            // Wyodrębnij indeks górny (oba kanały: '^' oraz '[x]')
+            var supMatch = SuperscriptSuffix.Match(v);
+            if (supMatch.Success)
             {
-                dto.Superscript = parts[1].Trim();
-                v = parts[0].Trim();
+                dto.Superscript = supMatch.Groups["sup"].Value.Trim();
+                v = supMatch.Groups["base"].Value.Trim();
             }
 
             // Usuń kropkę na końcu i zbędne białe znaki
@@ -68,7 +75,7 @@ namespace WordParserCore.Services
         /// Konwertuje EntityNumberDto z powrotem do sformatowanego ciągu znaków.
         /// </summary>
         /// <param name="dto">EntityNumberDto do konwersji</param>
-        /// <returns>Sformatowany numer (np. "5a¹")</returns>
+        /// <returns>Sformatowany numer (np. "5a[1]")</returns>
         public string FormatToString(EntityNumber dto)
         {
             var sb = new System.Text.StringBuilder();
@@ -85,8 +92,8 @@ namespace WordParserCore.Services
 
             if (!string.IsNullOrEmpty(dto.Superscript))
             {
-                // TODO: Po zmianie ZTP ujmować w nawiasy kwadratowe, np. [1]
-                sb.Append($"^{dto.Superscript}");
+                // Notacja § 89 ust. 6 ZTP: fragment w indeksie górnym w nawiasach kwadratowych
+                sb.Append($"[{dto.Superscript}]");
             }
 
             return sb.ToString();

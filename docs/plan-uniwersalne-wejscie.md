@@ -1,6 +1,6 @@
 # Plan przebudowy: uniwersalne wejście parsera (DOCX bez szablonu, PDF, TXT) + klasyfikacja aktu wg ZTP
 
-> **Status: W REALIZACJI** — Etap 0 ukończony 2026-07-16 (siatka bezpieczeństwa: snapshot doc001, testy charakteryzujące gałąź bezstylową, CLI `--dump`; plus naprawa zastanej czerwonej bazy — 4 testy en-dash). Plan opracowany 2026-07-16, skorygowany po adwersaryjnej weryfikacji kondensatu ZTP.
+> **Status: W REALIZACJI** — Etapy 0–2 ukończone. Etap 0 (2026-07-16): siatka bezpieczeństwa — snapshot doc001, testy charakteryzujące gałąź bezstylową, CLI `--dump`; plus naprawa zastanej czerwonej bazy (4 testy en-dash). Etap 1 (2026-07-16): reprezentacja pośrednia `Ingest/` + przepięcie DOCX. Etap 2 (2026-07-17): ujednolicenie kanału indeksu górnego `^`→`[x]` — snapshot doc001 bez diffu (dokument referencyjny nie zawiera jednostek z indeksem). Plan opracowany 2026-07-16, skorygowany po adwersaryjnej weryfikacji kondensatu ZTP.
 > Podstawa merytoryczna: „Zasady techniki prawodawczej" — tekst jednolity Dz. U. z 2026 r. poz. 300 ([docs/ZTP-2026-300.md](ZTP-2026-300.md)); kondensat reguł dla parsera: [docs/ztp-struktura-aktow.md](ztp-struktura-aktow.md).
 
 ## Kontekst
