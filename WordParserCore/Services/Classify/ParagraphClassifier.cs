@@ -77,6 +77,26 @@ namespace WordParserCore.Services.Classify
 		internal static readonly Regex TiretStripPattern = new(
 			$@"^{OptionalQuotePrefix}[-–]+\s*", RegexOptions.Compiled);
 
+		// === Jednostki systematyzacyjne (§ 60-62 ZTP) ===
+		// Wzorce ZAKOTWICZONE na całej linii ($): marker jednostki stoi w osobnym wierszu (§ 60), więc
+		// proza „Rozdział 5 stosuje się…"/„Tytuł V wprowadza się…" NIE jest brana za nagłówek. Dozwolona
+		// końcowa kropka/przecinek. Wersaliki to sygnał ZTP; dopuszczamy też kapitalizację tytułową
+		// (nie IgnoreCase — słowo małą literą to proza). Numer wyższych jednostek: cyfra rzymska
+		// (opcjonalny sufiks litery jednostki wtrąconej, „IVa") lub liczebnik słowny; rozstrzyga walidacja,
+		// więc „Część majątku…" nie zostanie uznane za jednostkę. Rozdział/Oddział: cyfra arabska + sufiks.
+		internal static readonly Regex PartUnitPattern = new(
+			@"^(?:CZĘŚĆ|Część)\s+(?<n>[IVXLCDM]+[a-z]?|\p{L}+)\s*[.,]?\s*$", RegexOptions.Compiled);
+		internal static readonly Regex BookUnitPattern = new(
+			@"^(?:KSIĘGA|Księga)\s+(?<n>[IVXLCDM]+[a-z]?|\p{L}+)\s*[.,]?\s*$", RegexOptions.Compiled);
+		internal static readonly Regex TitleUnitPattern = new(
+			@"^(?:TYTUŁ|Tytuł)\s+(?<n>[IVXLCDM]+[a-z]?|\p{L}+)\s*[.,]?\s*$", RegexOptions.Compiled);
+		internal static readonly Regex DivisionUnitPattern = new(
+			@"^(?:DZIAŁ|Dział)\s+(?<n>[IVXLCDM]+[a-z]?|\p{L}+)\s*[.,]?\s*$", RegexOptions.Compiled);
+		internal static readonly Regex ChapterUnitPattern = new(
+			@"^(?:ROZDZIAŁ|Rozdział)\s+(?<n>\d+[a-zA-Z]{0,3})\s*[.,]?\s*$", RegexOptions.Compiled);
+		internal static readonly Regex SubchapterUnitPattern = new(
+			@"^(?:ODDZIAŁ|Oddział)\s+(?<n>\d+[a-zA-Z]{0,3})\s*[.,]?\s*$", RegexOptions.Compiled);
+
 		// ============================================================
 		// Implementacja IParagraphClassifier
 		// ============================================================
@@ -306,12 +326,105 @@ namespace WordParserCore.Services.Classify
 
 		private static ParagraphKind? MatchRegex(string text)
 		{
+			// Jednostki systematyzacyjne sprawdzane najpierw (§ 60-62); rozstrzyga walidacja numeru.
+			var systematizing = MatchSystematizingRegex(text);
+			if (systematizing != null) return systematizing;
+
 			if (IsArticleByText(text))   return ParagraphKind.Article;
 			if (IsParagraphByText(text)) return ParagraphKind.Paragraph;
 			if (IsPointByText(text))     return ParagraphKind.Point;
 			if (IsLetterByText(text))    return ParagraphKind.Letter;
 			if (IsTiretByText(text))     return ParagraphKind.Tiret;
 			return null;
+		}
+
+		/// <summary>
+		/// Rozpoznaje jednostkę systematyzacyjną. Dla jednostek wyższych (Część/Księga/Tytuł/Dział)
+		/// wymaga poprawnego numeru rzymskiego lub liczebnika słownego; Rozdział/Oddział — arabskiego.
+		/// </summary>
+		private static ParagraphKind? MatchSystematizingRegex(string text)
+		{
+			if (MatchesHigherUnit(PartUnitPattern, text))     return ParagraphKind.PartUnit;
+			if (MatchesHigherUnit(BookUnitPattern, text))     return ParagraphKind.BookUnit;
+			if (MatchesHigherUnit(TitleUnitPattern, text))    return ParagraphKind.TitleUnit;
+			if (MatchesHigherUnit(DivisionUnitPattern, text)) return ParagraphKind.DivisionUnit;
+			if (ChapterUnitPattern.IsMatch(text))    return ParagraphKind.ChapterUnit;
+			if (SubchapterUnitPattern.IsMatch(text)) return ParagraphKind.SubchapterUnit;
+			return null;
+		}
+
+		private static bool MatchesHigherUnit(Regex pattern, string text)
+		{
+			var m = pattern.Match(text);
+			return m.Success && ParseHigherUnitToken(m.Groups["n"].Value) != null;
+		}
+
+		/// <summary>
+		/// Parsuje numer jednostki wyższej: cyfra rzymska lub liczebnik słowny, z opcjonalnym sufiksem
+		/// litery jednostki wtrąconej nowelizacją („IVa"). Zwraca wartość liczbową i sufiks; null gdy nie-numer.
+		/// </summary>
+		private static (int numeric, string suffix)? ParseHigherUnitToken(string token)
+		{
+			var n = RomanNumeralConverter.Parse(token);
+			if (n != null) return (n.Value, string.Empty);
+
+			int b = token.Length;
+			while (b > 0 && char.IsLower(token[b - 1])) b--;
+			if (b > 0 && b < token.Length)
+			{
+				var baseNum = RomanNumeralConverter.RomanToInt(token[..b]);
+				if (baseNum != null) return (baseNum.Value, token[b..]);
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Wyodrębnia numer jednostki systematyzacyjnej jako EntityNumber. Dla jednostek wyższych
+		/// Value pozostaje oryginalnym oznaczeniem (rzymskim/słownym) — zasada „nie przeinaczyć" —
+		/// a NumericPart niesie wartość liczbową do kontroli ciągłości. Rozdział/Oddział: numer arabski.
+		/// </summary>
+		public static EntityNumber? ParseSystematizingNumber(ParagraphKind kind, string text)
+		{
+			switch (kind)
+			{
+				case ParagraphKind.ChapterUnit:
+				case ParagraphKind.SubchapterUnit:
+					var pattern = kind == ParagraphKind.ChapterUnit ? ChapterUnitPattern : SubchapterUnitPattern;
+					var am = pattern.Match(text);
+					if (!am.Success) return null;
+					var token = am.Groups["n"].Value;
+					int di = 0;
+					while (di < token.Length && char.IsDigit(token[di])) di++;
+					var digits = token[..di];
+					return new EntityNumber
+					{
+						Value = token, RawValue = token, LexicalPart = token[di..],
+						NumericPart = int.TryParse(digits, out var n) ? n : 0,
+					};
+
+				default:
+					var higher = kind switch
+					{
+						ParagraphKind.PartUnit     => PartUnitPattern,
+						ParagraphKind.BookUnit     => BookUnitPattern,
+						ParagraphKind.TitleUnit    => TitleUnitPattern,
+						ParagraphKind.DivisionUnit => DivisionUnitPattern,
+						_ => null,
+					};
+					if (higher == null) return null;
+					var hm = higher.Match(text);
+					if (!hm.Success) return null;
+					var parsed = ParseHigherUnitToken(hm.Groups["n"].Value);
+					if (parsed == null) return null;
+					// Value = kanoniczna cyfra rzymska (znormalizowana z liczebnika/wielkości liter) + sufiks,
+					// by eId był spójny („KSIĘGA PIERWSZA" i „KSIĘGA I" → ks_I).
+					var canonical = RomanNumeralConverter.ToRoman(parsed.Value.numeric) + parsed.Value.suffix;
+					return new EntityNumber
+					{
+						Value = canonical, RawValue = hm.Groups["n"].Value,
+						NumericPart = parsed.Value.numeric, LexicalPart = parsed.Value.suffix,
+					};
+			}
 		}
 
 		private static EntityNumber? ParseNumberForKind(ParagraphKind kind, string text) =>

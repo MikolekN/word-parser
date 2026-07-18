@@ -23,6 +23,7 @@ namespace WordParserCore.Services.Parsing
 		private readonly PointBuilder _pointBuilder = new();
 		private readonly LetterBuilder _letterBuilder = new();
 		private readonly TiretBuilder _tiretBuilder = new();
+		private readonly SystematizingUnitBuilder _systematizingUnitBuilder = new();
 		private readonly JournalReferenceService _journalReferenceService = new();
 
 		/// <summary>
@@ -94,6 +95,26 @@ namespace WordParserCore.Services.Parsing
 		public bool Process(ParsingContext context, ClassificationResult classification, string text,
 			string? sourceStyleId = null)
 		{
+			// Tytuł jednostki systematyzacyjnej (drugi wiersz wzorca dwuwierszowego, § 60):
+			// pierwszy akapit po nagłówku jednostki, jeśli sam nie jest jednostką, opisuje ją.
+			if (context.PendingHeadingUnit is { } pendingUnit)
+			{
+				context.PendingHeadingUnit = null;
+				if (classification.Kind == ParagraphKind.Unknown && IsHeadingCandidate(text))
+				{
+					pendingUnit.Heading = text.Trim();
+					return true;
+				}
+				// brak tytułu — kontynuuj normalną obsługę bieżącego akapitu
+			}
+
+			// Jednostki systematyzacyjne (§ 60-62) — mogą wystąpić przed pierwszym artykułem.
+			if (IsSystematizing(classification.Kind))
+			{
+				HandleSystematizingUnit(context, classification, text, sourceStyleId);
+				return true;
+			}
+
 			if (classification.Kind == ParagraphKind.Article)
 			{
 				var result = _articleBuilder.Build(new ArticleBuildInput(context.Subchapter, text));
@@ -312,6 +333,45 @@ namespace WordParserCore.Services.Parsing
 			if (ParagraphClassifier.IsLetterByText(text))    return ParagraphKind.Letter;
 			if (ParagraphClassifier.IsTiretByText(text))     return ParagraphKind.Tiret;
 			return ParagraphKind.Unknown;
+		}
+
+		// ============================================================
+		// Jednostki systematyzacyjne (§ 60-62 ZTP)
+		// ============================================================
+
+		private static bool IsSystematizing(ParagraphKind kind) => kind is
+			ParagraphKind.PartUnit or ParagraphKind.BookUnit or ParagraphKind.TitleUnit or
+			ParagraphKind.DivisionUnit or ParagraphKind.ChapterUnit or ParagraphKind.SubchapterUnit;
+
+		private void HandleSystematizingUnit(ParsingContext context, ClassificationResult classification,
+			string text, string? sourceStyleId)
+		{
+			var number = ParagraphClassifier.ParseSystematizingNumber(classification.Kind, text);
+			if (number == null)
+			{
+				// MatchSystematizingRegex waliduje numer, więc tu nie powinniśmy trafić — defensywnie.
+				Log.Warning("Jednostka systematyzacyjna {Kind} bez rozpoznanego numeru (styl={StyleId}): {Text}",
+					classification.Kind, sourceStyleId, text);
+				return;
+			}
+
+			_systematizingUnitBuilder.Enter(context, classification.Kind, number);
+			Log.Debug("Wejście w jednostkę systematyzacyjną {Kind} {Number}", classification.Kind, number.Value);
+		}
+
+		/// <summary>
+		/// Czy akapit to prawdopodobny tytuł jednostki (§ 60): krótki, rozpoczyna się wielką literą
+		/// i NIE kończy się kropką (tytuł jednostki nie ma kropki końcowej; zdanie treści ma) — chroni
+		/// przed pochłonięciem realnej treści jako tytułu jednostki bez tytułu.
+		/// </summary>
+		private static bool IsHeadingCandidate(string text)
+		{
+			var t = text.Trim();
+			if (t.Length == 0 || t.Length > 120)
+				return false;
+			if (!char.IsLetter(t[0]) || !char.IsUpper(t[0]))
+				return false;
+			return t[^1] != '.';
 		}
 
 		/// <summary>

@@ -85,20 +85,29 @@ namespace WordParserCore.Tests
 		}
 
 		[Theory]
-		[InlineData("Rozdział 1")]
-		[InlineData("Oddział 2")]
-		[InlineData("DZIAŁ II")]
-		[InlineData("TYTUŁ III")]
-		[InlineData("KSIĘGA PIERWSZA")]
-		[InlineData("CZĘŚĆ OGÓLNA")]
-		public void Classify_SystematizingUnit_WithoutStyle_IsUnknown(string text)
+		[InlineData("Rozdział 1", ParagraphKind.ChapterUnit)]
+		[InlineData("Oddział 2", ParagraphKind.SubchapterUnit)]
+		[InlineData("DZIAŁ II", ParagraphKind.DivisionUnit)]
+		[InlineData("TYTUŁ III", ParagraphKind.TitleUnit)]
+		[InlineData("KSIĘGA PIERWSZA", ParagraphKind.BookUnit)]
+		[InlineData("CZĘŚĆ I", ParagraphKind.PartUnit)]
+		public void Classify_SystematizingUnit_WithoutStyle_IsRecognized(string text, ParagraphKind expected)
 		{
-			// UWAGA: dokumentuje obecną LUKĘ — jednostki systematyzacyjne (§ 60-62 ZTP)
-			// nie mają wzorców regex ani wartości w ParagraphKind. Zmiana planowana w Etapie 6b.
+			// Etap 6b: jednostki systematyzacyjne (§ 60-62 ZTP) rozpoznawane z treści bez stylu
+			// (Rozdział/Oddział — cyfra arabska; Część/Księga/Tytuł/Dział — rzymska lub liczebnik słowny).
 			var result = Classify(text);
 
+			Assert.Equal(expected, result.Kind);
+		}
+
+		[Fact]
+		public void Classify_NamedPartWithoutNumber_StaysUnknown()
+		{
+			// Ograniczenie: część nazwana bez numeru („CZĘŚĆ OGÓLNA") nie jest rozpoznawana jako jednostka —
+			// brak numeru rzymskiego/słownego. (Wielo-częściowe akry i części nazwane — poza zakresem 6b.)
+			var result = Classify("CZĘŚĆ OGÓLNA");
+
 			Assert.Equal(ParagraphKind.Unknown, result.Kind);
-			Assert.Equal(1, result.Confidence);
 		}
 
 		[Theory]

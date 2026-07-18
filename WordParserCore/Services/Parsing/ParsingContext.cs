@@ -18,10 +18,32 @@ namespace WordParserCore.Services.Parsing
 		{
 			Document = document;
 			Subchapter = subchapter;
+
+			// Bieżąca ścieżka jednostek systematyzujących z kanonicznego (zawsze spójnego) drzewa dokumentu.
+			// Dla realnego parsowania Subchapter pokrywa się z CurrentChapter.Subchapters[0].
+			CurrentPart = document.RootPart;
+			CurrentBook = CurrentPart.Books[0];
+			CurrentTitle = CurrentBook.Titles[0];
+			CurrentDivision = CurrentTitle.Divisions[0];
+			CurrentChapter = CurrentDivision.Chapters[0];
 		}
 
 		public LegalDocument Document { get; }
-		public Subchapter Subchapter { get; }
+
+		/// <summary>Bieżący oddział — miejsce dołączania artykułów. Aktualizowany przez SystematizingUnitBuilder.</summary>
+		public Subchapter Subchapter { get; internal set; }
+
+		// Bieżąca ścieżka jednostek systematyzujących (Część → … → Rozdział). Aktualizowana przy wejściu
+		// w jawną jednostkę; służy do dołączania jednostek-rodzeństwa na właściwym poziomie.
+		public Part CurrentPart { get; internal set; }
+		public Book CurrentBook { get; internal set; }
+		public Title CurrentTitle { get; internal set; }
+		public Division CurrentDivision { get; internal set; }
+		public Chapter CurrentChapter { get; internal set; }
+
+		/// <summary>Jednostka systematyzacyjna oczekująca na tytuł (drugi wiersz wzorca dwuwierszowego, § 60).</summary>
+		public ISystematizingUnit? PendingHeadingUnit { get; set; }
+
 		public DtoArticle? CurrentArticle { get; set; }
 		public DtoParagraph? CurrentParagraph { get; set; }
 		public DtoPoint? CurrentPoint { get; set; }
