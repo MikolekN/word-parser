@@ -2,6 +2,7 @@ using ModelDto;
 using ModelDto.EditorialUnits;
 using Serilog;
 using WordParserCore.Helpers;
+using WordParserCore.Ingest;
 using WordParserCore.Services.Classify;
 using WordParserCore.Services.Parsing.Builders;
 
@@ -93,7 +94,7 @@ namespace WordParserCore.Services.Parsing
 		/// Zwraca true jeśli encja została zbudowana (wykrywanie triggera powinno nastąpić po powrocie).
 		/// </summary>
 		public bool Process(ParsingContext context, ClassificationResult classification, string text,
-			string? sourceStyleId = null)
+			string? sourceStyleId = null, BlockLayoutInfo? layout = null)
 		{
 			// Tytuł jednostki systematyzacyjnej (drugi wiersz wzorca dwuwierszowego, § 60):
 			// pierwszy akapit po nagłówku jednostki, jeśli sam nie jest jednostką, opisuje ją.
@@ -117,13 +118,16 @@ namespace WordParserCore.Services.Parsing
 
 			if (classification.Kind == ParagraphKind.Article)
 			{
+				// Pierwszy artykuł zamyka strefę tytułową — metadane dalej nie są zbierane.
+				context.Metadata.Seal();
+
 				var result = _articleBuilder.Build(new ArticleBuildInput(context.Subchapter, text));
 				ValidationReporter.AddClassificationWarning(result.Article, classification, "ART");
 				context.CurrentArticle = result.Article;
 				context.CurrentParagraph = result.Paragraph;
 				context.CurrentPoint = null;
 				context.CurrentLetter = null;
-				context.TiretStack.Clear();
+				context.ClearTiretStack();
 
 				UpdateStructuralReference(context, result.Article);
 				if (result.Paragraph != null)
@@ -139,7 +143,7 @@ namespace WordParserCore.Services.Parsing
 			// Nierozpoznany — inference-first, potem diagnostyka
 			if (classification.Kind == ParagraphKind.Unknown)
 			{
-				HandleUnknown(context, text, sourceStyleId);
+				HandleUnknown(context, text, sourceStyleId, layout);
 				return true; // zawsze "skonsumowany"
 			}
 
@@ -158,7 +162,7 @@ namespace WordParserCore.Services.Parsing
 					ValidationReporter.AddClassificationWarning(context.CurrentParagraph, classification, "UST");
 					context.CurrentPoint = null;
 					context.CurrentLetter = null;
-					context.TiretStack.Clear();
+					context.ClearTiretStack();
 
 					UpdateStructuralReference(context, context.CurrentParagraph);
 					DetectAmendmentTargets(context, context.CurrentParagraph);
@@ -176,7 +180,7 @@ namespace WordParserCore.Services.Parsing
 						new PointBuildInput(context.CurrentParagraph, context.CurrentArticle, text));
 					ValidationReporter.AddClassificationWarning(context.CurrentPoint, classification, "PKT");
 					context.CurrentLetter = null;
-					context.TiretStack.Clear();
+					context.ClearTiretStack();
 
 					UpdateStructuralReference(context, context.CurrentPoint);
 					DetectAmendmentTargets(context, context.CurrentPoint);
@@ -198,7 +202,7 @@ namespace WordParserCore.Services.Parsing
 					context.CurrentLetter = _letterBuilder.Build(
 						new LetterBuildInput(context.CurrentPoint, context.CurrentParagraph, context.CurrentArticle, text));
 					ValidationReporter.AddClassificationWarning(context.CurrentLetter, classification, "LIT");
-					context.TiretStack.Clear();
+					context.ClearTiretStack();
 
 					UpdateStructuralReference(context, context.CurrentLetter);
 					DetectAmendmentTargets(context, context.CurrentLetter);
@@ -226,13 +230,14 @@ namespace WordParserCore.Services.Parsing
 					if (context.CurrentLetter.Tirets.Count == 0)
 						ParsingFactories.AttachIntroCommonPart(context.CurrentLetter);
 
-					var tiretDepth = GetTiretDepth(sourceStyleId);
+					var tiretDepth = GetTiretDepth(sourceStyleId, layout, context);
 
 					// Skroc stos do glebokosci depth-1 (usun tirety glebsze lub rowne)
-					while (context.TiretStack.Count >= tiretDepth)
-						context.TiretStack.RemoveAt(context.TiretStack.Count - 1);
+					context.PopTiretsToDepth(tiretDepth);
 
-					var parentTiret = tiretDepth > 1 ? context.TiretStack[^1] : null;
+					// Straznik: przy glebokosci > 1 rodzic musi istniec; inaczej degradacja do poziomu 1
+					// (np. 2TIR/wciecie bez poprzedzajacego tiretu — zamiast wyjatku).
+					var parentTiret = tiretDepth > 1 && context.TiretStack.Count > 0 ? context.TiretStack[^1] : null;
 
 					// Intro wspolna - tylko dla pierwszego dziecka na danym poziomie
 					if (parentTiret != null && parentTiret.Tirets.Count == 0)
@@ -246,7 +251,20 @@ namespace WordParserCore.Services.Parsing
 						context.CurrentLetter, context.CurrentPoint, context.CurrentParagraph,
 						context.CurrentArticle, text, tiretIndex, parentTiret));
 					ValidationReporter.AddClassificationWarning(tiret, classification, "TIR");
-					context.TiretStack.Add(tiret);
+
+					// Gdy zagniezdzenie wywnioskowano z wciecia (a nie ze stylu 2TIR/3TIR) — audyt decyzji (§ 58 ZTP).
+					if (parentTiret != null && !StyleEncodesTiretDepth(sourceStyleId))
+						ValidationReporter.AddValidationMessage(tiret, ValidationLevel.Info,
+							$"Glebokosc tiretu ({tiretDepth}) ustalona z wciecia (§ 58 ZTP).");
+					// Degradacja: sklasyfikowano na poziom > 1, ale brak tiretu nadrzednego — slad diagnostyczny.
+					else if (tiretDepth > 1 && parentTiret == null)
+						ValidationReporter.AddValidationMessage(tiret, ValidationLevel.Warning,
+							$"Tiret sklasyfikowany na poziom {tiretDepth}, ale brak tiretu nadrzednego — umieszczono na poziomie 1.");
+
+					// Tirety o glebokosci ustalonej ze STYLU nie wnosza wciecia jako punktu odniesienia dla
+					// wnioskowania (ich wciecie moze byc null lub sprzeczne z narzucona stylem glebokoscia) —
+					// inaczej mieszanie trybu stylowego i wcieciowego w obrebie litery falszowaloby zagniezdzenie.
+					context.PushTiret(tiret, StyleDecidesTiretDepth(sourceStyleId) ? null : layout?.LeftIndentTwips);
 
 					UpdateStructuralReference(context, tiret);
 					DetectAmendmentTargets(context, tiret);
@@ -271,7 +289,7 @@ namespace WordParserCore.Services.Parsing
 		/// Obsługuje akapit Unknown: najpierw próbuje wywnioskować rodzaj z treści,
 		/// a gdy brak wzorca — dołącza ValidationMessage do najgłębszej aktywnej encji.
 		/// </summary>
-		private void HandleUnknown(ParsingContext context, string text, string? sourceStyleId)
+		private void HandleUnknown(ParsingContext context, string text, string? sourceStyleId, BlockLayoutInfo? layout)
 		{
 			// Krok 1: wywnioskuj z treści (ochrona przed edge cases LayeredClassifier)
 			if (context.CurrentArticle != null)
@@ -297,7 +315,7 @@ namespace WordParserCore.Services.Parsing
 							},
 						],
 					};
-					Process(context, rescued, text, sourceStyleId);
+					Process(context, rescued, text, sourceStyleId, layout);
 					return;
 				}
 			}
@@ -305,6 +323,10 @@ namespace WordParserCore.Services.Parsing
 			// Krok 2: brak wzorca — diagnostyka bez encji
 			if (context.CurrentArticle == null)
 			{
+				// Strefa tytułowa (§ 16-19): spróbuj wychwycić metadane aktu (rodzaj/data/przedmiot).
+				if (context.Metadata.Observe(text))
+					return;
+
 				Log.Warning("Akapit Unknown przed pierwszym artykułem (metadane) — pominięty. " +
 					"Styl: {StyleId}, Tekst: {Text}",
 					sourceStyleId, text.Length > 80 ? text[..80] + "…" : text);
@@ -449,15 +471,79 @@ namespace WordParserCore.Services.Parsing
 			return null;
 		}
 
+		/// <summary>Tolerancja wciecia (twips, ~6 pt) przy porownywaniu poziomow tiretow (§ 58 ZTP).</summary>
+		private const int TiretIndentTolerance = 120;
+
+		/// <summary>Maks. glebokosc tiretu odwzorowana w modelu/stylach (TIR/2TIR/3TIR).</summary>
+		private const int MaxTiretDepth = 3;
+
 		/// <summary>
-		/// Wyznacza glebokos tiretu na podstawie stylu akapitu.
-		/// 1 = TIR, 2 = 2TIR, 3 = 3TIR. Domyslnie 1.
+		/// Wyznacza glebokosc tiretu. Priorytet:
+		/// 1) styl jawnie kodujacy glebokosc (2TIR/3TIR/TIR) — dokumenty szablonowe niezmienione;
+		/// 2) wciecie lewe bloku wzgledem tiretow otwartych na stosie (§ 58 ZTP) — dla dokumentow bezstylowych z ukladem;
+		/// 3) brak sygnalu (np. czysty TXT) — domyslnie poziom 1 (zachowanie dotychczasowe).
 		/// </summary>
-		private static int GetTiretDepth(string? styleId)
+		private static int GetTiretDepth(string? styleId, BlockLayoutInfo? layout, ParsingContext context)
 		{
-			if (string.IsNullOrEmpty(styleId)) return 1;
-			if (styleId.StartsWith("3TIR", StringComparison.OrdinalIgnoreCase)) return 3;
-			if (styleId.StartsWith("2TIR", StringComparison.OrdinalIgnoreCase)) return 2;
+			if (!string.IsNullOrEmpty(styleId))
+			{
+				if (styleId.StartsWith("3TIR", StringComparison.OrdinalIgnoreCase)) return 3;
+				if (styleId.StartsWith("2TIR", StringComparison.OrdinalIgnoreCase)) return 2;
+				if (styleId.StartsWith("TIR", StringComparison.OrdinalIgnoreCase)) return 1;
+			}
+
+			if (layout?.LeftIndentTwips is int curIndent)
+			{
+				var inferred = InferTiretDepthFromIndent(curIndent, context.OpenTiretIndents);
+				if (inferred != null) return inferred.Value;
+			}
+
+			return 1;
+		}
+
+		/// <summary>Czy styl jawnie koduje NIEZEROWA glebokosc zagniezdzenia tiretu (2TIR/3TIR).</summary>
+		private static bool StyleEncodesTiretDepth(string? styleId) =>
+			!string.IsNullOrEmpty(styleId) &&
+			(styleId.StartsWith("2TIR", StringComparison.OrdinalIgnoreCase) ||
+			 styleId.StartsWith("3TIR", StringComparison.OrdinalIgnoreCase));
+
+		/// <summary>Czy to glebokosc tiretu rozstrzyga STYL (TIR/2TIR/3TIR), a nie wciecie.</summary>
+		private static bool StyleDecidesTiretDepth(string? styleId) =>
+			(!string.IsNullOrEmpty(styleId) && styleId.StartsWith("TIR", StringComparison.OrdinalIgnoreCase))
+			|| StyleEncodesTiretDepth(styleId);
+
+		/// <summary>
+		/// Wnioskuje glebokosc tiretu z wciecia lewego wzgledem wciec tiretow otwartych na stosie.
+		/// Wieksze wciecie (o > tolerancje) niz najglebszy ZNANY punkt odniesienia = dziecko biezacego szczytu
+		/// stosu; wciecie w tolerancji = rodzenstwo tego poziomu; mniejsze = rodzenstwo plytszego poziomu.
+		/// Zwraca null, gdy brak punktu odniesienia (stos pusty lub same wciecia null) — wtedy wywolujacy
+		/// przyjmuje poziom 1. UWAGA (ograniczenie ekstrakcji ukladu): LeftIndentTwips pochodzi wylacznie
+		/// z bezposredniego w:left akapitu (DocxBlockReader), nie z wciec dziedziczonych ze stylu/numeracji;
+		/// tiret z wcieciem dziedziczonym trafia tu jako null i domyslnie ląduje na poziomie 1 (Etap 9/PDF: geometria).
+		/// </summary>
+		private static int? InferTiretDepthFromIndent(int curIndent, IReadOnlyList<int?> openIndents)
+		{
+			int deepest = openIndents.Count - 1;
+			while (deepest >= 0 && openIndents[deepest] == null) deepest--;
+			if (deepest < 0) return null;
+
+			int refIndent = openIndents[deepest]!.Value;
+
+			// Glebiej niz najglebszy ZNANY punkt odniesienia → dziecko RZECZYWISTEGO szczytu stosu.
+			// Glebokosc liczymy od pelnej wysokosci stosu (openIndents.Count), nie od poziomu odniesienia,
+			// bo miedzy nim a szczytem moga stac tirety o wcieciu null (styl 2TIR/3TIR) — inaczej zaniżalibysmy.
+			if (curIndent > refIndent + TiretIndentTolerance)
+				return System.Math.Min(openIndents.Count + 1, MaxTiretDepth);
+
+			// W przeciwnym razie znajdz najglebszy poziom, ktorego wciecie nie jest wieksze od biezacego
+			// (w tolerancji) — to poziom-rodzenstwo biezacego tiretu.
+			for (int d = deepest + 1; d >= 1; d--)
+			{
+				var ind = openIndents[d - 1];
+				if (ind == null) continue;
+				if (curIndent >= ind.Value - TiretIndentTolerance)
+					return d;
+			}
 			return 1;
 		}
 

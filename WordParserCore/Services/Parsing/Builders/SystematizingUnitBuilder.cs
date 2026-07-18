@@ -41,7 +41,7 @@ namespace WordParserCore.Services.Parsing.Builders
 			ctx.CurrentParagraph = null;
 			ctx.CurrentPoint = null;
 			ctx.CurrentLetter = null;
-			ctx.TiretStack.Clear();
+			ctx.ClearTiretStack();
 		}
 
 		private static ISystematizingUnit? EnterPart(ParsingContext ctx, EntityNumber number)

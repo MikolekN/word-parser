@@ -105,9 +105,9 @@ namespace WordParserCore.Tests
             var point = new Point { Article = article, Paragraph = paragraph, Parent = paragraph };
             var builder = new LetterBuilder();
 
-            var letter = builder.Build(new LetterBuildInput(point, paragraph, article, "abzz)Tekst"));
+            var letter = builder.Build(new LetterBuildInput(point, paragraph, article, "zz)Tekst"));
 
-            Assert.Equal("abzz", letter.Number?.Value);
+            Assert.Equal("zz", letter.Number?.Value);
         }
 
         [Fact]

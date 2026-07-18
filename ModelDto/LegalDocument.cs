@@ -66,6 +66,12 @@ namespace ModelDto
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
+        /// Data uchwalenia/wydania aktu (§ 17 ZTP), wydobyta ze strefy tytułowej ("z dnia D miesiąca RRRR r.").
+        /// Null gdy nierozpoznana (np. czysty tekst bez wiersza daty).
+        /// </summary>
+        public DateTime? ActDate { get; set; }
+
+        /// <summary>
         /// Informacja o źródle publikacji (Dziennik Ustaw, rok, numer pozycji).
         /// Zawiera metadane potrzebne do odwołań w systemie prawnym.
         /// </summary>

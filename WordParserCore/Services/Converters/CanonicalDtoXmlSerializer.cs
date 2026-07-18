@@ -30,6 +30,9 @@ namespace WordParserCore.Services.Converters
 			if (!string.IsNullOrEmpty(document.Title))
 				root.Add(new XAttribute("title", document.Title));
 
+			if (document.ActDate.HasValue)
+				root.Add(new XAttribute("actDate", document.ActDate.Value.ToString("yyyy-MM-dd")));
+
 			AddJournalElement(root, "sourceJournal", document.SourceJournal);
 
 			root.Add(SerializePart(document.RootPart));

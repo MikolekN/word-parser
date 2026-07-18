@@ -46,7 +46,21 @@ namespace WordParserCore.Services.Classify
 		internal static readonly Regex PointPattern = new(
 			$@"^{OptionalQuotePrefix}\d+[a-zA-Z]*{OptionalSuperscript}\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+		// ROZPOZNANIE litery z samego tekstu (§ 56 ZTP): litera to MAŁA litera alfabetu łacińskiego (bez
+		// polskich znaków diakrytycznych), a po wyczerpaniu alfabetu dwuznak „za", „zb"… — stąd [a-z]{1,2}
+		// BEZ IgnoreCase. Wersalik „A)" czy token 3+ znaków to nie litera redakcyjna (wyliczenie załącznika
+		// lub proza). Wzorzec węższy jest CELOWO tylko dla rozpoznania (gałąź regex-only); wydobycie numeru i
+		// obcięcie prefiksu (po sklasyfikowaniu, także ze stylu LIT) używają szerszych <see cref="LetterStripPattern"/>
+		// / <see cref="LetterNumberCapture"/>, aby nie zmieniać ścieżki stylowej.
 		internal static readonly Regex LetterPattern = new(
+			$@"^{OptionalQuotePrefix}[a-z]{{1,2}}{OptionalSuperscript}\)\s*", RegexOptions.Compiled);
+
+		/// <summary>
+		/// Prefiks litery do OBCIĘCIA po sklasyfikowaniu (szerszy niż <see cref="LetterPattern"/>: obejmuje też
+		/// litery sklasyfikowane ze stylu LIT, których marker nie spełnia § 56 — np. wersalik). Nie uczestniczy
+		/// w rozpoznaniu, więc szerokość nie zwiększa liczby fałszywych trafień.
+		/// </summary>
+		internal static readonly Regex LetterStripPattern = new(
 			$@"^{OptionalQuotePrefix}[a-zA-Z]{{1,5}}{OptionalSuperscript}\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		// Półpauza – dopuszczona dla tekstu niesanityzowanego (Sanitize normalizuje ją do dywizu)
@@ -69,7 +83,11 @@ namespace WordParserCore.Services.Classify
 		internal static readonly Regex PointNumberCapture = new(
 			$@"^{OptionalQuotePrefix}(\d+[a-zA-Z]*{OptionalSuperscript})\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		/// <summary>Numer litery z grupą przechwytującą (do ParseLetterNumber).</summary>
+		/// <summary>
+		/// Numer litery z grupą przechwytującą (do ParseLetterNumber). Wzorzec PARSUJĄCY (uruchamiany po
+		/// klasyfikacji, także dla liter ze stylu LIT) jest celowo szerszy niż rozpoznający <see cref="LetterPattern"/>,
+		/// aby wydobyć numer i uniknąć pozostawienia prefiksu w treści (zasada „nie przeinaczyć", ścieżka stylowa bez zmian).
+		/// </summary>
 		internal static readonly Regex LetterNumberCapture = new(
 			$@"^{OptionalQuotePrefix}([a-zA-Z]{{1,5}}{OptionalSuperscript})\)\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 

@@ -49,7 +49,8 @@ namespace WordParserCore.Tests
         [Fact]
         public void Classify_LetterByText_NoSpace_ReturnsLetter()
         {
-            var result = Classify("abzz)Tekst litery", null);
+            // Litera bez spacji po „)"; „zz" to poprawne dwuznakowe oznaczenie (§ 56 ZTP: a…z, potem za…zz).
+            var result = Classify("zz)Tekst litery", null);
 
             Assert.Equal(ParagraphKind.Letter, result.Kind);
         }

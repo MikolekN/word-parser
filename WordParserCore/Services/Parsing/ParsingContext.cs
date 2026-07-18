@@ -60,6 +60,41 @@ namespace WordParserCore.Services.Parsing
 		public DtoTiret? CurrentTiret => TiretStack.Count > 0 ? TiretStack[^1] : null;
 
 		/// <summary>
+		/// Wciecia lewe (twips) tiretow otwartych na stosie <see cref="TiretStack"/> — lista rownolegla,
+		/// zawsze tej samej dlugosci. null gdy blok nie niosl ukladu (np. TXT). Zasila wnioskowanie
+		/// glebokosci tiretu z wciecia (§ 58 ZTP), gdy styl 2TIR/3TIR nie rozstrzyga. Utrzymywana wylacznie
+		/// przez <see cref="PushTiret"/>/<see cref="PopTiretsToDepth"/>/<see cref="ClearTiretStack"/>.
+		/// </summary>
+		public List<int?> OpenTiretIndents { get; } = new();
+
+		/// <summary>Dodaje tiret na stos wraz z jego wcieciem lewym (utrzymuje synchronizacje obu list).</summary>
+		public void PushTiret(DtoTiret tiret, int? leftIndentTwips)
+		{
+			TiretStack.Add(tiret);
+			OpenTiretIndents.Add(leftIndentTwips);
+		}
+
+		/// <summary>Zdejmuje ze stosu tirety o glebokosci >= depth (pozostawia depth-1 poziomow).</summary>
+		public void PopTiretsToDepth(int depth)
+		{
+			while (TiretStack.Count >= depth && TiretStack.Count > 0)
+			{
+				TiretStack.RemoveAt(TiretStack.Count - 1);
+				OpenTiretIndents.RemoveAt(OpenTiretIndents.Count - 1);
+			}
+		}
+
+		/// <summary>Czysci caly stos tiretow (wejscie na poziom Letter/Point/Paragraph/Article/jednostke systematyzacyjna).</summary>
+		public void ClearTiretStack()
+		{
+			TiretStack.Clear();
+			OpenTiretIndents.Clear();
+		}
+
+		/// <summary>Kolektor metadanych aktu (rodzaj/data/przedmiot) ze strefy tytulowej (§ 16-19 ZTP).</summary>
+		public DocumentMetadataCollector Metadata { get; } = new();
+
+		/// <summary>
 		/// Serwis do budowania i aktualizacji referencji strukturalnych
 		/// w kontekscie nowelizacji.
 		/// </summary>

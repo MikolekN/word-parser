@@ -55,7 +55,7 @@ namespace WordParserCore.Services.Parsing
 
 			if (HandleAmendmentFlow(context, classification, text, styleId)) return;
 
-			if (_structureProcessor.Process(context, classification, text, styleId))
+			if (_structureProcessor.Process(context, classification, text, styleId, block.Layout))
 				_amendmentManager.DetectTrigger(context, text);
 		}
 
@@ -70,6 +70,9 @@ namespace WordParserCore.Services.Parsing
 				_amendmentManager.Flush(context);
 				context.InsideAmendment = false;
 			}
+
+			// Zapisz metadane aktu zebrane ze strefy tytułowej (rodzaj/data/przedmiot → Title/ActDate).
+			context.Metadata.ApplyTo(context.Document);
 		}
 
 		// ============================================================

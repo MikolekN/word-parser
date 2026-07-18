@@ -35,7 +35,7 @@ namespace WordParserCore.Services.Parsing
 		/// Usuwa prefiks litery (np. "a) ") z tekstu.
 		/// </summary>
 		public static string StripLetterPrefix(string text)
-			=> ParagraphClassifier.LetterPattern.Replace(text.Trim(), "", 1);
+			=> ParagraphClassifier.LetterStripPattern.Replace(text.Trim(), "", 1);
 
 		/// <summary>
 		/// Usuwa prefiks tiretu (np. "– ") z tekstu.
