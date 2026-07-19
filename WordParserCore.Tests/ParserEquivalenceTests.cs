@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using WordParserCore;
 using WordParserCore.Ingest;
+using WordParserCore.Ingest.Pdf;
 using Xunit;
 
 namespace WordParserCore.Tests
@@ -98,6 +99,49 @@ namespace WordParserCore.Tests
 		{
 			// Do domknięcia w Etapie 6: bez stylu część wspólna („– …") jest dziś mylona z tiretem,
 			// a jednostki systematyzacyjne (Rozdział/Oddział) są nierozpoznane.
+		}
+
+		[Fact]
+		public void SimpleAct_PdfAndTxt_AreEquivalent()
+		{
+			// Etap 9: ten sam akt jako PDF (warstwa tekstowa, bloki z geometrii) i jako TXT
+			// musi dać równoważny model — wspólny potok, format wejścia jest tylko adapterem.
+			var lines = new[]
+			{
+				"Art. 1. Artykuł pierwszy ma tylko jeden ustęp.",
+				"Art. 2.",
+				"1. Ustęp pierwszy artykułu drugiego.",
+				"2. Ustęp drugi zawiera wyliczenie:",
+				"1) punkt pierwszy;",
+				"2) punkt drugi zawiera litery:",
+				"a) litera pierwsza,",
+				"b) litera druga.",
+			};
+
+			var pdfBuilder = new TestPdfBuilder().AddPage();
+			for (int i = 0; i < lines.Length; i++)
+				pdfBuilder.AddText(lines[i], 57, 700 - i * 14);
+			// Wariant PDF dodatkowo ZAWIJA ostatni wiersz na dwie linie (wcięcie wiszące) —
+			// ekwiwalencja musi dowodzić także sklejania kontynuacji, nie tylko markerów 1:1.
+			pdfBuilder.AddText("c) litera trzecia o treści dłuższej, która w wariancie PDF", 57, 700 - lines.Length * 14);
+			pdfBuilder.AddText("zawija się do drugiego wiersza.", 71, 700 - (lines.Length + 1) * 14);
+
+			using var pdfStream = new MemoryStream(pdfBuilder.Build());
+			var pdfModel = LegalDocumentParser.ParseBlocks(new PdfBlockReader().ReadBlocks(pdfStream));
+			var txtLines = lines.Append(
+				"c) litera trzecia o treści dłuższej, która w wariancie PDF zawija się do drugiego wiersza.");
+			var txtModel = LegalDocumentParser.ParseBlocks(ReadTxt(string.Join("\n", txtLines)));
+
+			var pdfDescription = ModelEquivalenceComparer.Describe(pdfModel);
+			var txtDescription = ModelEquivalenceComparer.Describe(txtModel);
+
+			Assert.Equal(txtDescription, pdfDescription);
+
+			// Strażnik pustej równoważności — struktura naprawdę istnieje.
+			Assert.Contains("art 1", pdfDescription);
+			Assert.Contains("lit c", pdfDescription);
+			Assert.Contains("zawija się do drugiego wiersza", pdfDescription);
+			Assert.Equal(2, pdfModel.Articles.Count());
 		}
 
 		[Fact]
