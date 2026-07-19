@@ -46,6 +46,12 @@ namespace WordParserCore.Services.Parsing
 		public StructuralAmendmentReference? Target { get; private set; }
 
 		/// <summary>
+		/// Bilans cudzysłowów zbieranej treści (granice nowelizacji bez stylów Z/*, § 94 ZTP).
+		/// Uzbrajany przy pierwszym bezstylowym bloku zaczynającym się od „; resetowany z kolektorem.
+		/// </summary>
+		public QuoteBalanceTracker QuoteTracker { get; } = new();
+
+		/// <summary>
 		/// Czy kolektor jest w trybie aktywnego zbierania
 		/// (ma wlasciciela lub zebrane akapity).
 		/// </summary>
@@ -89,6 +95,13 @@ namespace WordParserCore.Services.Parsing
 			var styleInfo = AmendmentStyleDecoder.DecodeByStyleId(styleId);
 			_paragraphs.Add(new CollectedAmendmentParagraph(text, styleId, styleInfo));
 
+			// Bilans cudzysłowów — tylko dla zbierania bezstylowego. Rozbraja wyłącznie styl ZNACZĄCY
+			// (nowelizacyjny Z/* lub rozpoznany styl ustawy matki) — domyślny styl edytora
+			// („Normalny"/„Standard") nie niesie semantyki i nie może wyłączać granic cudzysłowowych.
+			var hasMeaningfulStyle = styleInfo != null
+				|| Services.Classify.ParagraphClassifier.GetStyleType(styleId) != null;
+			QuoteTracker.Observe(text, hasStyle: hasMeaningfulStyle);
+
 			Log.Debug(
 				"AmendmentCollector: dodano akapit #{Index} (styl={StyleId}, instrument={Instrument}, cel={Target})",
 				_paragraphs.Count,
@@ -109,6 +122,7 @@ namespace WordParserCore.Services.Parsing
 			_paragraphs.Clear();
 			Owner = null;
 			Target = null;
+			QuoteTracker.Reset();
 
 			if (count > 0)
 			{

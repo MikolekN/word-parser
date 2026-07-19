@@ -100,11 +100,42 @@ namespace WordParserCore.Tests
 			// a jednostki systematyzacyjne (Rozdział/Oddział) są nierozpoznane.
 		}
 
-		[Fact(Skip = "Etap 8 — nowelizacje bez stylów Z/* (QuoteBalanceTracker + AmendmentCommandParser)")]
+		[Fact]
 		public void AmendingAct_DocxAndTxt_AreEquivalent()
 		{
-			// Do domknięcia w Etapie 8: bez stylu treść nowelizacji w cudzysłowie nie jest
-			// rozpoznawana jako IsAmendmentContent (granice wyznaczają dziś tylko triggery tekstowe).
+			// Etap 8: ten sam akt zmieniający ze stylami (Z/* wyznacza treść nowelizacji) i jako TXT
+			// (granice z bilansu cudzysłowów „…") musi dać równoważny model — łącznie z nowelizacjami.
+			var lines = new (string Text, string Style)[]
+			{
+				("Art. 1. W ustawie z dnia 6 września 2001 r. o dostępie do informacji publicznej " +
+					"(Dz. U. z 2022 r. poz. 902) wprowadza się następujące zmiany:", "ART"),
+				("1) art. 5 otrzymuje brzmienie:", "PKT"),
+				("„Art. 5. Prawo do informacji podlega ograniczeniu:", "Z/ART"),
+				("1) w zakresie tajemnic ustawowo chronionych;", "Z/PKT"),
+				("2) ze względu na prywatność osoby fizycznej.”;", "Z/PKT"),
+				("2) w art. 7 uchyla się ust. 2;", "PKT"),
+				("3) w art. 9 wyrazy „trzech dni” zastępuje się wyrazami „siedmiu dni”.", "PKT"),
+				("Art. 2. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.", "ART"),
+			};
+
+			var docxBlocks = lines.Select((l, i) => Styled(l.Text, l.Style, i)).ToList();
+			var docxModel = LegalDocumentParser.ParseBlocks(docxBlocks);
+
+			var txt = string.Join("\n", lines.Select(l => l.Text));
+			var txtModel = LegalDocumentParser.ParseBlocks(ReadTxt(txt));
+
+			var docxDescription = ModelEquivalenceComparer.Describe(docxModel);
+			var txtDescription = ModelEquivalenceComparer.Describe(txtModel);
+
+			Assert.Equal(docxDescription, txtDescription);
+
+			// Strażnik pustej równoważności: nowelizacje naprawdę istnieją i mają właściwe operacje,
+			// a końcowy artykuł aktu zmieniającego NIE został połknięty do treści nowelizacji.
+			Assert.Contains("AMENDMENT Modification obj=Article", docxDescription);
+			Assert.Contains("AMENDMENT Repeal", docxDescription);
+			Assert.Contains("plaintext | siedmiu dni", docxDescription);
+			Assert.Equal(2, docxModel.Articles.Count());
+			Assert.Equal(2, txtModel.Articles.Count());
 		}
 	}
 }

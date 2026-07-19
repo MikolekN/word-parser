@@ -16,6 +16,15 @@ namespace WordParserCore.Services.Parsing
 		private readonly AmendmentFinalizer _amendmentFinalizer = new();
 
 		/// <summary>
+		/// Komendy wyrazowe § 87 ust. 3 pkt 2-3 ZTP: „skreśla się wyrazy „X"" / „dodaje się wyrazy „Y""
+		/// (po wskazanych wyrazach). Operują na wyrazach, nie jednostkach — bez tego strażnika
+		/// „skreśla się wyrazy" tworzyłoby FAŁSZYWE uchylenie całej jednostki (RepealPattern zna „skreśla się").
+		/// </summary>
+		private static readonly System.Text.RegularExpressions.Regex WordLevelCommandPattern = new(
+			@"(?:uchyla|skreśla|dodaje)\s+się\s+wyraz",
+			System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+		/// <summary>
 		/// Aktualizuje stan nowelizacji w kontekście na podstawie wyniku klasyfikacji bieżącego akapitu.
 		/// Logika oparta na stylach:
 		/// - Styl Z/... → zawsze nowelizacja
@@ -99,8 +108,11 @@ namespace WordParserCore.Services.Parsing
 			if (classification.Kind == ParagraphKind.Unknown)
 				return false;
 
+			// ReplaceWords („wyrazy … zastępuje się wyrazami …") to od Etapu 8 pełnoprawna komenda —
+			// nowy punkt ustawy matki z taką komendą również zamyka bieżącą nowelizację (symetria z DetectTrigger).
 			return AmendmentFinalizer.ModificationPattern.IsMatch(text) ||
-				AmendmentFinalizer.RepealPattern.IsMatch(text);
+				AmendmentFinalizer.RepealPattern.IsMatch(text) ||
+				AmendmentCommandParser.ReplaceWordsPattern.IsMatch(text);
 		}
 
 		/// <summary>
@@ -165,8 +177,55 @@ namespace WordParserCore.Services.Parsing
 		/// </summary>
 		public void DetectTrigger(ParsingContext context, string text)
 		{
-			// Uchylenie — natychmiastowa nowelizacja bez treści
-			if (AmendmentFinalizer.RepealPattern.IsMatch(text))
+			// Zamiana wyrazów (§ 87-88 ZTP) analizowana PRZED uchyleniem: fraza „uchyla się" WEWNĄTRZ
+			// cytowanych wyrazów komendy zamiany („wyrazy „uchyla się" zastępuje się…") nie może
+			// przeinaczyć operacji na Repeal. Komendę zamiany wycina się z tekstu, a POZOSTAŁOŚĆ bada
+			// na obecność innych komend (prawdziwa komenda złożona) — te wygrywają jako operacja
+			// strukturalna (model ma jedną nowelizację na encję), z Warningiem dla audytu.
+			var replaceCommand = AmendmentCommandParser.Parse(text) is { Kind: AmendmentCommandKind.ReplaceWords } cmd
+				? cmd : null;
+			var structuralText = replaceCommand?.MatchedCommandText != null
+				? text.Replace(replaceCommand.MatchedCommandText, " ")
+				: text;
+
+			if (replaceCommand != null)
+			{
+				bool hasStructuralCommand = AmendmentFinalizer.RepealPattern.IsMatch(structuralText)
+					|| AmendmentFinalizer.ModificationPattern.IsMatch(structuralText);
+
+				if (!hasStructuralCommand)
+				{
+					HandleReplaceWords(context, replaceCommand);
+					return;
+				}
+
+				var compoundOwner = GetOwner(context);
+				if (compoundOwner != null)
+				{
+					ValidationReporter.AddValidationMessage(compoundOwner, ValidationLevel.Warning,
+						"Komenda złożona: zamiana wyrazów połączona z inną komendą nowelizacyjną — " +
+						"model reprezentuje tylko operację strukturalną; zamiana wyrazów pozostaje w treści komendy.");
+				}
+			}
+
+			// Komendy WYRAZOWE § 87 ust. 3 pkt 2-3 („skreśla się wyrazy „X"", „dodaje się wyrazy „Y"") —
+			// operują na wyrazach, nie jednostkach: NIE wolno ich odwzorować jako Repeal/Insertion jednostki
+			// (fałszywe uchylenie art.!). Model nie ma dla nich reprezentacji — tekst pozostaje werbatim
+			// w treści właściciela, a ślad zostawia Warning.
+			if (WordLevelCommandPattern.IsMatch(structuralText))
+			{
+				var wordCmdOwner = GetOwner(context);
+				if (wordCmdOwner != null)
+				{
+					ValidationReporter.AddValidationMessage(wordCmdOwner, ValidationLevel.Warning,
+						"Komenda wyrazowa (skreślenie/dodanie wyrazów) — nieodwzorowana jako obiekt nowelizacji; " +
+						"treść komendy zachowana werbatim.");
+				}
+				return;
+			}
+
+			// Uchylenie — natychmiastowa nowelizacja bez treści (badane na tekście bez komendy zamiany).
+			if (AmendmentFinalizer.RepealPattern.IsMatch(structuralText))
 			{
 				var owner = GetOwner(context);
 				if (owner == null)
@@ -206,6 +265,43 @@ namespace WordParserCore.Services.Parsing
 					context.AmendmentOwner?.Id ?? "brak",
 					text.Length > 80 ? text.Substring(0, 80) + "..." : text);
 			}
+		}
+
+		/// <summary>
+		/// Zamiana wyrazów (§ 87-88 ZTP): komenda kompletna w jednym akapicie (bez cytowanego bloku
+		/// po niej) → natychmiastowa nowelizacja z nowym brzmieniem wyrazów jako treścią (werbatim).
+		/// Operacja WYMUSZONA na Modification — DetectOperationType na tekście właściciela mógłby
+		/// zostać przeinaczony przez czasowniki wewnątrz cytowanych wyrazów („dodaje się"/„uchyla się").
+		/// </summary>
+		private void HandleReplaceWords(ParsingContext context, AmendmentCommand command)
+		{
+			var owner = GetOwner(context);
+			if (owner == null)
+			{
+				Log.Warning("Zamiana wyrazów: brak właściciela");
+				return;
+			}
+
+			var collector = context.AmendmentCollector;
+			if (collector.IsCollecting && collector.Count > 0)
+			{
+				Log.Warning("Zamiana wyrazów wykryta podczas aktywnego zbierania nowelizacji; " +
+					"finalizacja poprzedniej (owner={OwnerId})", collector.Owner?.Id ?? "brak");
+				Flush(context);
+			}
+
+			var target = context.DetectedAmendmentTargets.TryGetValue(owner.Guid, out var t) ? t : null;
+			collector.Begin(owner, target);
+
+			var content = new AmendmentContent
+			{
+				ObjectType = AmendmentObjectType.None,
+				PlainText = command.NewWording,
+			};
+			_amendmentFinalizer.Finalize(new AmendmentFinalizerInput(content, collector, context,
+				AmendmentOperationType.Modification));
+
+			collector.Reset();
 		}
 
 		/// <summary>

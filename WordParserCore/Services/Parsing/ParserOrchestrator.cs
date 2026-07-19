@@ -144,15 +144,32 @@ namespace WordParserCore.Services.Parsing
 			// przed wywolaniem UpdateState. Jesli wlasnie weszlismy (wasInsideAmendment=false),
 			// to jestesmy przy pierwszym akapicie tresci — nie wolno go natychmiast wyrzucic,
 			// nawet jesli jego tekst zawiera zwrot nowelizacyjny (np. "w brzmieniu").
+			var quoteTracker = context.AmendmentCollector.QuoteTracker;
 			if (wasInsideAmendment && _amendmentManager.ShouldExitForNewParentLawTrigger(context, classification, text))
 			{
-				_amendmentManager.Flush(context);
-				context.InsideAmendment = false;
+				if (quoteTracker.IsInsideQuote)
+				{
+					// Komenda nowelizacyjna WEWNATRZ otwartego cytatu to nowelizacja zagniezdzona (ZZ) —
+					// cytat trwa; bez stylow nie da sie jej rozlozyc (Warning przy finalizacji).
+					quoteTracker.MarkNestedTrigger();
+				}
+				else
+				{
+					_amendmentManager.Flush(context);
+					context.InsideAmendment = false;
+				}
 			}
 
 			if (classification.IsAmendmentContent || context.InsideAmendment)
 			{
 				_amendmentManager.Collect(context, text, styleId);
+
+				// Bilans cudzyslowow domknal cytowana tresc („…") — koniec nowelizacji bez stylow (§ 94 ZTP).
+				if (quoteTracker.ClosureReached)
+				{
+					_amendmentManager.Flush(context);
+					context.InsideAmendment = false;
+				}
 				return true;
 			}
 			return false;
