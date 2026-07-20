@@ -21,8 +21,10 @@ namespace WordParserCore.Tests
 			var tempPath = TestFiles.CreateTemporaryCopy(TestFiles.GetReferenceDocPath("doc001.docx"));
 			try
 			{
-				var document = LegalDocumentParser.Parse(tempPath);
-				return CanonicalDtoXmlSerializer.Serialize(document);
+				// AlwaysParse: siatka regresyjna PARSERA ma być niezależna od progów klasyfikatora —
+				// zmiana punktacji klasyfikacji nie może wyzerować snapshotu (Document = null).
+				var result = LegalDocumentParser.Parse(tempPath, new ParseOptions { Policy = ParsePolicy.AlwaysParse });
+				return CanonicalDtoXmlSerializer.Serialize(result.Document!);
 			}
 			finally
 			{

@@ -1,157 +1,232 @@
-﻿using System.IO.Packaging;
-using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using ModelDto;
 using ModelDto.EditorialUnits;
 using Serilog;
 using WordParserCore;
+using WordParserCore.Exceptions;
+using WordParserCore.Ingest;
 using WordParserCore.Services.Converters;
 
 namespace WordParser
 {
     class Program
     {
-        static void Main(string[] args)
+        // Kody wyjścia: 0 = OK; 1 = błąd wejścia/parsowania; 2 = dokument nierozpoznany jako akt prawny (bez --force).
+        private const int ExitOk = 0;
+        private const int ExitError = 1;
+        private const int ExitNotLegalAct = 2;
+
+        static int Main(string[] args)
         {
             LoggerConfig.ConfigureLogger();
 
             try
             {
-            if (args.Length < 2)
-            {
-                Console.WriteLine("Użycie: WordParser --docx <nazwa-pliku> [--dump <plik.xml>]");
-                return;
-            }
-
-            string option = args[0];
-            string filePath = args[1];
-
-            // Opcjonalny kanoniczny zrzut modelu do porównań regresyjnych (diff przed/po zmianach parsera)
-            string? dumpPath = null;
-            int dumpFlagIndex = Array.IndexOf(args, "--dump", 2);
-            if (dumpFlagIndex >= 0)
-            {
-                if (dumpFlagIndex + 1 >= args.Length)
-                {
-                    Console.WriteLine("Brak ścieżki pliku po --dump. Użycie: WordParser --docx <nazwa-pliku> [--dump <plik.xml>]");
-                    return;
-                }
-                dumpPath = args[dumpFlagIndex + 1];
-            }
-
-            if (!File.Exists(filePath))
-            {
-                Console.WriteLine("Plik nie istnieje.");
-                return;
-            } else
-            {
-                string directoryName = Path.GetDirectoryName(filePath) ?? string.Empty;
-                if (directoryName == null)
-                {
-                    Console.WriteLine("Nie można uzyskać katalogu z podanej ścieżki pliku.");
-                    return;
-                }
-                string backupDirectory = directoryName;
-
-                string backupFileName = Path.GetFileNameWithoutExtension(filePath) + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(filePath);
-                string backupFilePath = Path.Combine(backupDirectory, backupFileName);
-
-                // overwrite: dwa uruchomienia w tej samej sekundzie (np. skrypt diffujący --dump przed/po)
-                // dają identyczną nazwę kopii — bez nadpisania drugie kończyłoby się IOException
-                File.Copy(filePath, backupFilePath, true);
-                filePath = backupFilePath;
-
-                if (option == "--docx")
-                {
-                    var document = LegalDocumentParser.Parse(filePath);
-                    PrintDocument(document);
-
-                    if (dumpPath != null)
-                    {
-                        try
-                        {
-                            File.WriteAllText(dumpPath, CanonicalDtoXmlSerializer.Serialize(document));
-                            Console.WriteLine($"Zapisano kanoniczny zrzut modelu: {dumpPath}");
-                        }
-                        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
-                        {
-                            Console.WriteLine($"Nie udało się zapisać zrzutu modelu do '{dumpPath}': {ex.Message}");
-                            Environment.ExitCode = 1;
-                        }
-                    }
-                }
-            
-                // using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, true))
-                // {
-                //     wordDoc.CompressionOption = CompressionOption.Maximum;
-                    
-                //     {
-                //         var legalAct = new WordParserCore.LegalAct(wordDoc);
-
-                //         // Usuwanie komentarzy autora 'System'
-                //         legalAct.CommentManager.RemoveSystemComments();
-
-                //         if (option == "--hyperlinks")
-                //         {
-                //             int commentCount = legalAct.DocumentProcessor.ParseHyperlinks();
-                //             Console.WriteLine($"Liczba dodanych komentarzy: {commentCount}");
-                //         }
-                //         else if (option == "--formatting")
-                //         {
-                //             legalAct.DocumentProcessor.CleanParagraphProperties();
-                //             legalAct.DocumentProcessor.MergeRuns();
-                //             legalAct.DocumentProcessor.MergeTexts();
-                //         }
-                //         else if (option == "--generatexml")
-                //         {
-                //             legalAct.XmlGenerator.Generate();
-                //             //legalAct.SaveAmendmentList();
-                //             legalAct.CommentManager.CommentErrors(legalAct);
-                //         }
-                //         else if (option == "--createAmendmentsTable")
-                //         {
-                //             using var stream = legalAct.XlsxGenerator.GenerateXlsx();
-                //             string xlsxFileName = Path.GetFileNameWithoutExtension(filePath) + "_amendments.xlsx";
-                //             string xlsxFilePath = Path.Combine(directoryName, xlsxFileName);
-
-                //             using (var fileStream = File.Create(xlsxFilePath))
-                //             {
-                //                 stream.CopyTo(fileStream);
-                //             }
-
-                //             Console.WriteLine($"Utworzono plik: {xlsxFilePath}");
-                //         }
-                //         else
-                //         {
-                //             Console.WriteLine("Nieznany przełącznik. Użycie: WordParser --hyperlinks|--formatting <nazwa-pliku>");
-                //         }
-                //         string newFileName = Path.GetFileName(filePath);
-                        
-                //         string copiesDirectory = Path.Combine(directoryName, "kopie");
-                //         if (!Directory.Exists(copiesDirectory))
-                //         {
-                //             Directory.CreateDirectory(copiesDirectory);
-                //         }
-                //         string newFilePath = Path.Combine(copiesDirectory, newFileName);
-
-                //         // Zapisz dokument pod nową nazwą
-                //         legalAct.SaveAs(newFilePath);
-                //     }
-                // }
-                // System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                // {
-                //     FileName = filePath,
-                //     UseShellExecute = true
-                // });
-            }
-            //Console.ReadLine(); 
+                return Run(args);
             }
             finally
             {
                 Log.CloseAndFlush();
             }
         }
+
+        private static int Run(string[] args)
+        {
+            var cli = CliArguments.Parse(args, out string? argumentError);
+            if (argumentError != null || cli is null)
+            {
+                if (argumentError != null)
+                {
+                    Console.WriteLine(argumentError);
+                }
+                PrintUsage();
+                return ExitError;
+            }
+
+            if (!File.Exists(cli.FilePath))
+            {
+                Console.WriteLine($"Plik nie istnieje: {cli.FilePath}");
+                return ExitError;
+            }
+
+            string filePath = cli.FilePath;
+            if (cli.LegacyDocxMode)
+            {
+                // Tryb legacy --docx: zachowana dotychczasowa kopia zapasowa obok pliku
+                // (historycznie parser modyfikował dokument). Nowe ścieżki czytają read-only, bez kopii.
+                var backupPath = CreateLegacyBackup(filePath);
+                if (backupPath is null)
+                {
+                    return ExitError;
+                }
+                filePath = backupPath;
+            }
+
+            var options = new ParseOptions
+            {
+                // Tryb legacy nigdy nie klasyfikował — parsuje zawsze (nie łamiemy istniejących skryptów).
+                Policy = cli.Force || cli.LegacyDocxMode ? ParsePolicy.AlwaysParse : ParsePolicy.ParseWhenLegalAct,
+                ForcedFormat = cli.Format ?? (cli.LegacyDocxMode ? SourceFormat.Docx : null),
+            };
+
+            ParseResult result;
+            try
+            {
+                result = LegalDocumentParser.Parse(filePath, options);
+            }
+            catch (ScannedPdfException ex)
+            {
+                Console.WriteLine($"PDF bez użytecznej warstwy tekstowej (skan?): {ex.Message}");
+                return ExitError;
+            }
+            catch (UnsupportedDocumentFormatException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ExitError;
+            }
+            catch (OpenXmlPackageException ex)
+            {
+                Console.WriteLine($"Plik nie jest poprawnym dokumentem Word (DOCX): {ex.Message}");
+                return ExitError;
+            }
+            catch (ParsingException ex)
+            {
+                Console.WriteLine($"Błąd parsowania: {ex.Message}");
+                return ExitError;
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"Błąd odczytu pliku: {ex.Message}");
+                return ExitError;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine($"Brak uprawnień do odczytu pliku: {ex.Message}");
+                return ExitError;
+            }
+
+            // Tryb legacy zachowuje dotychczasowy format stdout (skrypty diffujące/grepujące
+            // wyjście --docx) — raport klasyfikacji drukują tylko nowe wywołania.
+            if (!cli.LegacyDocxMode)
+            {
+                PrintClassificationReport(result);
+            }
+
+            if (result.Document is null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Dokument nie został sparsowany. Użyj --force, aby sparsować mimo wszystko.");
+                return ExitNotLegalAct;
+            }
+
+            if (!cli.LegacyDocxMode)
+            {
+                Console.WriteLine();
+            }
+            PrintDocument(result.Document);
+
+            if (cli.DumpPath != null)
+            {
+                return WriteDump(result.Document, cli.DumpPath);
+            }
+
+            return ExitOk;
+        }
+
+        private static void PrintUsage()
+        {
+            Console.WriteLine("Użycie:");
+            Console.WriteLine("  WordParser <plik> [--format docx|pdf|txt] [--force] [--dump <plik.xml>]");
+            Console.WriteLine("  WordParser --docx <plik> [--dump <plik.xml>]   (tryb legacy: kopia zapasowa + parsowanie bez klasyfikacji)");
+            Console.WriteLine();
+            Console.WriteLine("Kody wyjścia: 0 = OK; 1 = błąd; 2 = dokument nierozpoznany jako akt prawny (bez --force).");
+        }
+
+        /// <summary>Kopia zapasowa w trybie legacy --docx; zwraca ścieżkę kopii albo null przy błędzie.</summary>
+        private static string? CreateLegacyBackup(string filePath)
+        {
+            string directoryName = Path.GetDirectoryName(filePath) ?? string.Empty;
+
+            string backupFileName = Path.GetFileNameWithoutExtension(filePath) + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(filePath);
+            string backupFilePath = Path.Combine(directoryName, backupFileName);
+
+            try
+            {
+                // overwrite: dwa uruchomienia w tej samej sekundzie (np. skrypt diffujący --dump przed/po)
+                // dają identyczną nazwę kopii — bez nadpisania drugie kończyłoby się IOException
+                File.Copy(filePath, backupFilePath, true);
+                return backupFilePath;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Console.WriteLine($"Nie udało się utworzyć kopii zapasowej '{backupFilePath}': {ex.Message}");
+                return null;
+            }
+        }
+
+        private static int WriteDump(LegalDocument document, string dumpPath)
+        {
+            try
+            {
+                File.WriteAllText(dumpPath, CanonicalDtoXmlSerializer.Serialize(document));
+                Console.WriteLine($"Zapisano kanoniczny zrzut modelu: {dumpPath}");
+                return ExitOk;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
+            {
+                Console.WriteLine($"Nie udało się zapisać zrzutu modelu do '{dumpPath}': {ex.Message}");
+                return ExitError;
+            }
+        }
+
+        // ============================================================
+        // Raport klasyfikacji
+        // ============================================================
+
+        private static void PrintClassificationReport(ParseResult result)
+        {
+            var c = result.Classification;
+
+            Console.WriteLine("── Klasyfikacja dokumentu ──");
+            Console.WriteLine($"Format źródłowy: {FormatLabel(result.SourceFormat)}, bloków: {result.BlockCount}");
+            Console.WriteLine(c.IsLegalAct
+                ? $"Rozpoznano akt prawny: {c.ActType?.ToFriendlyString() ?? "rodzaj nieokreślony"} (pewność {c.Confidence}/100)"
+                : $"Nie rozpoznano aktu prawnego (pewność {c.Confidence}/100)");
+
+            if (c.IsConsolidatedText)
+            {
+                Console.WriteLine("Tekst jednolity: tak");
+            }
+            if (c.IsAmending)
+            {
+                Console.WriteLine("Akt zmieniający: tak");
+            }
+
+            Console.WriteLine(c.Justification);
+
+            const int maxSignals = 8;
+            foreach (var signal in c.Signals.Take(maxSignals))
+            {
+                string evidence = string.IsNullOrEmpty(signal.MatchedText) ? string.Empty : $" — „{signal.MatchedText}”";
+                Console.WriteLine($"  [{signal.Score,3}] {signal.Description}{evidence}");
+            }
+            if (c.Signals.Count > maxSignals)
+            {
+                Console.WriteLine($"  … oraz {c.Signals.Count - maxSignals} dalszych sygnałów.");
+            }
+        }
+
+        private static string FormatLabel(SourceFormat format) => format switch
+        {
+            SourceFormat.Docx => "DOCX",
+            SourceFormat.Pdf => "PDF",
+            SourceFormat.PlainText => "TXT",
+            _ => "nieznany",
+        };
+
+        // ============================================================
+        // Wydruk modelu dokumentu
+        // ============================================================
 
         private static void PrintDocument(LegalDocument document)
         {
@@ -432,6 +507,99 @@ namespace WordParser
             }
 
             return content.Length <= maxLength ? content : content.Substring(0, maxLength);
+        }
+    }
+
+    /// <summary>Argumenty CLI. Formy: „&lt;plik&gt; [--format …] [--force] [--dump …]" oraz legacy „--docx &lt;plik&gt;".</summary>
+    sealed class CliArguments
+    {
+        public required string FilePath { get; init; }
+        public bool LegacyDocxMode { get; init; }
+        public bool Force { get; init; }
+        public SourceFormat? Format { get; init; }
+        public string? DumpPath { get; init; }
+
+        public static CliArguments? Parse(string[] args, out string? error)
+        {
+            error = null;
+
+            string? filePath = null;
+            bool legacyDocx = false;
+            bool force = false;
+            SourceFormat? format = null;
+            string? dumpPath = null;
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                switch (args[i])
+                {
+                    case "--docx":
+                        legacyDocx = true;
+                        break;
+
+                    case "--force":
+                        force = true;
+                        break;
+
+                    case "--format":
+                        if (++i >= args.Length)
+                        {
+                            error = "Brak wartości po --format (oczekiwane: docx, pdf lub txt).";
+                            return null;
+                        }
+                        format = args[i].ToLowerInvariant() switch
+                        {
+                            "docx" => SourceFormat.Docx,
+                            "pdf" => SourceFormat.Pdf,
+                            "txt" => SourceFormat.PlainText,
+                            _ => null,
+                        };
+                        if (format is null)
+                        {
+                            error = $"Nieznany format '{args[i]}' (oczekiwane: docx, pdf lub txt).";
+                            return null;
+                        }
+                        break;
+
+                    case "--dump":
+                        if (++i >= args.Length)
+                        {
+                            error = "Brak ścieżki pliku po --dump.";
+                            return null;
+                        }
+                        dumpPath = args[i];
+                        break;
+
+                    default:
+                        if (args[i].StartsWith("--", StringComparison.Ordinal))
+                        {
+                            error = $"Nieznany przełącznik: {args[i]}";
+                            return null;
+                        }
+                        if (filePath != null)
+                        {
+                            error = $"Nadmiarowy argument: {args[i]} (plik został już wskazany: {filePath}).";
+                            return null;
+                        }
+                        filePath = args[i];
+                        break;
+                }
+            }
+
+            if (filePath is null)
+            {
+                error = args.Length == 0 ? null : "Nie wskazano pliku do sparsowania.";
+                return null;
+            }
+
+            return new CliArguments
+            {
+                FilePath = filePath,
+                LegacyDocxMode = legacyDocx,
+                Force = force,
+                Format = format,
+                DumpPath = dumpPath,
+            };
         }
     }
 }

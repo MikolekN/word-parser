@@ -11,13 +11,38 @@ namespace WordParserCore.Tests
 		private static string GetTemporaryCopyPath(string fileName)
 			=> TestFiles.CreateTemporaryCopy(TestFiles.GetReferenceDocPath(fileName));
 
+		// AlwaysParse: testy referencyjne parsera niezależne od progów klasyfikatora dokumentu.
+		private static ModelDto.LegalDocument ParseDocument(string tempPath)
+			=> LegalDocumentParser.Parse(tempPath, new ParseOptions { Policy = ParsePolicy.AlwaysParse }).Document!;
+
+		[Fact]
+		public void ReferenceAct_DefaultPolicy_IsRecognizedAsLegalAct()
+		{
+			// Strażnik fałszywego negatywu na REALNYM akcie: zmiana punktacji/progów klasyfikatora,
+			// która odrzuciłaby doc001 przy domyślnej polityce (Document=null, CLI exit 2),
+			// musi być widoczna w siatce — testy syntetyczne tego nie łapią.
+			var tempPath = GetTemporaryCopyPath("doc001.docx");
+			try
+			{
+				var result = LegalDocumentParser.Parse(tempPath);
+
+				Assert.True(result.Classification.IsLegalAct,
+					$"doc001 nierozpoznany jako akt: {result.Classification.Justification}");
+				Assert.NotNull(result.Document);
+			}
+			finally
+			{
+				File.Delete(tempPath);
+			}
+		}
+
 		[Fact]
 		public void ReferenceAct_ContainsAtLeastOneArticle()
 		{
 			var tempPath = GetTemporaryCopyPath("doc001.docx");
 			try
 			{
-				var document = LegalDocumentParser.Parse(tempPath);
+				var document = ParseDocument(tempPath);
 
 				Assert.True(document.Articles.Any());
 			}
@@ -33,7 +58,7 @@ namespace WordParserCore.Tests
 			var tempPath = GetTemporaryCopyPath("doc001.docx");
 			try
 			{
-				var document = LegalDocumentParser.Parse(tempPath);
+				var document = ParseDocument(tempPath);
 
 				var paragraph = document.Articles
 					.SelectMany(a => a.Paragraphs)

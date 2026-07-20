@@ -44,6 +44,13 @@ namespace WordParserCore.Services.Parsing
 			if (block.IsEmpty)
 				return;
 
+			// Kontrakt adapterów (PdfBlockReader): bloki przypisów NIE są treścią jednostek
+			// redakcyjnych — bez tego filtra przypis „1) Niniejsza ustawa…" z dołu strony PDF
+			// zostałby sklasyfikowany tekstowo jako punkt 1) i przeinaczył treść aktu.
+			// Klasyfikator dokumentu czyta je osobno (sygnały TJ) — z pełnej listy bloków.
+			if (block.Role == BlockRole.FootnoteText)
+				return;
+
 			var text    = block.Text.Sanitize().Trim();
 			var styleId = block.StyleId;
 

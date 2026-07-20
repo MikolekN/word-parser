@@ -78,6 +78,13 @@ namespace ModelDto
         public JournalInfo SourceJournal { get; set; } = new();
 
         /// <summary>
+        /// Raport klasyfikacji dokumentu (rodzaj aktu wg ZTP, pewność, sygnały) — ustawiany
+        /// przez kopertę Parse, gdy klasyfikacja została wykonana. Null, gdy model zbudowano
+        /// z pominięciem klasyfikacji. Nie wpływa na strukturę ani serializację kanoniczną.
+        /// </summary>
+        public DocumentClassificationResult? Classification { get; set; }
+
+        /// <summary>
         /// Pierwsza (najwyższa) jednostka systematyzująca w akcie (Część).
         /// Zawsze zawiera minimalną pełną hierarchię od Części do Oddziału.
         /// Parser oznacza jednostki obecne w tekście jako IsImplicit = false.

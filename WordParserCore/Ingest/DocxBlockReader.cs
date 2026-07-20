@@ -25,8 +25,62 @@ namespace WordParserCore.Ingest
 
 		public IReadOnlyList<DocumentBlock> ReadBlocks(Stream stream)
 		{
-			using var wordDocument = WordprocessingDocument.Open(stream, false);
-			return ReadBlocks(wordDocument);
+			ArgumentNullException.ThrowIfNull(stream);
+			if (stream.CanSeek)
+				stream.Position = 0;
+
+			GuardDeclaredArchiveSize(stream);
+
+			try
+			{
+				using var wordDocument = WordprocessingDocument.Open(stream, false);
+				return ReadBlocks(wordDocument);
+			}
+			catch (Exception ex) when (ex is OpenXmlPackageException or FileFormatException
+				or InvalidDataException or System.Xml.XmlException)
+			{
+				// Parytet kontraktu z PdfBlockReader: uszkodzony/nieoczekiwany kontener ma jeden,
+				// przewidywalny typ wyjątku — inaczej FileFormatException (FormatException!) ominąłby
+				// obsługę błędów CLI/Web i kończył się surowym stack trace / HTTP 500.
+				throw new UnsupportedDocumentFormatException(
+					"Plik nie jest poprawnym dokumentem Word (DOCX) — kontener jest uszkodzony lub ma nieoczekiwaną zawartość.", ex);
+			}
+		}
+
+		/// <summary>
+		/// Strażnik przed bombami dekompresyjnymi: suma DEKLAROWANYCH rozmiarów wpisów ZIP
+		/// (katalog centralny, bez dekompresji) nie może przekroczyć limitu — OpenXml materializuje
+		/// części pakietu w pamięci. Deklaracje mogą kłamać, więc strażnik odcina naiwne bomby
+		/// i przypadkowe olbrzymy; nie zastępuje limitów pamięci hosta.
+		/// </summary>
+		private static void GuardDeclaredArchiveSize(Stream stream)
+		{
+			const long maxDeclaredUncompressedBytes = 512L * 1024 * 1024;
+
+			try
+			{
+				using var archive = new System.IO.Compression.ZipArchive(
+					stream, System.IO.Compression.ZipArchiveMode.Read, leaveOpen: true);
+
+				long totalDeclared = 0;
+				foreach (var entry in archive.Entries)
+				{
+					totalDeclared += entry.Length;
+					if (totalDeclared > maxDeclaredUncompressedBytes)
+						throw new UnsupportedDocumentFormatException(
+							$"Dokument DOCX deklaruje ponad {maxDeclaredUncompressedBytes / (1024 * 1024)} MB danych po dekompresji — odmowa przetworzenia.");
+				}
+			}
+			catch (InvalidDataException ex)
+			{
+				throw new UnsupportedDocumentFormatException(
+					"Plik nie jest poprawnym dokumentem Word (DOCX) — archiwum jest uszkodzone.", ex);
+			}
+			finally
+			{
+				if (stream.CanSeek)
+					stream.Position = 0;
+			}
 		}
 
 		public IReadOnlyList<DocumentBlock> ReadBlocks(WordprocessingDocument wordDocument)
