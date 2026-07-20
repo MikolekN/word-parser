@@ -154,6 +154,47 @@ namespace WordParserCore.Tests
 			Assert.True(result.IsAmending);
 		}
 
+		[Fact]
+		public void Classify_TitleCaseStatuteHeader_IsMatched_AndLiftsShortAmendingStatuteOffThreshold()
+		{
+			// Realny format szczotek RCL (walidacja korpusu 2320 aktów): nagłówek to „Ustawa"
+			// (kapitalizacja tytułowa), nie wersaliki „USTAWA". Krótka ustawa podwójnie zmieniająca
+			// (2 artykuły) BEZ sygnału nagłówka lądowała dokładnie na progu conf=40 — o krok od
+			// nieparsowania przy domyślnej polityce. Nagłówek „Ustawa" musi być rozpoznany.
+			var result = Classify(
+				"Ustawa",
+				"z dnia 5 grudnia 2024 r.",
+				"zmieniająca ustawę o zmianie ustawy o prawie autorskim i prawach pokrewnych oraz ustawy o grach hazardowych",
+				"Art. 1. W ustawie z dnia 11 września 2015 r. o zmianie ustawy o prawie autorskim (Dz. U. poz. 1639) w art. 5 wprowadza się zmiany.",
+				"Art. 2. Ustawa wchodzi w życie z dniem 1 stycznia 2025 r.");
+
+			Assert.True(result.IsLegalAct);
+			Assert.Equal(LegalActType.AmendingStatute, result.ActType);
+			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.ActKindHeader);
+			// Z nagłówkiem (+35) wynik jest wyraźnie ponad progiem 40 — nie wisi na krawędzi.
+			Assert.True(result.Confidence >= 60, $"Pewność: {result.Confidence}");
+		}
+
+		[Fact]
+		public void Classify_TitleCaseRegulationHeader_IsMatched()
+		{
+			// Analogicznie dla rozporządzenia: słowo kluczowe „Rozporządzenie" (kapitalizacja tytułowa),
+			// organ w osobnym wierszu WIELKIMI (grupa organu pozostaje wielkoliterowa).
+			var result = Classify(
+				"Rozporządzenie",
+				"MINISTRA FINANSÓW",
+				"z dnia 12 czerwca 2023 r.",
+				"w sprawie szczegółowych zasad rachunkowości",
+				"Na podstawie art. 50 ust. 1 ustawy z dnia 29 września 1994 r. o rachunkowości zarządza się, co następuje:",
+				"§ 1. Rozporządzenie określa zasady rachunkowości.",
+				"§ 2. Ilekroć w rozporządzeniu jest mowa o jednostce, rozumie się przez to podmiot.",
+				"§ 3. Rozporządzenie wchodzi w życie z dniem 1 stycznia 2024 r.");
+
+			Assert.True(result.IsLegalAct);
+			Assert.Equal(LegalActType.Regulation, result.ActType);
+			Assert.Contains(result.Signals, s => s.Kind == DocumentSignalKind.ActKindHeader);
+		}
+
 		// ============================================================
 		// Negatywy — nie rozpoznano rodzaju aktu
 		// ============================================================

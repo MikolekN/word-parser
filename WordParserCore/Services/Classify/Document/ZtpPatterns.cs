@@ -12,13 +12,24 @@ namespace WordParserCore.Services.Classify.Document
 	{
 		// === STREFA TYTUŁOWA (§ 16-19, § 96, § 102, § 120, § 138a) — dopasowanie do całej linii po Trim() ===
 
-		/// <summary>§ 16: samodzielny wiersz „USTAWA" (tolerancja rozstrzelenia „U S T A W A").</summary>
+		/// <summary>
+		/// § 16: samodzielny wiersz „USTAWA" (tolerancja rozstrzelenia „U S T A W A").
+		/// IgnoreCase celowo: szczotki RCL renderują nagłówek jako „Ustawa" (kapitalizacja tytułowa),
+		/// a wersaliki NIE są tu wiarygodnym sygnałem — walidacja korpusu (2320 aktów) wykazała, że
+		/// forma „Ustawa" jest w praktyce dominująca. Wzorzec jest zakotwiczony na CAŁYM bloku
+		/// (^…$), więc słowo „ustawa" w treści zdania nigdy nie stanowi całego akapitu → brak fałszywek.
+		/// </summary>
 		internal static readonly Regex StatuteHeaderPattern = new(
-			@"^U\s*S\s*T\s*A\s*W\s*A$", RegexOptions.Compiled);
+			@"^U\s*S\s*T\s*A\s*W\s*A$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		/// <summary>§ 120: „ROZPORZĄDZENIE" + opcjonalnie organ WIELKIMI w tej samej linii.</summary>
+		/// <summary>
+		/// § 120: „ROZPORZĄDZENIE" (także kapitalizacja tytułowa „Rozporządzenie" ze szczotek RCL)
+		/// + opcjonalnie organ WIELKIMI w tej samej linii. Bez blankietowego IgnoreCase: grupa organu
+		/// musi pozostać wielkoliterowa (odróżnia nazwę organu od prozy), więc wariant wielkości liter
+		/// dotyczy tylko słowa kluczowego — spójnie z nagłówkami uchwały/zarządzenia.
+		/// </summary>
 		internal static readonly Regex RegulationHeaderPattern = new(
-			@"^ROZPORZĄDZENIE(?:\s+(?<organ>[A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ\s\-,\.]+))?$", RegexOptions.Compiled);
+			@"^(?:ROZPORZĄDZENIE|Rozporządzenie)(?:\s+(?<organ>[A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ\s\-,\.]+))?$", RegexOptions.Compiled);
 
 		/// <summary>
 		/// § 102: nagłówek obwieszczenia (w tym tekstu jednolitego). Dopuszcza wersaliki „OBWIESZCZENIE",
