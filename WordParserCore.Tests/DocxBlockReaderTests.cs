@@ -7,8 +7,8 @@ namespace WordParserCore.Tests
 {
 	/// <summary>
 	/// Testy adaptera DOCX → IR (DocxBlockReader.ToBlock), w szczególności ekstrakcji
-	/// metadanych układu (Etap 3 planu). Layout jest addytywny — żaden etap go jeszcze
-	/// nie konsumuje, więc snapshot doc001 pozostaje bez zmian; tu weryfikujemy sam odczyt.
+	/// metadanych układu. Layout konsumuje dziś wnioskowanie głębokości tiretu
+	/// (StructureProcessor.GetTiretDepth, gdy styl 2TIR/3TIR nie rozstrzyga); tu weryfikujemy sam odczyt.
 	/// </summary>
 	public class DocxBlockReaderTests
 	{

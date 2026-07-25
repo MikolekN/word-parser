@@ -7,10 +7,9 @@ namespace WordParserCore.Tests
 	/// Testy CHARAKTERYZUJĄCE obecne zachowanie klasyfikatora dla akapitów BEZ stylu szablonu
 	/// (styleId = null albo styl nierozpoznany, np. "Normal" z DOCX bez szablonu).
 	///
-	/// Siatka bezpieczeństwa przebudowy (docs/plan-uniwersalne-wejscie.md, Etap 0):
-	/// część utrwalonych tu zachowań to ZNANE LUKI gałęzi bezstylowej, które będą świadomie
-	/// zmieniane w Etapach 6-8 — każda zmiana wyniku wymaga jawnej aktualizacji tego pliku
-	/// z uzasadnieniem ZTP w opisie PR, nigdy "przy okazji".
+	/// Część utrwalonych tu zachowań to ZNANE LUKI gałęzi bezstylowej (rejestr: docs/backlog.md,
+	/// sekcja 1) — nie błędy do „naprawienia przy okazji". Każda zmiana wyniku wymaga jawnej
+	/// aktualizacji tego pliku z uzasadnieniem ZTP w opisie PR.
 	/// </summary>
 	public class ParagraphClassifierStylelessTests
 	{
@@ -78,7 +77,7 @@ namespace WordParserCore.Tests
 		{
 			// UWAGA: dokumentuje obecne BŁĘDNE zachowanie — część wspólna wyliczenia
 			// ("– przepisy stosuje się odpowiednio.") bez stylu CZ_WSP_* wpada w TiretPattern.
-			// Zmiana planowana w Etapie 6a (IsWrapUpByText w gałęzi bezstylowej + kontekst listy).
+			// Luka świadomie odłożona — powód i warunki domknięcia: docs/backlog.md, sekcja 1.
 			var result = Classify("- przepisy stosuje się odpowiednio.");
 
 			Assert.Equal(ParagraphKind.Tiret, result.Kind);
