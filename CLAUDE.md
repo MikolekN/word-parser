@@ -113,6 +113,7 @@ Reguła decyzyjna: twardy wymóg dwóch zgodnych sygnałów dotyczy głównie ro
 - **Wzorce regex**: deklaruj jako `private static readonly Regex`, prekompilowane. Wzorce muszą obsługiwać opcjonalny prefiks cudzysłowu dla treści nowelizacji.
 - **Logowanie**: używaj Serilog (konfigurowanego przez `LoggerConfig.ConfigureLogger()`); minimalny poziom Warning. Logi trafiają do `logs/log.txt` i na konsolę.
 - **Komunikaty commitów**: proponuj nazwy commitów po **angielsku** po każdej zmianie (zarówno małej jak i architektonicznej).
+- **Dokumentacja i plany**: wersjonowany katalog `docs/` trzyma wyłącznie dokumenty opisujące **stan i uzasadnienia** — `architecture.md` (w tym sekcja „Decyzje architektoniczne"), `backlog.md` (znane luki i prace świadomie odroczone), `ztp-struktura-aktow.md` (kondensat ZTP). Plany przebudowy, analizy i raporty robocze powstają w `docs/internal/` (gitignorowane), nigdy w wersjonowanym `docs/`. Po wykonaniu planu wygaś go trójpodziałem: „dlaczego" i zasady twarde → `architecture.md`, niezrealizowane/odroczone → `backlog.md`, etapowanie i definicje ukończenia → usuń (historia jest w `git log`). Każde twierdzenie przepisywane z planu **zweryfikuj w kodzie** — plany opisują stan z dnia ich napisania i po drodze dryfują.
 - **Walidacja**: dołączaj obiekty `ValidationMessage` (Info/Warning/Error/Critical) do encji DTO dla akapitów o niepewnej lub naprawionej klasyfikacji.
 
 ## Testy
