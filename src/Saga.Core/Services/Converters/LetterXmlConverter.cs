@@ -1,9 +1,9 @@
 using System.Xml.Linq;
-using ModelDto.EditorialUnits;
-using static WordParserCore.XLinqWrappers;
-using static WordParserCore.Services.Converters.CommonPartXmlConverter;
+using Saga.Model.EditorialUnits;
+using static Saga.Core.XLinqWrappers;
+using static Saga.Core.Services.Converters.CommonPartXmlConverter;
 
-namespace WordParserCore.Services.Converters
+namespace Saga.Core.Services.Converters
 {
     /// <summary>
     /// Konwertuje model Letter na element XML.

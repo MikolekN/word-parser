@@ -1,4 +1,4 @@
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Pojedynczy wiersz źródłowy przed złożeniem w blok. Wspólna jednostka wejścia

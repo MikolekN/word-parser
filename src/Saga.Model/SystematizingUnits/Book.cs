@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ModelDto.SystematizingUnits
+namespace Saga.Model.SystematizingUnits
 {
     /// <summary>
     /// Jednostka systematyzująca: księga

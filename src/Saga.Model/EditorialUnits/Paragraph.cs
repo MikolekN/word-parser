@@ -4,7 +4,7 @@ using System.Text;
 
 #nullable enable
 
-namespace ModelDto.EditorialUnits
+namespace Saga.Model.EditorialUnits
 {
     /// <summary>
     /// Model ustepu artykulu (Paragraph) - definicja struktury bez logiki parsowania.

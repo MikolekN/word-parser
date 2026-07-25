@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Rozpoznaje format źródłowy dokumentu po zawartości (sniffing sygnatur), nie po rozszerzeniu.

@@ -1,7 +1,7 @@
 using System.Text;
-using ModelDto;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Classify.Document;
+using Saga.Model;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Classify.Document;
 
 // ============================================================================
 // CorpusValidator — walidacja DocumentClassifier na oznakowanym korpusie DOCX.

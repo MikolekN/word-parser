@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Kontrakt dla jednostek redakcyjnych, które mogą być dzielone na segmenty tekstu (np. zdania).

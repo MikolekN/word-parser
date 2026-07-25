@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using ModelDto.EditorialUnits;
+using Saga.Model.EditorialUnits;
 
 #nullable enable
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Model treści nowelizacji - może zawierać dowolny fragment hierarchicznej struktury aktu prawnego.

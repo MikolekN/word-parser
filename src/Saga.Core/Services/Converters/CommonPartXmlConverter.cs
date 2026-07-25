@@ -1,10 +1,10 @@
 using System.Xml.Linq;
-using ModelDto;
-using ModelDto.EditorialUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
 using Serilog;
-using static WordParserCore.XLinqWrappers;
+using static Saga.Core.XLinqWrappers;
 
-namespace WordParserCore.Services.Converters
+namespace Saga.Core.Services.Converters
 {
     /// <summary>
     /// Konwertuje fragment CommonPart encji na XML.

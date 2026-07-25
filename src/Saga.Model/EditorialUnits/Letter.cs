@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using ModelDto;
+using Saga.Model;
 using System.Text;
 
 #nullable enable
 
-namespace ModelDto.EditorialUnits
+namespace Saga.Model.EditorialUnits
 {
     /// <summary>
     /// Model litery punktu - zawiera definicje struktury bez logiki parsowania.

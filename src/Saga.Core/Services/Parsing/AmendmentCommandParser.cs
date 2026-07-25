@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using WordParserCore.Helpers;
+using Saga.Core.Helpers;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Rodzaj komendy nowelizacyjnej rozpoznanej z treści (§ 82-97 ZTP).

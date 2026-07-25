@@ -1,10 +1,10 @@
 using System.Linq;
-using ModelDto;
-using ModelDto.SystematizingUnits;
+using Saga.Model;
+using Saga.Model.SystematizingUnits;
 using Serilog;
-using WordParserCore.Services.Classify;
+using Saga.Core.Services.Classify;
 
-namespace WordParserCore.Services.Parsing.Builders
+namespace Saga.Core.Services.Parsing.Builders
 {
 	/// <summary>
 	/// Buduje jednostki systematyzacyjne (Część → Księga → Tytuł → Dział → Rozdział → Oddział; § 60-62 ZTP)

@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Segment tekstu w jednostce redakcyjnej, np. pojedyncze zdanie.

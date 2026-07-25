@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ModelDto;
+using Saga.Model;
 
 #nullable enable
 
-namespace ModelDto.EditorialUnits
+namespace Saga.Model.EditorialUnits
 {
     /// <summary>
     /// Model punktu ustepu - zawiera definicje struktury bez logiki parsowania.

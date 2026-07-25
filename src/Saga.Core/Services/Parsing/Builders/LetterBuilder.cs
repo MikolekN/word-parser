@@ -1,9 +1,9 @@
-using DtoArticle = ModelDto.EditorialUnits.Article;
-using DtoLetter = ModelDto.EditorialUnits.Letter;
-using DtoParagraph = ModelDto.EditorialUnits.Paragraph;
-using DtoPoint = ModelDto.EditorialUnits.Point;
+using DtoArticle = Saga.Model.EditorialUnits.Article;
+using DtoLetter = Saga.Model.EditorialUnits.Letter;
+using DtoParagraph = Saga.Model.EditorialUnits.Paragraph;
+using DtoPoint = Saga.Model.EditorialUnits.Point;
 
-namespace WordParserCore.Services.Parsing.Builders
+namespace Saga.Core.Services.Parsing.Builders
 {
 	/// <summary>
 	/// Wejscie dla budowania litery (punkt + ustep + artykul + tekst).

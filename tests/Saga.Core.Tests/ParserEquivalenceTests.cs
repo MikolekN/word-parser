@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using WordParserCore;
-using WordParserCore.Ingest;
-using WordParserCore.Ingest.Pdf;
+using Saga.Core;
+using Saga.Core.Ingest;
+using Saga.Core.Ingest.Pdf;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Rama ekwiwalencji (Etap 5): ten sam akt podany jako bloki DOCX (ze stylami szablonu)

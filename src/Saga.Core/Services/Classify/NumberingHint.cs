@@ -1,6 +1,6 @@
-using ModelDto;
+using Saga.Model;
 
-namespace WordParserCore.Services.Classify
+namespace Saga.Core.Services.Classify
 {
 	/// <summary>
 	/// Podpowiedź numeracyjna obliczana przez orkiestrator przed klasyfikacją.

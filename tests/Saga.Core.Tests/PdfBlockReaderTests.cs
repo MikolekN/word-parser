@@ -1,11 +1,11 @@
 using System.IO;
 using System.Linq;
-using WordParserCore.Exceptions;
-using WordParserCore.Ingest;
-using WordParserCore.Ingest.Pdf;
+using Saga.Core.Exceptions;
+using Saga.Core.Ingest;
+using Saga.Core.Ingest.Pdf;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy adaptera PDF (Etap 9): odtwarzanie wierszy i bloków z warstwy tekstowej, polskie znaki,
@@ -426,7 +426,7 @@ namespace WordParserCore.Tests
 				.AddText("– tiret powrotny.", 85, 630))
 				.Build();
 
-			var model = WordParserCore.LegalDocumentParser.ParseBlocks(Read(pdf));
+			var model = Saga.Core.LegalDocumentParser.ParseBlocks(Read(pdf));
 
 			var letter = model.Articles.First().Paragraphs[0].Points[0].Letters[0];
 			Assert.Equal(2, letter.Tirets.Count);

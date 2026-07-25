@@ -7,7 +7,7 @@
 
 Adapter PDF potrzebował biblioteki dającej dostęp do pozycji znaków i słów (nie samego tekstu),
 bo hierarchia jednostek redakcyjnych jest w PDF kodowana wcięciem (§ 58 ZTP), a odnośniki i indeksy
-górne — rozmiarem i przesunięciem baseline. WordParserWeb wystawia usługę sieciową w instytucji
+górne — rozmiarem i przesunięciem baseline. Saga.Web wystawia usługę sieciową w instytucji
 publicznej (RCL).
 
 ## Decyzja
@@ -30,7 +30,7 @@ o pozycjach — czyli traci dokładnie to, po co sięgamy do PDF.
 Pakiet NuGet nazywa się **`PdfPig`**. Uwaga praktyczna: w rejestrze istnieje też
 „UglyToad.PdfPig" — to obcy fork, nie ta biblioteka; pomyłka przy `dotnet add package` jest łatwa.
 
-Wersja przypięta w `WordParserCore.csproj` (0.1.15). Oś Y w PdfPig rośnie do góry, więc składanie
+Wersja przypięta w `Saga.Core.csproj` (0.1.15). Oś Y w PdfPig rośnie do góry, więc składanie
 linii wymaga sortowania malejąco po baseline — nieoczywistość opłacona w `PdfLineExtractor`.
 
 Brak OCR jest osobną decyzją: ADR-0005.

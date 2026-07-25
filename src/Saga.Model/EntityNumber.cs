@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 #nullable enable
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Model opisujący numer encji (artykuł, ustęp, punkt, litera, tiret).

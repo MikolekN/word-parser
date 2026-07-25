@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Model informacji o publikatorze (np. Dziennik Ustaw).

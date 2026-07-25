@@ -4,21 +4,23 @@ Ten plik zawiera wskazówki dla Claude Code (claude.ai/code) dotyczące pracy z 
 
 ## Opis projektu
 
-**WordParser** to zestaw narzędzi na platformie .NET 10 do parsowania polskich dokumentów prawnych (aktów prawnych) z formatu DOCX do hierarchicznego modelu obiektowego, a następnie eksportu do XML/XLSX. Obsługuje hierarchiczne struktury dokumentów oraz nowelizacje.
+**SAGA** (System Automatycznego Generowania Aktów) to zestaw narzędzi na platformie .NET 10 do parsowania polskich dokumentów prawnych (aktów prawnych) z formatu DOCX do hierarchicznego modelu obiektowego, a następnie eksportu do XML/XLSX. Obsługuje hierarchiczne struktury dokumentów oraz nowelizacje.
 
 ## Polecenia
 
 ```bash
-# Budowanie (tylko biblioteka + CLI — projekt API jest zawieszony, nie używaj build-all)
-dotnet build src/Saga.Core/WordParserCore.csproj
-dotnet build src/Saga.Cli/WordParser.csproj
-# Lub użyj zadania VS Code: "build-offline"
+# Budowanie całej solucji (Model, Core, Cli, Web, testy)
+dotnet build Saga.sln
+
+# Pojedyncze projekty (zadanie VS Code: "build-offline" = Core + Cli)
+dotnet build src/Saga.Core/Saga.Core.csproj
+dotnet build src/Saga.Cli/Saga.Cli.csproj
 
 # Uruchomienie wszystkich testów
-dotnet test tests/Saga.Core.Tests/WordParserCore.Tests.csproj
+dotnet test tests/Saga.Core.Tests/Saga.Core.Tests.csproj
 
 # Uruchomienie pojedynczej klasy testowej
-dotnet test tests/Saga.Core.Tests/WordParserCore.Tests.csproj --filter "FullyQualifiedName~EIdTests"
+dotnet test tests/Saga.Core.Tests/Saga.Core.Tests.csproj --filter "FullyQualifiedName~EIdTests"
 
 # Build wydania + Docker (obraz src/Saga.Web/Dockerfile, tag = skrócony hash commita gita + 'latest', push do rejestru; inkrementacja build.number jest ZAKOMENTOWANA i nieużywana)
 ./build.sh
@@ -29,17 +31,17 @@ dotnet test tests/Saga.Core.Tests/WordParserCore.Tests.csproj --filter "FullyQua
 ### Graf zależności projektów
 
 ```
-WordParser (CLI)          ──► WordParserCore ──► ModelDto
-WordParserWeb (Web)       ──► WordParserCore ──► ModelDto
-WordParserCore.Tests   ──► WordParserCore ──► ModelDto
-WordParserApi (zawieszony) ──► WordParserCore ──► ModelDto
+src/Saga.Cli   (CLI, exe: saga)  ──► src/Saga.Core ──► src/Saga.Model
+src/Saga.Web   (Web, ASP.NET 10) ──► src/Saga.Core ──► src/Saga.Model
+tests/Saga.Core.Tests            ──► src/Saga.Core ──► src/Saga.Model
+tools/CorpusValidator (poza sln)  ──► src/Saga.Core ──► src/Saga.Model
 ```
 
-- `ModelDto` — czyste DTO, bez logiki biznesowej
-- `WordParserCore` — cała logika silnika parsowania; zależy od `DocumentFormat.OpenXml`, `Serilog` i `PdfPig` 0.1.15 (adapter PDF: `src/Saga.Core/Ingest/Pdf/` — `PdfBlockReader`, `PdfLineExtractor`, `PageArtifactFilter`)
-- `WordParser` — cienka nakładka CLI
-- `WordParserWeb` — aktywna aplikacja webowa ASP.NET 10 (renderowanie HTML dokumentów)
-- `WordParserApi` — zawieszony; nie rozwijaj tego projektu
+- `Saga.Model` — czyste DTO, bez logiki biznesowej
+- `Saga.Core` — cała logika silnika parsowania; zależy od `DocumentFormat.OpenXml`, `Serilog` i `PdfPig` 0.1.15 (adapter PDF: `src/Saga.Core/Ingest/Pdf/` — `PdfBlockReader`, `PdfLineExtractor`, `PageArtifactFilter`)
+- `Saga.Cli` — cienka nakładka CLI; plik wykonywalny nazywa się `saga`
+- `Saga.Web` — aktywna aplikacja webowa ASP.NET 10 (renderowanie HTML dokumentów); z niej powstaje obraz `saga-gui`
+- `Saga.Api` — **nie istnieje w repozytorium**. Poprzednik (`WordParserApi`) był zawieszony, niewersjonowany i nie kompilował się, więc nie przeszedł migracji nazw; przy reanimacji API zakłada się nowy projekt `src/Saga.Api` i dodaje go do `Saga.sln`.
 
 ### Hierarchia modelu dokumentu
 
@@ -120,7 +122,7 @@ Reguła decyzyjna: twardy wymóg dwóch zgodnych sygnałów dotyczy głównie ro
 
 ## Testy
 
-- Projekt testowy: `WordParserCore.Tests`
+- Projekt testowy: `Saga.Core.Tests`
 - Framework: xUnit 2.9.3
 - Dokumenty referencyjne DOCX leżą w lokalnym `DocRepo/` (niewersjonowany); `tests/Saga.Core.Tests/Artifacts/` zawiera golden snapshoty oczekiwanych wyników (np. `doc001.snapshot.xml`) — oba katalogi niewersjonowane
 - Klasy testowe: lista NIE jest tu utrzymywana (dryfowała — brakowało w niej kolejnych klas). Wygeneruj aktualną:

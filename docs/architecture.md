@@ -1,6 +1,6 @@
-# Architektura projektu WordParser
+# Architektura projektu SAGA
 
-> Dokument opisuje domenę projektową, moduły, role klas, przepływy danych, zależności między warstwami oraz konwencje stosowane w projekcie WordParser.
+> Dokument opisuje domenę projektową, moduły, role klas, przepływy danych, zależności między warstwami oraz konwencje stosowane w projekcie SAGA.
 
 > Aktualny na dzień: 2026-07-25
 
@@ -8,7 +8,7 @@
 
 ## 1. Przegląd domeny
 
-WordParser to toolkit .NET 10 służący do **parsowania polskich aktów prawnych** z dokumentów Word/DOCX, PDF (z warstwą tekstową) oraz TXT do modelu obiektowego (DTO), a następnie do formatów wyjściowych (XML/XLSX). Wejście jest uniwersalne: format źródłowy jest wykrywany sygnaturowo, a dokument jest klasyfikowany wg rodzaju aktu (ZTP) przed (opcjonalnym) zbudowaniem modelu. Domena obejmuje:
+SAGA to toolkit .NET 10 służący do **parsowania polskich aktów prawnych** z dokumentów Word/DOCX, PDF (z warstwą tekstową) oraz TXT do modelu obiektowego (DTO), a następnie do formatów wyjściowych (XML/XLSX). Wejście jest uniwersalne: format źródłowy jest wykrywany sygnaturowo, a dokument jest klasyfikowany wg rodzaju aktu (ZTP) przed (opcjonalnym) zbudowaniem modelu. Domena obejmuje:
 
 - **Hierarchię jednostek redakcyjnych**: `Article → Paragraph → Point → Letter → Tiret → Tiret (zagnieżdżony)` — „podwójny tiret" (2TIR/3TIR) to nie osobna klasa, tylko zagnieżdżona lista `Tiret.Tirets`
 - **Hierarchię jednostek systematyzujących**: `Part → Book → Title → Division → Chapter → Subchapter`
@@ -20,7 +20,7 @@ WordParser to toolkit .NET 10 służący do **parsowania polskich aktów prawnyc
 
 ## 2. Moduły (projekty)
 
-### 2.1 `ModelDto` — Warstwa modelu danych
+### 2.1 `Saga.Model` — Warstwa modelu danych
 
 
 Czyste klasy DTO bez logiki biznesowej. Definiuje strukturę drzewa aktu prawnego.
@@ -53,9 +53,9 @@ Czyste klasy DTO bez logiki biznesowej. Definiuje strukturę drzewa aktu prawneg
 | `IHasTextSegments` | Encja może być dzielona na segmenty tekstu (`List<TextSegment>`) |
 | `ISystematizingUnit` | Kontrakt jednostek systematyzujących (`Heading`, `IsImplicit`) |
 
-### 2.2 `WordParserCore` — Warstwa logiki parsowania
+### 2.2 `Saga.Core` — Warstwa logiki parsowania
 
-Silnik parsujący dokumenty DOCX/PDF (z warstwą tekstową)/TXT. Zależy od `ModelDto`,
+Silnik parsujący dokumenty DOCX/PDF (z warstwą tekstową)/TXT. Zależy od `Saga.Model`,
 `DocumentFormat.OpenXml` (DOCX), `PdfPig` (PDF) i `Serilog`.
 
 | Ścieżka | Rola |
@@ -73,22 +73,24 @@ Silnik parsujący dokumenty DOCX/PDF (z warstwą tekstową)/TXT. Zależy od `Mod
 | `Services/Parsing/` | **Pipeline parsowania** — orkiestrator, buildery, przetwarzanie struktury, zarządzanie nowelizacjami |
 | `Services/Converters/` | Konwertery do XML (w trakcie implementacji, nieaktywne) |
 
-### 2.3 `WordParser` — Narzędzie konsolowe (CLI)
+### 2.3 `Saga.Cli` — Narzędzie konsolowe (CLI)
 
 Interfejs wiersza poleceń korzystający z uniwersalnego `LegalDocumentParser.Parse`. Domyślnie czyta
 plik **read-only**, bez kopii zapasowej. Kopia zapasowa z sygnaturą czasową jest tworzona wyłącznie
 w trybie wstecznej kompatybilności `--docx` (legacy), który parsuje zawsze (`ParsePolicy.AlwaysParse`)
 i wymusza format DOCX.
 
-### 2.4 `WordParserWeb` — Aplikacja webowa (aktywna)
+### 2.4 `Saga.Web` — Aplikacja webowa (aktywna)
 
-ASP.NET 10 — renderowanie HTML dokumentów sparsowanych przez `WordParserCore`. Korzysta z uniwersalnego `LegalDocumentParser.Parse(Stream, ...)` (raport klasyfikacji dokumentu + tryb wymuszonego parsowania).
+ASP.NET 10 — renderowanie HTML dokumentów sparsowanych przez `Saga.Core`. Korzysta z uniwersalnego `LegalDocumentParser.Parse(Stream, ...)` (raport klasyfikacji dokumentu + tryb wymuszonego parsowania).
 
-### 2.5 `WordParserApi` — Web API (wstrzymany)
+### 2.5 `Saga.Api` — Web API (nie istnieje w repozytorium)
 
-ASP.NET Core Web API z Swagger/OpenAPI. Projekt wstrzymany — zalecane użycie CLI/`WordParserWeb`.
+Planowane ASP.NET Core Web API. Poprzednik (`WordParserApi`) był zawieszony, niewersjonowany
+i nie kompilował się, dlatego nie przeszedł migracji nazw i wypadł z solucji. Reanimacja oznacza
+nowy projekt `src/Saga.Api` dodany do `Saga.sln`. Do tego czasu interfejsami są CLI i `Saga.Web`.
 
-### 2.6 `WordParserCore.Tests` — Testy jednostkowe
+### 2.6 `Saga.Core.Tests` — Testy jednostkowe
 
 Testy xUnit pokrywające kluczowe scenariusze parsowania.
 
@@ -97,18 +99,18 @@ Testy xUnit pokrywające kluczowe scenariusze parsowania.
 ## 3. Diagram zależności między projektami
 
 ```
-WordParser (CLI)           ──►  WordParserCore  ──────►  ModelDto
-WordParserWeb (Web)        ──►  WordParserCore  ──────►  ModelDto
-WordParserCore.Tests       ──►  WordParserCore  ──────►  ModelDto
-WordParserApi (wstrzymany) ──►  WordParserCore  ──────►  ModelDto
+SAGA (CLI)           ──►  Saga.Core  ──────►  Saga.Model
+Saga.Web (Web)        ──►  Saga.Core  ──────►  Saga.Model
+Saga.Core.Tests       ──►  Saga.Core  ──────►  Saga.Model
+Saga.Api (wstrzymany) ──►  Saga.Core  ──────►  Saga.Model
 ```
 
 Zależności zewnętrzne:
-- `DocumentFormat.OpenXml` — parsowanie dokumentów DOCX (tylko w `WordParserCore`)
-- `PdfPig` — odczyt warstwy tekstowej PDF (tylko w `WordParserCore`; UWAGA: paczka NuGet
+- `DocumentFormat.OpenXml` — parsowanie dokumentów DOCX (tylko w `Saga.Core`)
+- `PdfPig` — odczyt warstwy tekstowej PDF (tylko w `Saga.Core`; UWAGA: paczka NuGet
   „UglyToad.PdfPig" to obcy fork — używana jest `PdfPig`)
-- `Serilog` — strukturalne logowanie (w `WordParserCore`)
-- `xUnit` — framework testowy (w `WordParserCore.Tests`)
+- `Serilog` — strukturalne logowanie (w `Saga.Core`)
+- `xUnit` — framework testowy (w `Saga.Core.Tests`)
 
 ---
 
@@ -355,10 +357,10 @@ model strukturalny. Wywoływana przez `LegalDocumentParser.Parse(blocks, options
 | **`IDocumentClassifier`** | Interfejs — `Classify(IReadOnlyList<DocumentBlock>) → DocumentClassificationResult`. Nie ocenia normatywności ani nie decyduje o parsowaniu — wyłącznie raportuje. |
 | **`DocumentClassifier`** | Implementacja dwufazowa: (A) strefa tytułowa — pierwsze 25 niepustych bloków (nagłówek rodzaju aktu, organ, data, przedmiot); (B) statystyka korpusu (formuła kompetencyjna, dominacja jednostki podstawowej Art./§, wejście w życie, markery TJ, komendy nowelizacyjne). Punktacja rozdziela sygnały różnicujące typ od bonusu „aktowości"; wymaga silnego sygnału strukturalnego (`hasBackbone`) i wyniku ≥ progu (40), inaczej `IsLegalAct = false`. |
 | **`ZtpPatterns`** | Skompilowane wzorce regex sygnałów dokumentu (nagłówki rodzajów aktu, formuła TJ, formuła kompetencyjna, wejście w życie, komendy nowelizacyjne, publikator woj., markery TJ, organ JST…). |
-| **`DocumentClassificationResult`** (ModelDto) | `ActType: LegalActType?`, `IsLegalAct`, `IsConsolidatedText`, `IsAmending`, `Confidence` (1–100), `Signals: IReadOnlyList<DocumentSignal>`, `Justification`. |
-| **`DocumentSignal`** / **`DocumentSignalKind`** (ModelDto) | Pojedynczy dowód klasyfikacji: rodzaj sygnału, wynik, indeks bloku, dopasowany fragment, opis. |
+| **`DocumentClassificationResult`** (Saga.Model) | `ActType: LegalActType?`, `IsLegalAct`, `IsConsolidatedText`, `IsAmending`, `Confidence` (1–100), `Signals: IReadOnlyList<DocumentSignal>`, `Justification`. |
+| **`DocumentSignal`** / **`DocumentSignalKind`** (Saga.Model) | Pojedynczy dowód klasyfikacji: rodzaj sygnału, wynik, indeks bloku, dopasowany fragment, opis. |
 
-`ParseResult`/`ParseOptions`/`ParsePolicy` (w `WordParserCore`, poza `Services/`) spinają tę warstwę
+`ParseResult`/`ParseOptions`/`ParsePolicy` (w `Saga.Core`, poza `Services/`) spinają tę warstwę
 z rdzeniem budowy modelu — patrz 5.1.
 
 ---
@@ -636,7 +638,7 @@ Centralnie obsługiwane przez `ParagraphExtensions.StyleId()`.
 
 ### 10.7 Testy
 
-- Framework: xUnit (`WordParserCore.Tests`)
+- Framework: xUnit (`Saga.Core.Tests`)
 - Konwencja nazewnictwa plików: `*Tests.cs` (np. `EIdTests.cs`, `ParagraphClassifierTests.cs`)
 - Każda zmiana w logice parsowania wymaga aktualizacji lub dodania testów
 - Artefakty testowe (pliki DOCX) w `Artifacts/`
@@ -857,7 +859,7 @@ w [docs/adr/](adr/README.md). Tutaj tylko skrót z odesłaniem; ta sekcja nie je
 
 | ADR | Decyzja |
 |---|---|
-| [0001](adr/0001-jeden-ujednolicony-potok-wejscia.md) | Wszystkie formaty schodzą się do `DocumentBlock[]` — jeden potok, nie ścieżka per format. Stąd też: IR nie trafia do `ModelDto`, wcięcia w twipach, `ProcessParagraph` utrzymywany jako adapter. |
+| [0001](adr/0001-jeden-ujednolicony-potok-wejscia.md) | Wszystkie formaty schodzą się do `DocumentBlock[]` — jeden potok, nie ścieżka per format. Stąd też: IR nie trafia do `Saga.Model`, wcięcia w twipach, `ProcessParagraph` utrzymywany jako adapter. |
 | [0002](adr/0002-adaptery-nie-udaja-styleid.md) | Adaptery PDF/TXT nie zgadują `styleId` — brak stylu zostaje brakiem i obniża pewność karą, zamiast udawać sygnał szablonu. |
 | [0003](adr/0003-backbone-warunkiem-uznania-za-akt.md) | Bez silnego sygnału strukturalnego (`hasBackbone`) dokument nie jest aktem, choćby przekroczył próg punktowy. |
 | [0004](adr/0004-pdfpig-zamiast-itext.md) | PdfPig (Apache-2.0) do odczytu PDF; iText odrzucony — AGPL rozciągnąłby wymóg udostępnienia źródeł na usługę sieciową. |

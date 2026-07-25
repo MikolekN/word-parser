@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Blok tekstu dokumentu — format-agnostyczny odpowiednik akapitu Word,

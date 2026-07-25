@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ModelDto;
+using Saga.Model;
 
-namespace ModelDto.EditorialUnits
+namespace Saga.Model.EditorialUnits
 {
     /// <summary>
     /// Model artykulu ustawy - zawiera definicje struktury bez logiki.

@@ -1,7 +1,7 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 
-namespace WordParserCore.Helpers
+namespace Saga.Core.Helpers
 {
     public static class SpreadsheetHelper
     {

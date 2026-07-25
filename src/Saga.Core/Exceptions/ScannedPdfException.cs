@@ -1,4 +1,4 @@
-namespace WordParserCore.Exceptions
+namespace Saga.Core.Exceptions
 {
 	/// <summary>
 	/// PDF bez użytecznej warstwy tekstowej (skan/obraz). OCR jest poza zakresem parsera —

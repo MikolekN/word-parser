@@ -1,7 +1,7 @@
-using WordParserCore.Services.Classify;
+using Saga.Core.Services.Classify;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy CHARAKTERYZUJĄCE obecne zachowanie klasyfikatora dla akapitów BEZ stylu szablonu

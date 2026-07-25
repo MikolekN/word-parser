@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace WordParserCore
+namespace Saga.Core
 {
     public static class StringExtensions
     {

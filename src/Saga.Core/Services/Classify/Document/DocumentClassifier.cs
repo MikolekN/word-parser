@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ModelDto;
-using WordParserCore.Ingest;
+using Saga.Model;
+using Saga.Core.Ingest;
 
-namespace WordParserCore.Services.Classify.Document
+namespace Saga.Core.Services.Classify.Document
 {
 	/// <summary>
 	/// Klasyfikator dokumentu wg ZTP. Dwufazowo: (A) strefa tytułowa = pierwsze 25 niepustych

@@ -1,8 +1,8 @@
 #nullable enable
-using ModelDto;
-using WordParserCore.Ingest;
+using Saga.Model;
+using Saga.Core.Ingest;
 
-namespace WordParserCore
+namespace Saga.Core
 {
 	/// <summary>
 	/// Koperta wyniku parsowania uniwersalnego wejścia: raport klasyfikacji dokumentu

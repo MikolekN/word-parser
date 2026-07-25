@@ -1,9 +1,9 @@
 using System.Linq;
-using WordParserCore;
-using WordParserCore.Helpers;
+using Saga.Core;
+using Saga.Core.Helpers;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	public class AmendmentStyleDecoderTests
 	{

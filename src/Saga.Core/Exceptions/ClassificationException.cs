@@ -1,6 +1,6 @@
 using System;
 
-namespace WordParserCore.Exceptions
+namespace Saga.Core.Exceptions
 {
     /// <summary>
     /// Wyjątek zgłaszany, gdy klasyfikacja akapitu jest niemożliwa lub prowadzi do niejednoznacznego wyniku

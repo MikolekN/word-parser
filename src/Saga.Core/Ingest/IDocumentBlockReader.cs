@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Adapter formatu wejściowego → lista bloków reprezentacji pośredniej.

@@ -1,4 +1,4 @@
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Rodzaj operacji nowelizacyjnej.

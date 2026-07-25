@@ -1,9 +1,9 @@
 using System;
-using ModelDto;
+using Saga.Model;
 
 #nullable enable
 
-namespace ModelDto.EditorialUnits
+namespace Saga.Model.EditorialUnits
 {
     /// <summary>
     /// Czesc wspolna (intro/wrapUp) - wirtualna jednostka redakcyjna reprezentujaca

@@ -1,7 +1,7 @@
-using DtoArticle = ModelDto.EditorialUnits.Article;
-using DtoParagraph = ModelDto.EditorialUnits.Paragraph;
+using DtoArticle = Saga.Model.EditorialUnits.Article;
+using DtoParagraph = Saga.Model.EditorialUnits.Paragraph;
 
-namespace WordParserCore.Services.Parsing.Builders
+namespace Saga.Core.Services.Parsing.Builders
 {
 	/// <summary>
 	/// Wejscie dla budowania ustepu (artykul + biezacy ustep + tekst).

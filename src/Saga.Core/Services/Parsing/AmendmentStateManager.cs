@@ -1,9 +1,9 @@
-using ModelDto;
+using Saga.Model;
 using Serilog;
-using WordParserCore.Services.Classify;
-using WordParserCore.Services.Parsing.Builders;
+using Saga.Core.Services.Classify;
+using Saga.Core.Services.Parsing.Builders;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Zarządza cyklem życia nowelizacji w trakcie parsowania:

@@ -1,7 +1,7 @@
-using WordParserCore.Exceptions;
-using WordParserCore.Ingest.Pdf;
+using Saga.Core.Exceptions;
+using Saga.Core.Ingest.Pdf;
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Fabryka adapterów wejścia: format źródłowy → reader bloków reprezentacji pośredniej.

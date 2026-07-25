@@ -1,12 +1,12 @@
-using ModelDto;
-using ModelDto.SystematizingUnits;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Model.SystematizingUnits;
+using Saga.Core.Services.Parsing;
 using Xunit;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml;
 using System.Linq;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	public class ParserOrchestratorCommonPartTests
 	{

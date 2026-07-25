@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace ModelDto.SystematizingUnits
+namespace Saga.Model.SystematizingUnits
 {
     /// <summary>
     /// Kontrakt dla jednostek systematyzujących (organizacyjnych) aktu prawnego.

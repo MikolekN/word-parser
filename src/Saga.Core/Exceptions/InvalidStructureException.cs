@@ -1,6 +1,6 @@
 using System;
 
-namespace WordParserCore.Exceptions
+namespace Saga.Core.Exceptions
 {
     /// <summary>
     /// Wyjątek zgłaszany, gdy hierarchia dokumentu jest nieprawidłowa lub niekompletna

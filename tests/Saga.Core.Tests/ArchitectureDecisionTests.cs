@@ -2,13 +2,13 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using ModelDto;
-using WordParserCore;
-using WordParserCore.Ingest;
-using WordParserCore.Ingest.Pdf;
+using Saga.Model;
+using Saga.Core;
+using Saga.Core.Ingest;
+using Saga.Core.Ingest.Pdf;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy strażnicze decyzji architektonicznych z docs/adr/. Każdy pilnuje jednej decyzji,
@@ -22,21 +22,21 @@ namespace WordParserCore.Tests
 	public class ArchitectureDecisionTests
 	{
 		// ============================================================
-		// ADR-0001 — reprezentacja pośrednia nie wycieka do ModelDto
+		// ADR-0001 — reprezentacja pośrednia nie wycieka do Saga.Model
 		// ============================================================
 
 		[Fact]
-		public void Adr0001_ModelDto_DoesNotDependOnParserOrIntermediateRepresentation()
+		public void Adr0001_SagaModel_DoesNotDependOnParserOrIntermediateRepresentation()
 		{
-			var modelDtoDirectory = Path.Combine(TestFiles.GetRepositoryRoot(), "src", "Saga.Model");
+			var modelDirectory = Path.Combine(TestFiles.GetRepositoryRoot(), "src", "Saga.Model");
 
-			var leaking = Directory.EnumerateFiles(modelDtoDirectory, "*.cs", SearchOption.AllDirectories)
+			var leaking = Directory.EnumerateFiles(modelDirectory, "*.cs", SearchOption.AllDirectories)
 				.Where(file => !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}") &&
 				               !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}"))
 				.Where(file =>
 				{
 					var content = File.ReadAllText(file);
-					return content.Contains("using WordParserCore", StringComparison.Ordinal) ||
+					return content.Contains("using Saga.Core", StringComparison.Ordinal) ||
 					       content.Contains("DocumentBlock", StringComparison.Ordinal) ||
 					       content.Contains("DocumentFormat.OpenXml", StringComparison.Ordinal);
 				})
@@ -44,7 +44,7 @@ namespace WordParserCore.Tests
 				.ToList();
 
 			Assert.True(leaking.Count == 0,
-				"ModelDto musi zostać czystym modelem wyjściowym (ADR-0001). Pliki sięgające " +
+				"Saga.Model musi zostać czystym modelem wyjściowym (ADR-0001). Pliki sięgające " +
 				"do parsera, IR albo OpenXml: " + string.Join(", ", leaking));
 		}
 

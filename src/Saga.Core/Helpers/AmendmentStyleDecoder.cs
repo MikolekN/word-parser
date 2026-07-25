@@ -1,6 +1,6 @@
 using System;
 
-namespace WordParserCore.Helpers
+namespace Saga.Core.Helpers
 {
 	/// <summary>
 	/// Czym jest dokonywana zmiana (instrument nowelizacji).

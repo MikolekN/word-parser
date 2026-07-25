@@ -1,7 +1,7 @@
 #nullable enable
-using WordParserCore.Ingest;
+using Saga.Core.Ingest;
 
-namespace WordParserCore
+namespace Saga.Core
 {
 	/// <summary>
 	/// Polityka decydująca, czy po klasyfikacji dokumentu budować model strukturalny.

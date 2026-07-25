@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Normalizacja surowego tekstu z formatów tekstowych (TXT/PDF) do kanału zgodnego

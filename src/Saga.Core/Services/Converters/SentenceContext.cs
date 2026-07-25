@@ -1,7 +1,7 @@
 using System.Xml.Linq;
-using static WordParserCore.XLinqWrappers;
+using static Saga.Core.XLinqWrappers;
 
-namespace WordParserCore.Services.Converters
+namespace Saga.Core.Services.Converters
 {
 	/// <summary>
 	/// Kontekst parsowania zdania przechowujacy numer i GUID aktualnie przetwarzanego

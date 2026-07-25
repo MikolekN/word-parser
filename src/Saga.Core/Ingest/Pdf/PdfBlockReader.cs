@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
-using WordParserCore.Exceptions;
+using Saga.Core.Exceptions;
 
-namespace WordParserCore.Ingest.Pdf
+namespace Saga.Core.Ingest.Pdf
 {
 	/// <summary>
 	/// Adapter PDF (warstwa tekstowa) → bloki reprezentacji pośredniej. Potok:

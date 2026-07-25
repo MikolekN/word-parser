@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using WordParserCore.Ingest;
+using Saga.Core.Ingest;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy detekcji formatu źródłowego (Etap 10): sygnatury bajtowe (ZIP/OOXML, %PDF- w pierwszych

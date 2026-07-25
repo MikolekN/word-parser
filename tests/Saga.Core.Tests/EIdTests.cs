@@ -1,9 +1,9 @@
-using ModelDto;
-using ModelDto.EditorialUnits;
-using ModelDto.SystematizingUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
+using Saga.Model.SystematizingUnits;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
     public class EIdTests
     {

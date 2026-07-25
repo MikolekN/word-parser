@@ -1,9 +1,9 @@
 using System.Text.RegularExpressions;
-using ModelDto;
-using ModelDto.EditorialUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
 using Serilog;
 
-namespace WordParserCore.Services
+namespace Saga.Core.Services
 {
 	/// <summary>
 	/// Serwis do parsowania publikatorów (Dz. U.) z treści artykułów

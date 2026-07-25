@@ -1,12 +1,12 @@
-using ModelDto;
-using ModelDto.SystematizingUnits;
-using DtoArticle = ModelDto.EditorialUnits.Article;
-using DtoLetter = ModelDto.EditorialUnits.Letter;
-using DtoParagraph = ModelDto.EditorialUnits.Paragraph;
-using DtoPoint = ModelDto.EditorialUnits.Point;
-using DtoTiret = ModelDto.EditorialUnits.Tiret;
+using Saga.Model;
+using Saga.Model.SystematizingUnits;
+using DtoArticle = Saga.Model.EditorialUnits.Article;
+using DtoLetter = Saga.Model.EditorialUnits.Letter;
+using DtoParagraph = Saga.Model.EditorialUnits.Paragraph;
+using DtoPoint = Saga.Model.EditorialUnits.Point;
+using DtoTiret = Saga.Model.EditorialUnits.Tiret;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Kontekst parsowania przechowujacy aktualny stan drzewa encji

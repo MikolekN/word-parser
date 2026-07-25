@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Kontrakt dla jednostek, ktore zawieraja nowelizacje.

@@ -2,13 +2,13 @@ using System;
 using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using ModelDto;
-using ModelDto.SystematizingUnits;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Classify.Document;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Model.SystematizingUnits;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Classify.Document;
+using Saga.Core.Services.Parsing;
 
-namespace WordParserCore
+namespace Saga.Core
 {
 	public static class LegalDocumentParser
 	{

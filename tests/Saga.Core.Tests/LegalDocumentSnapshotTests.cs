@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using WordParserCore.Services.Converters;
+using Saga.Core.Services.Converters;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy snapshotowe (golden) pełnego modelu dokumentu referencyjnego doc001.docx.

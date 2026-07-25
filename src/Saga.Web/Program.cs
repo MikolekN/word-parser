@@ -2,9 +2,9 @@ using DocumentFormat.OpenXml.Packaging;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Caching.Memory;
 using Serilog;
-using WordParserCore;
-using WordParserCore.Exceptions;
-using WordParserWeb;
+using Saga.Core;
+using Saga.Core.Exceptions;
+using Saga.Web;
 
 // Limit rozmiaru przesyłanego dokumentu — akty prawne (DOCX/PDF/TXT) mieszczą się z dużym zapasem.
 const long MaxUploadBytes = 64L * 1024 * 1024;

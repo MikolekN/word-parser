@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using ModelDto;
-using ModelDto.EditorialUnits;
-using ModelDto.SystematizingUnits;
-using WordParserCore.Services.Parsing;
-using WordParserCore.Services.Parsing.Builders;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
+using Saga.Model.SystematizingUnits;
+using Saga.Core.Services.Parsing;
+using Saga.Core.Services.Parsing.Builders;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	public class AmendmentFinalizerTests
 	{

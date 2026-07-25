@@ -1,4 +1,4 @@
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Typ aktu prawnego - określa formę legislacyjną i konwencje nazewnictwa jednostek.

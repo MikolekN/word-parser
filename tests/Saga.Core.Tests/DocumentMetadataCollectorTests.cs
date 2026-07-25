@@ -1,10 +1,10 @@
 using System;
-using ModelDto;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Parsing;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy zbierania metadanych aktu ze strefy tytułowej (Etap 7b, § 16-19 ZTP): rodzaj/data/przedmiot →

@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using ModelDto;
+using Saga.Model;
 
-namespace WordParserCore.Services
+namespace Saga.Core.Services
 {
     /// <summary>
     /// Serwis do parsowania i formatowania numerów encji (artykuł, ustęp, punkt, litera, tiret).

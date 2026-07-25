@@ -1,14 +1,14 @@
 using System.Linq;
 using System.Text.RegularExpressions;
-using ModelDto;
-using WordParserCore.Services.Classify;
-using ModelDto.EditorialUnits;
-using DtoArticle = ModelDto.EditorialUnits.Article;
-using DtoLetter = ModelDto.EditorialUnits.Letter;
-using DtoParagraph = ModelDto.EditorialUnits.Paragraph;
-using DtoPoint = ModelDto.EditorialUnits.Point;
+using Saga.Model;
+using Saga.Core.Services.Classify;
+using Saga.Model.EditorialUnits;
+using DtoArticle = Saga.Model.EditorialUnits.Article;
+using DtoLetter = Saga.Model.EditorialUnits.Letter;
+using DtoParagraph = Saga.Model.EditorialUnits.Paragraph;
+using DtoPoint = Saga.Model.EditorialUnits.Point;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Fabryki pomocnicze dla parsowania: tworzenie encji, parsowanie numerow,

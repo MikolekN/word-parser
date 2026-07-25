@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Położenie bloku w dokumencie źródłowym — do diagnostyki

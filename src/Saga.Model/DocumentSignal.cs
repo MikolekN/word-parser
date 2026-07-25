@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Pojedynczy sygnał klasyfikacyjny z dowodem — wynik dopasowania wzorca ZTP

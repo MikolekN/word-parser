@@ -1,8 +1,8 @@
-using ModelDto.SystematizingUnits;
-using DtoArticle = ModelDto.EditorialUnits.Article;
-using DtoParagraph = ModelDto.EditorialUnits.Paragraph;
+using Saga.Model.SystematizingUnits;
+using DtoArticle = Saga.Model.EditorialUnits.Article;
+using DtoParagraph = Saga.Model.EditorialUnits.Paragraph;
 
-namespace WordParserCore.Services.Parsing.Builders
+namespace Saga.Core.Services.Parsing.Builders
 {
 	/// <summary>
 	/// Wejscie dla budowania artykulu (subchapter + tekst akapitu).

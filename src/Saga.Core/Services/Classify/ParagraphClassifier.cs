@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using ModelDto;
-using WordParserCore.Helpers;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Core.Helpers;
+using Saga.Core.Services.Parsing;
 
-namespace WordParserCore.Services.Classify
+namespace Saga.Core.Services.Classify
 {
 	/// <summary>
 	/// Klasyfikator akapitów. Rozpoznaje typ jednostki redakcyjnej i oblicza pewność (1–100).

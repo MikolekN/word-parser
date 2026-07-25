@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy pilnujące, że dokumentacja mówi prawdę o kodzie. Dokumentacja dryfuje cicho —
@@ -23,9 +23,15 @@ namespace WordParserCore.Tests
 		private static readonly Regex MarkdownLinkPattern =
 			new(@"\]\((?<target>[^)\s]+)\)", RegexOptions.Compiled);
 
-		/// <summary>Ścieżki plików źródłowych w backtickach, np. `WordParserCore/Ingest/DocumentBlock.cs`.</summary>
-		private static readonly Regex BacktickedSourcePathPattern =
-			new(@"`(?<path>[A-Za-z0-9_.\-]+(?:/[A-Za-z0-9_.\-]+)+\.(?:cs|csproj|sln))`", RegexOptions.Compiled);
+		/// <summary>
+		/// Ścieżki plików źródłowych — także BEZ backticków, bo w blokach ```bash pojawiają się
+		/// w poleceniach (`dotnet build src/Saga.Core/Saga.Core.csproj`). Wymagamy prefiksu
+		/// znanego katalogu, żeby nie łapać fragmentów prozy.
+		/// </summary>
+		/// Uwaga na kolejność w alternatywie rozszerzeń: „cs" przed „csproj" ucięłoby ścieżkę
+		/// do pliku projektu w połowie i zgłaszało nieistniejący plik.
+		private static readonly Regex SourcePathPattern =
+			new(@"(?<path>(?:src|tests|tools|schema|docs)/[A-Za-z0-9_.\-/]+\.(?:csproj|sln|cs))\b", RegexOptions.Compiled);
 
 		/// <summary>
 		/// Wszystkie pliki źródłowe repozytorium jako ścieżki relatywne z separatorem '/'.
@@ -51,18 +57,26 @@ namespace WordParserCore.Tests
 			   || RepositoryFiles.Value.Any(path =>
 				   path.EndsWith($"/{documentedPath}", StringComparison.Ordinal));
 
-		/// <summary>Dokumentacja wersjonowana. docs/internal/ pominięty — pliki robocze, niewersjonowane.</summary>
+		/// <summary>
+		/// Cała dokumentacja wersjonowana — nie tylko docs/, bo README narzędzi w tools/ też
+		/// odwołuje się do plików projektu (i przy migracji nazw właśnie tam został nieaktualny ślad).
+		/// Pomijamy docs/internal/ (pliki robocze, gitignorowane) oraz katalogi build.
+		/// </summary>
 		private static IEnumerable<string> VersionedMarkdownFiles()
 		{
-			yield return Path.Combine(Root, "CLAUDE.md");
-			yield return Path.Combine(Root, "README.md");
-
-			var docs = Path.Combine(Root, "docs");
-			foreach (var file in Directory.EnumerateFiles(docs, "*.md", SearchOption.AllDirectories)
-				         .Where(f => !f.Contains($"{Path.DirectorySeparatorChar}internal{Path.DirectorySeparatorChar}")))
+			string[] excluded =
 			{
-				yield return file;
-			}
+				$"{Path.DirectorySeparatorChar}internal{Path.DirectorySeparatorChar}",
+				$"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}",
+				$"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}",
+				$"{Path.DirectorySeparatorChar}schema-pg{Path.DirectorySeparatorChar}",
+				$"{Path.DirectorySeparatorChar}DocRepo{Path.DirectorySeparatorChar}",
+				$"{Path.DirectorySeparatorChar}.claude{Path.DirectorySeparatorChar}",
+				$"{Path.DirectorySeparatorChar}.devcontainer{Path.DirectorySeparatorChar}",
+			};
+
+			return Directory.EnumerateFiles(Root, "*.md", SearchOption.AllDirectories)
+				.Where(file => !excluded.Any(fragment => file.Contains(fragment, StringComparison.Ordinal)));
 		}
 
 		public static TheoryData<string> MarkdownFiles()
@@ -116,12 +130,12 @@ namespace WordParserCore.Tests
 
 		[Theory]
 		[MemberData(nameof(MarkdownFiles))]
-		public void BacktickedSourcePaths_PointToExistingFiles(string relativeDocPath)
+		public void DocumentedSourcePaths_PointToExistingFiles(string relativeDocPath)
 		{
 			var docPath = Path.Combine(Root, relativeDocPath);
 			var missing = new List<string>();
 
-			foreach (Match match in BacktickedSourcePathPattern.Matches(File.ReadAllText(docPath)))
+			foreach (Match match in SourcePathPattern.Matches(File.ReadAllText(docPath)))
 			{
 				var path = match.Groups["path"].Value;
 				if (!RepositoryContains(path))

@@ -1,7 +1,7 @@
 using System.Text.Encodings.Web;
 using Serilog;
 
-namespace WordParserWeb;
+namespace Saga.Web;
 
 static class HtmlTemplateStore
 {

@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Bilans cudzysłowów treści nowelizacji bez stylów Z/* (Etap 8, § 94 ZTP: nowe brzmienie

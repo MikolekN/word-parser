@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using ModelDto.EditorialUnits;
-using WordParserCore.Services;
+using Saga.Model.EditorialUnits;
+using Saga.Core.Services;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	public class JournalReferenceServiceTests
 	{

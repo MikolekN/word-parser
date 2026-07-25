@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using ModelDto;
-using ModelDto.EditorialUnits;
-using ModelDto.SystematizingUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
+using Saga.Model.SystematizingUnits;
 
 #nullable enable
 
-namespace WordParserCore.Services.Converters
+namespace Saga.Core.Services.Converters
 {
 	/// <summary>
 	/// Kanoniczna, deterministyczna serializacja LegalDocument do XML.

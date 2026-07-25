@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 #nullable enable
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Wynik klasyfikacji dokumentu: czy rozpoznano akt prawny, jakiego rodzaju,

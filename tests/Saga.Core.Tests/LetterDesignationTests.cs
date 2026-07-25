@@ -1,10 +1,10 @@
-using ModelDto;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Classify;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Classify;
+using Saga.Core.Services.Parsing;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy zaostrzonego wzorca litery (Etap 7c, § 56 ZTP): litera to MAŁA litera alfabetu łacińskiego

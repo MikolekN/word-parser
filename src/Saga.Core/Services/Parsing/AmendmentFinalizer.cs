@@ -1,11 +1,11 @@
 using System;
 using System.Text.RegularExpressions;
-using ModelDto;
-using ModelDto.EditorialUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
 using Serilog;
-using WordParserCore.Helpers;
+using Saga.Core.Helpers;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Dane wejściowe dla finalizatora nowelizacji.

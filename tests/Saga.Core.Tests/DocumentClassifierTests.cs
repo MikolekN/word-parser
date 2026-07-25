@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using ModelDto;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Classify.Document;
+using Saga.Model;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Classify.Document;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy DocumentClassifier (Etap 4). Bloki budowane programowo — klasyfikator przyjmuje

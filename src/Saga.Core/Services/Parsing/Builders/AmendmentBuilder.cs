@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using ModelDto;
-using ModelDto.EditorialUnits;
-using WordParserCore.Helpers;
-using WordParserCore.Services;
-using WordParserCore.Services.Classify;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
+using Saga.Core.Helpers;
+using Saga.Core.Services;
+using Saga.Core.Services.Classify;
 using Serilog;
 
-namespace WordParserCore.Services.Parsing.Builders
+namespace Saga.Core.Services.Parsing.Builders
 {
 	/// <summary>
 	/// Wejście dla budowania treści nowelizacji z zebranych akapitów.

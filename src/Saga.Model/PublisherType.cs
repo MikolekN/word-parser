@@ -1,4 +1,4 @@
-namespace ModelDto
+namespace Saga.Model
 {
     public enum PublisherType
     {

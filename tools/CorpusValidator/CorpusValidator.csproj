@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../WordParserCore/WordParserCore.csproj" />
+    <ProjectReference Include="../../src/Saga.Core/Saga.Core.csproj" />
   </ItemGroup>
 
 </Project>

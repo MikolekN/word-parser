@@ -1,4 +1,4 @@
-namespace WordParserCore.Services.Converters
+namespace Saga.Core.Services.Converters
 {
     /// <summary>Stałe nazwy elementów i atrybutów XML używane w konwerterach.</summary>
     internal static class XmlConverterConstants

@@ -1,18 +1,18 @@
 using System;
 using System.IO;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Wspólne ścieżki plików testowych. Dokumenty referencyjne (DOCX) leżą
 	/// w lokalnym, niewersjonowanym DocRepo/; goldeny snapshotowe w lokalnym
-	/// WordParserCore.Tests/Artifacts/ (też niewersjonowane — decyzja projektu:
+	/// Saga.Core.Tests/Artifacts/ (też niewersjonowane — decyzja projektu:
 	/// dokumenty robocze i artefakty nie trafiają do repozytorium).
 	/// </summary>
 	internal static class TestFiles
 	{
 		/// <summary>
-		/// Korzeń projektu testowego (katalog z WordParserCore.Tests.csproj),
+		/// Korzeń projektu testowego (katalog z Saga.Core.Tests.csproj),
 		/// odnajdywany od katalogu wyjściowego testów w górę.
 		/// </summary>
 		public static string GetTestProjectRoot()
@@ -82,7 +82,7 @@ namespace WordParserCore.Tests
 		public static string CreateTemporaryCopy(string sourcePath)
 		{
 			var tempPath = Path.Combine(Path.GetTempPath(),
-				$"WordParserTests_{Guid.NewGuid():N}_{Path.GetFileName(sourcePath)}");
+				$"SagaTests_{Guid.NewGuid():N}_{Path.GetFileName(sourcePath)}");
 			File.Copy(sourcePath, tempPath, true);
 			return tempPath;
 		}

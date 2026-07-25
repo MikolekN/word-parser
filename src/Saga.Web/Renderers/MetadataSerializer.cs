@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using ModelDto;
-using ModelDto.EditorialUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
 
-namespace WordParserWeb;
+namespace Saga.Web;
 
 static class MetadataSerializer
 {

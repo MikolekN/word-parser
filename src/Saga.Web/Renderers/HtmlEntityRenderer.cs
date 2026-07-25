@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Encodings.Web;
-using ModelDto;
-using ModelDto.EditorialUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
 
-namespace WordParserWeb;
+namespace Saga.Web;
 
 static class HtmlEntityRenderer
 {

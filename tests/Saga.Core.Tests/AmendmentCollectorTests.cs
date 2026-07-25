@@ -1,11 +1,11 @@
 using System;
-using ModelDto;
-using ModelDto.EditorialUnits;
-using WordParserCore.Helpers;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
+using Saga.Core.Helpers;
+using Saga.Core.Services.Parsing;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	public class AmendmentCollectorTests
 	{

@@ -1,13 +1,13 @@
 using DocumentFormat.OpenXml.Packaging;
-using ModelDto;
-using ModelDto.EditorialUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
 using Serilog;
-using WordParserCore;
-using WordParserCore.Exceptions;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Converters;
+using Saga.Core;
+using Saga.Core.Exceptions;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Converters;
 
-namespace WordParser
+namespace Saga.Cli
 {
     class Program
     {
@@ -136,8 +136,8 @@ namespace WordParser
         private static void PrintUsage()
         {
             Console.WriteLine("Użycie:");
-            Console.WriteLine("  WordParser <plik> [--format docx|pdf|txt] [--force] [--dump <plik.xml>]");
-            Console.WriteLine("  WordParser --docx <plik> [--dump <plik.xml>]   (tryb legacy: kopia zapasowa + parsowanie bez klasyfikacji)");
+            Console.WriteLine("  saga <plik> [--format docx|pdf|txt] [--force] [--dump <plik.xml>]");
+            Console.WriteLine("  saga --docx <plik> [--dump <plik.xml>]   (tryb legacy: kopia zapasowa + parsowanie bez klasyfikacji)");
             Console.WriteLine();
             Console.WriteLine("Kody wyjścia: 0 = OK; 1 = błąd; 2 = dokument nierozpoznany jako akt prawny (bez --force).");
         }
@@ -257,7 +257,7 @@ namespace WordParser
             }
         }
 
-        private static void PrintParagraph(ModelDto.EditorialUnits.Paragraph paragraph)
+        private static void PrintParagraph(Saga.Model.EditorialUnits.Paragraph paragraph)
         {
             PrintEntityLine(paragraph, "    ");
             PrintCommonParts(paragraph.CommonParts, "      ", paragraph);

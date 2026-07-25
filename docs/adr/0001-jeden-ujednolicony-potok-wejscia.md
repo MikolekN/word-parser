@@ -8,7 +8,7 @@
 Parser przyjmował wyłącznie DOCX napisany na specjalistycznym szablonie RCL (style `ART`, `UST`,
 `Z/*`). Doszły trzy nowe wejścia: DOCX bez szablonu, PDF z warstwą tekstową, TXT. Analiza wykazała,
 że granica OpenXml kończy się w `ParserOrchestrator.ProcessParagraph` — dalej potok operuje na
-`(string text, string? styleId)`, a `ModelDto` jest w 100% wolne od OpenXml.
+`(string text, string? styleId)`, a `Saga.Model` jest w 100% wolne od OpenXml.
 
 ## Decyzja
 
@@ -30,7 +30,7 @@ co jest osobno zakazane (ADR-0002), i dokłada format pośredni bez żadnej korz
 
 ## Konsekwencje
 
-`DocumentBlock` jest kontraktem wewnętrznym potoku i celowo **nie** trafia do `ModelDto` — inaczej
+`DocumentBlock` jest kontraktem wewnętrznym potoku i celowo **nie** trafia do `Saga.Model` — inaczej
 graf zależności otworzyłby się na szczegóły odczytu formatu, a DTO przestałoby być czystym wynikiem.
 
 Adapter DOCX iteruje `Descendants<Word.Paragraph>()` tak samo jak wcześniejszy kod (parytet — łapie
@@ -45,8 +45,8 @@ poziom ukryłby błąd przeliczenia w miejscu bez dostępu do kontekstu listy.
 
 ## Weryfikacja
 
-- `ArchitectureDecisionTests.Adr0001_ModelDto_DoesNotDependOnParserOrIntermediateRepresentation` —
-  pilnuje, że `ModelDto` nie sięga do parsera, IR ani OpenXml.
+- `ArchitectureDecisionTests.Adr0001_Saga.Model_DoesNotDependOnParserOrIntermediateRepresentation` —
+  pilnuje, że `Saga.Model` nie sięga do parsera, IR ani OpenXml.
 - `ParserEquivalenceTests` — pilnuje, że ten sam akt podany różnymi formatami daje równoważny model;
   to test sensu istnienia wspólnego potoku.
 

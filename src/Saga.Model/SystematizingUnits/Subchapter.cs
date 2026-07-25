@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using ModelDto.EditorialUnits;
+using Saga.Model.EditorialUnits;
 
-namespace ModelDto.SystematizingUnits
+namespace Saga.Model.SystematizingUnits
 {
     /// <summary>
     /// Jednostka systematyzująca: oddział (najniższa, zawiera artykuły)

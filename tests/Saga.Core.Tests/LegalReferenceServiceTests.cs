@@ -1,12 +1,12 @@
-using ModelDto;
-using WordParserCore.Services;
-using WordParserCore.Services.Parsing;
-using WordParserCore.Services.Parsing.Builders;
-using ModelDto.EditorialUnits;
-using ModelDto.SystematizingUnits;
+using Saga.Model;
+using Saga.Core.Services;
+using Saga.Core.Services.Parsing;
+using Saga.Core.Services.Parsing.Builders;
+using Saga.Model.EditorialUnits;
+using Saga.Model.SystematizingUnits;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
     public class LegalReferenceServiceTests
     {

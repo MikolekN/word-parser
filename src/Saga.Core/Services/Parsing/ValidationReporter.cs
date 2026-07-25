@@ -1,7 +1,7 @@
-using ModelDto;
-using WordParserCore.Services.Classify;
+using Saga.Model;
+using Saga.Core.Services.Classify;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Rejestruje ostrzeżenia i komunikaty walidacji na encjach DTO.

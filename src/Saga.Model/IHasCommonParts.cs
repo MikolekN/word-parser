@@ -1,9 +1,9 @@
 #nullable enable
 
 using System.Collections.Generic;
-using ModelDto.EditorialUnits;
+using Saga.Model.EditorialUnits;
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Kontrakt dla jednostek, które mogą posiadać części wspólne (intro/wrapUp).

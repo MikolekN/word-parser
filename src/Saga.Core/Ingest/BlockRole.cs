@@ -1,4 +1,4 @@
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Rola bloku w dokumencie. Bloki przypisów (np. odnośniki u dołu strony PDF)

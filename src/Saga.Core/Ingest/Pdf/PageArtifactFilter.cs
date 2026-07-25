@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace WordParserCore.Ingest.Pdf
+namespace Saga.Core.Ingest.Pdf
 {
 	/// <summary>
 	/// Usuwa artefakty stron (nagłówki/stopki/paginację) z wierszy PDF — inaczej nagłówek strony

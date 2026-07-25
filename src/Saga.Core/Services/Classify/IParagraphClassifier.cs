@@ -1,4 +1,4 @@
-namespace WordParserCore.Services.Classify
+namespace Saga.Core.Services.Classify
 {
 	/// <summary>
 	/// Kontrakt klasyfikatora akapitów w parserze.

@@ -1,6 +1,6 @@
 using Serilog;
 
-namespace WordParserCore
+namespace Saga.Core
 {
     public static class LoggerConfig
     {

@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DocumentFormat.OpenXml.Wordprocessing;
-using ModelDto;
-using WordParserCore.Helpers;
-using WordParserCore.Services.Classify;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Core.Helpers;
+using Saga.Core.Services.Classify;
+using Saga.Core.Services.Parsing;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy jednostek systematyzacyjnych (Etap 6b, § 60-62 ZTP): rozpoznanie z treści bez stylu,

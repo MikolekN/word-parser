@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ModelDto.EditorialUnits;
-using ModelDto.SystematizingUnits;
+using Saga.Model.EditorialUnits;
+using Saga.Model.SystematizingUnits;
 
 #nullable enable
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Model aktu prawnego - wrapper całej struktury dokumentu legislacyjnego.

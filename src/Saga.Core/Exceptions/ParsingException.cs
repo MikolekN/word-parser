@@ -1,6 +1,6 @@
 using System;
 
-namespace WordParserCore.Exceptions
+namespace Saga.Core.Exceptions
 {
     /// <summary>
     /// Bazowy wyjątek dla błędów w trakcie parsowania dokumentu prawnego.

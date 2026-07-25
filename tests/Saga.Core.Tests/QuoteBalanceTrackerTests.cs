@@ -1,7 +1,7 @@
-using WordParserCore.Services.Parsing;
+using Saga.Core.Services.Parsing;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy bilansu cudzysłowów (Etap 8a): uzbrojenie na pierwszym bezstylowym bloku od „,

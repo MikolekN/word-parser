@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Metadane układu bloku — jednostka kanoniczna: twips (1 pt = 20 twips).

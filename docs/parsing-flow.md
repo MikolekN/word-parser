@@ -1,4 +1,4 @@
-# Analiza flow parsowania — WordParserCore
+# Analiza flow parsowania — Saga.Core
 
 ## Cel
 Dokumentacja pełnego przebiegu parsowania od punktu wejścia (`LegalDocumentParser.Parse`)

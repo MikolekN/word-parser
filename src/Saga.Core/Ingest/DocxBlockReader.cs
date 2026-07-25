@@ -5,12 +5,12 @@ using System.IO;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using Word = DocumentFormat.OpenXml.Wordprocessing;
-using WordParserCore.Exceptions;
-using WordParserCore.Helpers;
+using Saga.Core.Exceptions;
+using Saga.Core.Helpers;
 
 #nullable enable
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Adapter DOCX → bloki reprezentacji pośredniej.

@@ -1,8 +1,8 @@
-using ModelDto;
-using WordParserCore.Services.Classify;
+using Saga.Model;
+using Saga.Core.Services.Classify;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy jednostkowe dla <see cref="NumberingHint.IsContinuous"/> i

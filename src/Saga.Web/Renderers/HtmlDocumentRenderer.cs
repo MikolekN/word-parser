@@ -1,10 +1,10 @@
 using System.Text;
 using System.Text.Encodings.Web;
-using ModelDto;
-using WordParserCore;
-using WordParserCore.Ingest;
+using Saga.Model;
+using Saga.Core;
+using Saga.Core.Ingest;
 
-namespace WordParserWeb;
+namespace Saga.Web;
 
 static class HtmlDocumentRenderer
 {
@@ -15,7 +15,7 @@ static class HtmlDocumentRenderer
         var sb = new StringBuilder();
 
         sb.AppendLine("<section class=\"panel\">");
-        sb.AppendLine("  <h1>WordParserWeb</h1>");
+        sb.AppendLine("  <h1>SAGA</h1>");
         sb.AppendLine("  <p class=\"lead\">Prześlij dokument (DOCX, PDF z warstwą tekstową lub TXT), aby zobaczyć wynik klasyfikacji i parsowania.</p>");
 
         if (!string.IsNullOrWhiteSpace(errorMessage))
@@ -29,7 +29,7 @@ static class HtmlDocumentRenderer
         sb.AppendLine("  </form>");
         sb.AppendLine("</section>");
 
-        return WrapPage("WordParserWeb", sb.ToString());
+        return WrapPage("Saga.Web", sb.ToString());
     }
 
     public static string RenderDocument(LegalDocument document, string fileName)

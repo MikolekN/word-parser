@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace WordParserCore.Helpers
+namespace Saga.Core.Helpers
 {
 	/// <summary>
 	/// Konwersja oznaczeń jednostek systematyzacyjnych (§ 60 ZTP) na wartość liczbową:

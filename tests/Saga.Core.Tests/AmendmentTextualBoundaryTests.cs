@@ -1,10 +1,10 @@
 using System.Linq;
-using ModelDto;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Parsing;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy granic nowelizacji bez stylów Z/* (Etap 8): bilans cudzysłowów wyznacza koniec

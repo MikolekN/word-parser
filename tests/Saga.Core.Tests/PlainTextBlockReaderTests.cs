@@ -1,10 +1,10 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using WordParserCore.Ingest;
+using Saga.Core.Ingest;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy adaptera TXT → IR (Etap 5): detekcja kodowania, normalizacja, segmentacja bloków.

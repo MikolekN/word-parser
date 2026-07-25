@@ -1,4 +1,4 @@
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Wyrównanie bloku tekstu (metadana układu).

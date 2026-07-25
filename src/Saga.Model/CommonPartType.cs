@@ -1,4 +1,4 @@
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Typ części wspólnej (wirtualnego bytu reprezentującego intro lub wrapUp jednostki wyliczeniowej).

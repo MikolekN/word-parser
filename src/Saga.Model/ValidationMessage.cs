@@ -1,6 +1,6 @@
 using System;
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Poziom ważności wiadomości walidacji/diagnostyki (błędy, ostrzeżenia, informacje).

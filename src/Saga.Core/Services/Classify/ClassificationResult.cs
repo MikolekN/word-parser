@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WordParserCore.Services.Classify
+namespace Saga.Core.Services.Classify
 {
 	/// <summary>
 	/// Wynik klasyfikacji akapitu: typ jednostki redakcyjnej, pewność (1–100)

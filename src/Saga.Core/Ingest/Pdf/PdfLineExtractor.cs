@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UglyToad.PdfPig.Content;
 
-namespace WordParserCore.Ingest.Pdf
+namespace Saga.Core.Ingest.Pdf
 {
 	/// <summary>
 	/// Odtwarza wiersze tekstu z liter strony PDF (PdfPig): grupowanie po linii bazowej

@@ -1,4 +1,4 @@
-namespace WordParserCore.Services.Parsing.Builders
+namespace Saga.Core.Services.Parsing.Builders
 {
 	/// <summary>
 	/// Wspolny kontrakt dla builderow encji.

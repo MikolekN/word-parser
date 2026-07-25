@@ -1,9 +1,9 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
-using WordParserCore.Ingest;
+using Saga.Core.Ingest;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy adaptera DOCX → IR (DocxBlockReader.ToBlock), w szczególności ekstrakcji

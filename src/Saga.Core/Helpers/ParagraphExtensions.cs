@@ -1,7 +1,7 @@
 using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
 
-namespace WordParserCore
+namespace Saga.Core
 {
     public static class ParagraphExtensions
     {

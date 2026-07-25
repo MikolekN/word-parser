@@ -1,8 +1,8 @@
-using DtoArticle = ModelDto.EditorialUnits.Article;
-using DtoParagraph = ModelDto.EditorialUnits.Paragraph;
-using DtoPoint = ModelDto.EditorialUnits.Point;
+using DtoArticle = Saga.Model.EditorialUnits.Article;
+using DtoParagraph = Saga.Model.EditorialUnits.Paragraph;
+using DtoPoint = Saga.Model.EditorialUnits.Point;
 
-namespace WordParserCore.Services.Parsing.Builders
+namespace Saga.Core.Services.Parsing.Builders
 {
 	/// <summary>
 	/// Wejscie dla budowania punktu (ustep + artykul + tekst).

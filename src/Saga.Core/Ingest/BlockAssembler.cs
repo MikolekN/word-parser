@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WordParserCore.Ingest
+namespace Saga.Core.Ingest
 {
 	/// <summary>
 	/// Składa wiersze źródłowe (TXT) w bloki reprezentacji pośredniej: <b>jeden niepusty wiersz = jeden blok</b>,

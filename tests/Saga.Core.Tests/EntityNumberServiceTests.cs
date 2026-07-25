@@ -1,10 +1,10 @@
-using ModelDto;
-using WordParserCore.Services;
-using WordParserCore.Services.Classify;
-using WordParserCore.Services.Parsing;
+using Saga.Model;
+using Saga.Core.Services;
+using Saga.Core.Services.Classify;
+using Saga.Core.Services.Parsing;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy parsowania i formatowania numerów encji — w szczególności OBU kanałów

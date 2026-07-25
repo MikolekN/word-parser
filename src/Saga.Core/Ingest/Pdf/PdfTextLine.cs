@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace WordParserCore.Ingest.Pdf
+namespace Saga.Core.Ingest.Pdf
 {
 	/// <summary>
 	/// Wiersz tekstu odtworzony z liter strony PDF (współrzędne w punktach; oś Y rośnie DO GÓRY).

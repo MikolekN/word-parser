@@ -1,10 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using WordParserCore;
+using Saga.Core;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	public class ReferenceActTests
 	{
@@ -12,7 +12,7 @@ namespace WordParserCore.Tests
 			=> TestFiles.CreateTemporaryCopy(TestFiles.GetReferenceDocPath(fileName));
 
 		// AlwaysParse: testy referencyjne parsera niezależne od progów klasyfikatora dokumentu.
-		private static ModelDto.LegalDocument ParseDocument(string tempPath)
+		private static Saga.Model.LegalDocument ParseDocument(string tempPath)
 			=> LegalDocumentParser.Parse(tempPath, new ParseOptions { Policy = ParsePolicy.AlwaysParse }).Document!;
 
 		[Fact]

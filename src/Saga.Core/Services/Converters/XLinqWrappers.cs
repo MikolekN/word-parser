@@ -1,7 +1,7 @@
 using System.Xml.Linq;
-using WordParserCore.Services.Converters;
+using Saga.Core.Services.Converters;
 
-namespace WordParserCore
+namespace Saga.Core
 {
     /// <summary>
     /// Nakładki na API XLinq dodające przestrzeń nazw do tworzonych elementów.

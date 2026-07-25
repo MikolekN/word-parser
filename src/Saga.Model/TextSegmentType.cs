@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace ModelDto
+namespace Saga.Model
 {
     /// <summary>
     /// Typ segmentu tekstu w jednostce redakcyjnej.

@@ -1,8 +1,8 @@
 using DocumentFormat.OpenXml.Wordprocessing;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Classify;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Classify;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Koordynuje jednoprzebiegowe parsowanie dokumentu prawnego.

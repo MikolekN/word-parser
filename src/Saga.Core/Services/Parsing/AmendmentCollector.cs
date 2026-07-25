@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using ModelDto;
-using WordParserCore.Helpers;
+using Saga.Model;
+using Saga.Core.Helpers;
 using Serilog;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Dane pojedynczego akapitu zebranego jako tresc nowelizacji.

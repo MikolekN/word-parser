@@ -1,8 +1,8 @@
 using System.Xml.Linq;
-using ModelDto;
+using Saga.Model;
 using Serilog;
 
-namespace WordParserCore.Services.Converters
+namespace Saga.Core.Services.Converters
 {
     internal static class SentenceProcessor
     {

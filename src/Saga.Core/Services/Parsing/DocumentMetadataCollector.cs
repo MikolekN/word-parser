@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using ModelDto;
-using WordParserCore.Services.Classify.Document;
+using Saga.Model;
+using Saga.Core.Services.Classify.Document;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Zbiera metadane aktu ze strefy tytułowej — akapitów sprzed pierwszego artykułu (§ 16-19, § 102, § 120 ZTP):

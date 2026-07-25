@@ -1,4 +1,4 @@
-namespace WordParserCore.Exceptions
+namespace Saga.Core.Exceptions
 {
 	/// <summary>
 	/// Dokument w formacie nieobsługiwanym przez potok parsowania (np. PDF zaszyfrowany hasłem,

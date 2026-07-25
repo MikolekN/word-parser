@@ -1,4 +1,4 @@
-namespace WordParserCore.Services.Classify
+namespace Saga.Core.Services.Classify
 {
 	/// <summary>
 	/// Domyślna implementacja <see cref="IConflictResolver"/> — treść wygrywa nad stylem.

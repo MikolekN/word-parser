@@ -3,14 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DocumentFormat.OpenXml.Packaging;
-using ModelDto;
-using WordParserCore;
-using WordParserCore.Exceptions;
-using WordParserCore.Ingest;
+using Saga.Model;
+using Saga.Core;
+using Saga.Core.Exceptions;
+using Saga.Core.Ingest;
 using Xunit;
 using Word = DocumentFormat.OpenXml.Wordprocessing;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy kanonicznej fasady Parse (Etap 10): detekcja formatu → klasyfikacja → polityka →
@@ -261,7 +261,7 @@ namespace WordParserCore.Tests
 
 			// Blok przypisu ISTNIEJE w IR (klasyfikator dokumentu go widzi) — pominął go tylko parser.
 			using var rawStream = new MemoryStream(pdf.Build());
-			var rawBlocks = new WordParserCore.Ingest.Pdf.PdfBlockReader().ReadBlocks(rawStream);
+			var rawBlocks = new Saga.Core.Ingest.Pdf.PdfBlockReader().ReadBlocks(rawStream);
 			var footnote = Assert.Single(rawBlocks, b => b.Role == BlockRole.FootnoteText);
 			Assert.Contains("Zmiany tekstu jednolitego", footnote.Text);
 		}
@@ -285,7 +285,7 @@ namespace WordParserCore.Tests
 		[Fact]
 		public void ParseFilePath_ReadsFileReadOnly()
 		{
-			var path = Path.Combine(Path.GetTempPath(), $"wordparser_test_{Guid.NewGuid():N}.txt");
+			var path = Path.Combine(Path.GetTempPath(), $"saga_test_{Guid.NewGuid():N}.txt");
 			File.WriteAllText(path, string.Join("\n", StatuteLines), new UTF8Encoding(false));
 			var writtenAt = File.GetLastWriteTimeUtc(path);
 			try

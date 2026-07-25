@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace WordParserCore.Services.Classify.Document
+namespace Saga.Core.Services.Classify.Document
 {
 	/// <summary>
 	/// Współdzielone wzorce ZTP do klasyfikacji dokumentu i (docelowo) zbierania metadanych.

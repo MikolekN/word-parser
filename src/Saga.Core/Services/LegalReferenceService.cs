@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using ModelDto;
+using Saga.Model;
 
-namespace WordParserCore.Services
+namespace Saga.Core.Services
 {
     /// <summary>
     /// Serwis do zarządzania odniesieniami do aktów prawnych.
@@ -68,7 +68,7 @@ namespace WordParserCore.Services
             var contextBuilder = new StringBuilder();
             var currentEntity = entity;
 
-            while (currentEntity != null && !(currentEntity is ModelDto.EditorialUnits.Article))
+            while (currentEntity != null && !(currentEntity is Saga.Model.EditorialUnits.Article))
             {
                 if (!string.IsNullOrEmpty(currentEntity.ContentText))
                 {

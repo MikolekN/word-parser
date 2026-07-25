@@ -1,8 +1,8 @@
 using System.Xml.Linq;
-using ModelDto.EditorialUnits;
-using static WordParserCore.XLinqWrappers;
+using Saga.Model.EditorialUnits;
+using static Saga.Core.XLinqWrappers;
 
-namespace WordParserCore.Services.Converters
+namespace Saga.Core.Services.Converters
 {
     /// <summary>
     /// Konwertuje model Tiret na element XML.

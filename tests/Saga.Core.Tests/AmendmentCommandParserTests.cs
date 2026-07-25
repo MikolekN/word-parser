@@ -1,8 +1,8 @@
-using WordParserCore.Helpers;
-using WordParserCore.Services.Parsing;
+using Saga.Core.Helpers;
+using Saga.Core.Services.Parsing;
 using Xunit;
 
-namespace WordParserCore.Tests
+namespace Saga.Core.Tests
 {
 	/// <summary>
 	/// Testy parsera komend nowelizacyjnych (Etap 8b, § 82-97 ZTP): rozpoznanie rodzaju komendy
@@ -158,7 +158,7 @@ namespace WordParserCore.Tests
 		public void SkreslaSie_IsRepealInFinalizerPattern()
 		{
 			// Historyczny czasownik uchylenia — RepealPattern dorównany do własnej dokumentacji.
-			Assert.Matches(WordParserCore.Services.Parsing.AmendmentFinalizer.RepealPattern,
+			Assert.Matches(Saga.Core.Services.Parsing.AmendmentFinalizer.RepealPattern,
 				"w art. 5 skreśla się ust. 2;");
 		}
 

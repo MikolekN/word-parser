@@ -1,12 +1,12 @@
-using ModelDto;
-using WordParserCore.Services;
-using DtoArticle = ModelDto.EditorialUnits.Article;
-using DtoLetter = ModelDto.EditorialUnits.Letter;
-using DtoParagraph = ModelDto.EditorialUnits.Paragraph;
-using DtoPoint = ModelDto.EditorialUnits.Point;
-using DtoTiret = ModelDto.EditorialUnits.Tiret;
+using Saga.Model;
+using Saga.Core.Services;
+using DtoArticle = Saga.Model.EditorialUnits.Article;
+using DtoLetter = Saga.Model.EditorialUnits.Letter;
+using DtoParagraph = Saga.Model.EditorialUnits.Paragraph;
+using DtoPoint = Saga.Model.EditorialUnits.Point;
+using DtoTiret = Saga.Model.EditorialUnits.Tiret;
 
-namespace WordParserCore.Services.Parsing.Builders
+namespace Saga.Core.Services.Parsing.Builders
 {
 	/// <summary>
 	/// Wejscie dla budowania tiretu (litera + kontekst + indeks).

@@ -1,12 +1,12 @@
-using ModelDto;
-using ModelDto.EditorialUnits;
+using Saga.Model;
+using Saga.Model.EditorialUnits;
 using Serilog;
-using WordParserCore.Helpers;
-using WordParserCore.Ingest;
-using WordParserCore.Services.Classify;
-using WordParserCore.Services.Parsing.Builders;
+using Saga.Core.Helpers;
+using Saga.Core.Ingest;
+using Saga.Core.Services.Classify;
+using Saga.Core.Services.Parsing.Builders;
 
-namespace WordParserCore.Services.Parsing
+namespace Saga.Core.Services.Parsing
 {
 	/// <summary>
 	/// Buduje encje domenowe (Article, Paragraph, Point, Letter, Tiret)
