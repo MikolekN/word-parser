@@ -33,7 +33,24 @@ zmiana któregokolwiek wymaga jawnej aktualizacji z uzasadnieniem ZTP).
   w `ZtpPatterns` i brak wartości w `DocumentSignalKind` — sygnał nie istnieje. Materiał źródłowy
   gotowy: [ztp-struktura-aktow.md](ztp-struktura-aktow.md) sekcja 5.7.
 
-## 3. Testy, których plan przewidywał, a nie powstały
+## 3. Model danych — luki wobec docelowego eksportu XML
+
+Stan sprawdzony w kodzie 2026-07-25. Istotne, bo profil `akn4pl` (i każdy inny docelowy schemat XML)
+wymaga danych, których model dziś nie przechowuje — parser ich nie zbiera, więc eksport nie ma z czego
+ich wziąć.
+
+| Luka | Stan |
+|---|---|
+| **Metadane aktu** | `LegalDocument` ma `Title`, `ActDate`, `SourceJournal`, `Classification`. Brak: **ELI URI**, **organu wydającego**, **sygnatury**, **daty ogłoszenia** (osobnej od daty aktu). |
+| **`ContentText` jako płaski string** | Tabele, grafiki i wzory matematyczne są spłaszczane do tekstu (TODO w `BaseEntity`). Dotyczy też `cytat-strukt` inline poza kontekstem nowelizacji — w samej nowelizacji strukturę trzyma `Amendment`/`AmendmentContent`. |
+| **Brak encji preambuły** | Ani `Preamble`, ani odpowiednika `preambula` — element obecny i w EAP, i w AKN. |
+| **Brak modelu odnośników (przypisów)** | Istnieje tylko sygnał klasyfikacyjny `FootnoteDensity`; same odnośniki (§ 106 pkt 2–5, § 163 ZTP) nie mają reprezentacji, choć w tekstach jednolitych niosą treść normatywną. |
+| **Brak metadanych FRBR** | `FRBRthis`/`FRBRuri`/`FRBRdate`/`FRBRauthor` — wymagane przez `akn4pl.xsd`, w modelu nieobecne. |
+| **`LegalActType` bez orzeczeń** | 11 wartości, brak `JudicialDecision` (wyrok TK) — a w lustrze upstreamu leży przykład `przyklady/wyrok_TK.xml`. |
+| **Brakujące prefiksy eId** | Model ma `art`/`ust`/`pkt`/`lit`/`tir` + systematyzacyjne. Brak: `par` (§ jako podjednostka artykułu w kodeksach), `zd` (zdanie), `ak` (akapit w prawie UE), `zal` (załącznik). |
+| **Atrybuty typograficzne pominięte** | Założenie „to warstwa prezentacji" **warte podważenia**: w tekstach jednolitych kursywa oznacza akty i przepisy, które utraciły moc oraz zlikwidowane organy (§ 108a–108b ZTP), a pogrubienie — brzmienia przyszłe (§ 106a ust. 4). To znaczenie normatywne, nie ozdoba. Adapter DOCX czyta już `IsBold`/`IsItalic` do `BlockLayoutInfo`, ale model wyjściowy tego nie przechowuje. |
+
+## 4. Testy, których plan przewidywał, a nie powstały
 
 - **Korpus ekwiwalencji plikowej** — zakładano ten sam akt w czterech wariantach
   (DOCX-szablon / DOCX bez stylów / PDF / TXT) w `DocRepo/equivalence/`. Katalog nie istnieje;
@@ -43,7 +60,7 @@ zmiana któregokolwiek wymaga jawnej aktualizacji z uzasadnieniem ZTP).
 - **Smoke-test na samym ZTP** — konwersja [ZTP-2026-300.md](ZTP-2026-300.md) → TXT z oczekiwaniem
   „rozporządzenie, wysoka pewność" i sparsowanymi jednostkami `§`.
 
-## 4. Ryzyka do pilnowania przy zmianach
+## 5. Ryzyka do pilnowania przy zmianach
 
 - **Tiret vs część wspólna** — półpauza na początku wiersza jest niejednoznaczna; każda zmiana
   w tym obszarze rusza gałąź bezstylową i wymaga przejrzenia testów charakteryzujących.
