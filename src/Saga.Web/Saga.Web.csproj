@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WordParserCore\WordParserCore.csproj" />
-    <ProjectReference Include="..\ModelDto\ModelDto.csproj" />
+    <ProjectReference Include="../Saga.Core/Saga.Core.csproj" />
+    <ProjectReference Include="../Saga.Model/Saga.Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>

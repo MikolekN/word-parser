@@ -18,7 +18,7 @@ namespace WordParserCore.Tests
 		public static string GetTestProjectRoot()
 		{
 			var dir = new DirectoryInfo(AppContext.BaseDirectory);
-			while (dir != null && !File.Exists(Path.Combine(dir.FullName, "WordParserCore.Tests.csproj")))
+			while (dir != null && !File.Exists(Path.Combine(dir.FullName, "Saga.Core.Tests.csproj")))
 			{
 				dir = dir.Parent;
 			}
@@ -26,7 +26,7 @@ namespace WordParserCore.Tests
 			if (dir == null)
 			{
 				throw new DirectoryNotFoundException(
-					"Nie znaleziono katalogu projektu testowego (WordParserCore.Tests.csproj) powyżej katalogu wyjściowego testów.");
+					"Nie znaleziono katalogu projektu testowego (Saga.Core.Tests.csproj) powyżej katalogu wyjściowego testów.");
 			}
 
 			return dir.FullName;
@@ -36,13 +36,13 @@ namespace WordParserCore.Tests
 			=> Path.Combine(GetTestProjectRoot(), "Artifacts", fileName);
 
 		/// <summary>
-		/// Korzeń repozytorium (katalog z WordParser.sln) — potrzebny testom weryfikującym
+		/// Korzeń repozytorium (katalog z Saga.sln) — potrzebny testom weryfikującym
 		/// dokumentację, która odwołuje się do plików w innych projektach.
 		/// </summary>
 		public static string GetRepositoryRoot()
 		{
 			var dir = new DirectoryInfo(AppContext.BaseDirectory);
-			while (dir != null && !File.Exists(Path.Combine(dir.FullName, "WordParser.sln")))
+			while (dir != null && !File.Exists(Path.Combine(dir.FullName, "Saga.sln")))
 			{
 				dir = dir.Parent;
 			}
@@ -50,7 +50,7 @@ namespace WordParserCore.Tests
 			if (dir == null)
 			{
 				throw new DirectoryNotFoundException(
-					"Nie znaleziono korzenia repozytorium (WordParser.sln) powyżej katalogu wyjściowego testów.");
+					"Nie znaleziono korzenia repozytorium (Saga.sln) powyżej katalogu wyjściowego testów.");
 			}
 
 			return dir.FullName;

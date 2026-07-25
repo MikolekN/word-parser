@@ -23,11 +23,11 @@ Interfejs webowy. Przyjmuje upload wieloformatowy DOCX/PDF/TXT (limit 64MB). Gdy
 
 ```bash
 # Budowanie
-dotnet build WordParserCore/WordParserCore.csproj
-dotnet build WordParser/WordParser.csproj
+dotnet build src/Saga.Core/WordParserCore.csproj
+dotnet build src/Saga.Cli/WordParser.csproj
 
 # Testy
-dotnet test WordParserCore.Tests/WordParserCore.Tests.csproj
+dotnet test tests/Saga.Core.Tests/WordParserCore.Tests.csproj
 
 # Uruchomienie CLI
 dotnet run --project WordParser -- <ścieżka-do-pliku.docx>

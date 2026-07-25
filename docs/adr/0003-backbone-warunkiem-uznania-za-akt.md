@@ -13,7 +13,7 @@ sygnałów słabych: umowa albo statut wewnętrzny ma jednostki `§`, datę i fr
 ## Decyzja
 
 Wprowadzono warunek konieczny `hasBackbone` w
-[`DocumentClassifier.Classify`](../../WordParserCore/Services/Classify/Document/DocumentClassifier.cs).
+[`DocumentClassifier.Classify`](../../src/Saga.Core/Services/Classify/Document/DocumentClassifier.cs).
 Dokument bez co najmniej jednego silnego sygnału strukturalnego — nagłówka rodzaju aktu, formuły
 kompetencyjnej, komend nowelizacyjnych albo formuły wejścia w życie — jest klasyfikowany jako
 nie-akt niezależnie od liczby punktów.

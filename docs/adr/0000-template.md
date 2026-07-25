@@ -26,5 +26,5 @@ utrzymywane specjalnie po to. Także to, co trzeba pilnować przy zmianach.
 
 Nazwy testów, które **spadną**, jeśli decyzja zostanie odwrócona — dzięki temu jej cofnięcie wymaga
 świadomego usunięcia asercji, widocznego w diffie. Strażników pisze się w
-`WordParserCore.Tests/ArchitectureDecisionTests.cs`, chyba że istnieje już test w naturalnym miejscu.
+`tests/Saga.Core.Tests/ArchitectureDecisionTests.cs`, chyba że istnieje już test w naturalnym miejscu.
 Jeśli decyzji nie da się objąć testem, napisz to wprost i wskaż, co ją pilnuje.

@@ -659,7 +659,7 @@ historycznie parser modyfikował dokument).
 ## 11. Mapa plików — szybki przegląd
 
 ```
-ModelDto/
+src/Saga.Model/
 ├── BaseEntity.cs                    # Klasa bazowa wszystkich encji
 ├── LegalDocument.cs                 # Korzeń modelu aktu prawnego
 ├── EntityNumber.cs                  # Model numeru encji
@@ -697,7 +697,7 @@ ModelDto/
     ├── Chapter.cs                   # Rozdział
     └── Subchapter.cs                # Oddział (kontener artykułów)
 
-WordParserCore/
+src/Saga.Core/
 ├── LegalDocumentParser.cs           # PUNKT WEJŚCIA — Parse(Stream/filePath) → ParseResult; Parse(WordprocessingDocument) [Obsolete]
 ├── ParseResult.cs                   # Koperta wyniku: Classification, Document?, SourceFormat, BlockCount
 ├── ParseOptions.cs                  # Opcje: Policy (ParsePolicy), ForcedFormat

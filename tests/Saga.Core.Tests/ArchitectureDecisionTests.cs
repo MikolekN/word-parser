@@ -28,7 +28,7 @@ namespace WordParserCore.Tests
 		[Fact]
 		public void Adr0001_ModelDto_DoesNotDependOnParserOrIntermediateRepresentation()
 		{
-			var modelDtoDirectory = Path.Combine(TestFiles.GetRepositoryRoot(), "ModelDto");
+			var modelDtoDirectory = Path.Combine(TestFiles.GetRepositoryRoot(), "src", "Saga.Model");
 
 			var leaking = Directory.EnumerateFiles(modelDtoDirectory, "*.cs", SearchOption.AllDirectories)
 				.Where(file => !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}") &&

@@ -10,17 +10,17 @@ Ten plik zawiera wskazówki dla Claude Code (claude.ai/code) dotyczące pracy z 
 
 ```bash
 # Budowanie (tylko biblioteka + CLI — projekt API jest zawieszony, nie używaj build-all)
-dotnet build WordParserCore/WordParserCore.csproj
-dotnet build WordParser/WordParser.csproj
+dotnet build src/Saga.Core/WordParserCore.csproj
+dotnet build src/Saga.Cli/WordParser.csproj
 # Lub użyj zadania VS Code: "build-offline"
 
 # Uruchomienie wszystkich testów
-dotnet test WordParserCore.Tests/WordParserCore.Tests.csproj
+dotnet test tests/Saga.Core.Tests/WordParserCore.Tests.csproj
 
 # Uruchomienie pojedynczej klasy testowej
-dotnet test WordParserCore.Tests/WordParserCore.Tests.csproj --filter "FullyQualifiedName~EIdTests"
+dotnet test tests/Saga.Core.Tests/WordParserCore.Tests.csproj --filter "FullyQualifiedName~EIdTests"
 
-# Build wydania + Docker (obraz WordParserWeb/Dockerfile, tag = skrócony hash commita gita + 'latest', push do rejestru; inkrementacja build.number jest ZAKOMENTOWANA i nieużywana)
+# Build wydania + Docker (obraz src/Saga.Web/Dockerfile, tag = skrócony hash commita gita + 'latest', push do rejestru; inkrementacja build.number jest ZAKOMENTOWANA i nieużywana)
 ./build.sh
 ```
 
@@ -36,7 +36,7 @@ WordParserApi (zawieszony) ──► WordParserCore ──► ModelDto
 ```
 
 - `ModelDto` — czyste DTO, bez logiki biznesowej
-- `WordParserCore` — cała logika silnika parsowania; zależy od `DocumentFormat.OpenXml`, `Serilog` i `PdfPig` 0.1.15 (adapter PDF: `WordParserCore/Ingest/Pdf/` — `PdfBlockReader`, `PdfLineExtractor`, `PageArtifactFilter`)
+- `WordParserCore` — cała logika silnika parsowania; zależy od `DocumentFormat.OpenXml`, `Serilog` i `PdfPig` 0.1.15 (adapter PDF: `src/Saga.Core/Ingest/Pdf/` — `PdfBlockReader`, `PdfLineExtractor`, `PageArtifactFilter`)
 - `WordParser` — cienka nakładka CLI
 - `WordParserWeb` — aktywna aplikacja webowa ASP.NET 10 (renderowanie HTML dokumentów)
 - `WordParserApi` — zawieszony; nie rozwijaj tego projektu
@@ -56,12 +56,12 @@ Part → Book → Title → Division → Chapter → Subchapter → [Articles]
 
 **Jednostki niejawne (wirtualne)**: jeśli artykuł ma dokładnie jeden ustęp, ten ustęp jest oznaczony jako `IsImplicit = true`. Jednostki niejawne są pomijane w ścieżkach eId i w prezentacji. Przykładowy format eId: `art_5__ust_2__pkt_3__lit_a__tir_1` (podwójny podkreślnik między komponentami, pojedynczy podkreślnik między prefiksem a numerem).
 
-### Potok parsowania (`WordParserCore/Services/Parsing/`)
+### Potok parsowania (`src/Saga.Core/Services/Parsing/`)
 
-Punkt wejścia: `LegalDocumentParser.Parse(...)` przyjmuje `Stream` lub ścieżkę pliku i zwraca kopertę `ParseResult` (`WordParserCore/ParseResult.cs`), nie bezpośrednio `LegalDocument` → wewnętrznie wywołuje `ParserOrchestrator`
+Punkt wejścia: `LegalDocumentParser.Parse(...)` przyjmuje `Stream` lub ścieżkę pliku i zwraca kopertę `ParseResult` (`src/Saga.Core/ParseResult.cs`), nie bezpośrednio `LegalDocument` → wewnętrznie wywołuje `ParserOrchestrator`
 
 Etapy potoku:
-0. Detekcja formatu przez `SourceFormatDetector` (`WordParserCore/Ingest/SourceFormatDetector.cs`) i odczyt bloków przez `DocumentBlockReaderFactory`/`IDocumentBlockReader` (adaptery DOCX/PDF/TXT, katalog `WordParserCore/Ingest/`), następnie klasyfikacja CAŁEGO dokumentu (rodzaj aktu) przez `DocumentClassifier` (`WordParserCore/Services/Classify/Document/DocumentClassifier.cs`), sterowana `ParseOptions.Policy` (`WordParserCore/ParseOptions.cs`); dopiero potem budowa modelu przez `ParserOrchestrator`
+0. Detekcja formatu przez `SourceFormatDetector` (`src/Saga.Core/Ingest/SourceFormatDetector.cs`) i odczyt bloków przez `DocumentBlockReaderFactory`/`IDocumentBlockReader` (adaptery DOCX/PDF/TXT, katalog `src/Saga.Core/Ingest/`), następnie klasyfikacja CAŁEGO dokumentu (rodzaj aktu) przez `DocumentClassifier` (`src/Saga.Core/Services/Classify/Document/DocumentClassifier.cs`), sterowana `ParseOptions.Policy` (`src/Saga.Core/ParseOptions.cs`); dopiero potem budowa modelu przez `ParserOrchestrator`
 1. `ParagraphClassifier` (w `Services/Classify/`) — klasyfikuje każdy akapit przy użyciu 3 warstw (patrz niżej)
 2. `StructureProcessor` — buduje encje domenowe delegując do klas `*Builder` (`ArticleBuilder`, `ParagraphBuilder`, `PointBuilder`, `LetterBuilder`, `TiretBuilder`, `AmendmentBuilder`, `SystematizingUnitBuilder` — buduje jednostki systematyzacyjne Part/Book/Title/Division/Chapter/Subchapter) — wzorzec kaskadowy; buildery niższego poziomu zapewniają istnienie encji nadrzędnych
 3. `AmendmentStateManager` / `AmendmentCollector` / `AmendmentFinalizer` — wykrywają wyzwalacze nowelizacji, buforują treść, finalizują obiekty `Amendment`
@@ -82,29 +82,29 @@ Reguła decyzyjna: twardy wymóg dwóch zgodnych sygnałów dotyczy głównie ro
 
 - Słowa kluczowe wyzwalające: „otrzymuje brzmienie:", „dodaje się", „uchyla się"
 - Style akapitów nowelizacji używają prefiksów `Z/*`, `ZZ*`, `Z_*` (dekodowane przez `AmendmentStyleDecoder`)
-- Typy (`ModelDto/AmendmentOperationType.cs`): Modification, Insertion, Repeal — dotyczą udanej klasyfikacji; czwarta wartość Error oznacza błąd przetwarzania
+- Typy (`src/Saga.Model/AmendmentOperationType.cs`): Modification, Insertion, Repeal — dotyczą udanej klasyfikacji; czwarta wartość Error oznacza błąd przetwarzania
 - Wieloetapowy cykl życia: Wykrycie → Zbieranie (`AmendmentCollector`) → Finalizacja (`AmendmentFinalizer`)
 
 ## Kluczowe pliki
 
 | Plik | Rola |
 |---|---|
-| `WordParserCore/LegalDocumentParser.cs` | Publiczny punkt wejścia |
-| `WordParserCore/Ingest/SourceFormatDetector.cs` + `DocumentBlockReaderFactory` | Detekcja formatu źródłowego i odczyt bloków (DOCX/PDF/TXT) |
-| `WordParserCore/Services/Classify/Document/DocumentClassifier.cs` | Klasyfikacja rodzaju aktu (całego dokumentu) |
-| `WordParserCore/ParseResult.cs` i `WordParserCore/ParseOptions.cs` | Koperta wyniku parsowania + polityka parsowania |
-| `WordParserCore/Services/Parsing/ParserOrchestrator.cs` | Główny potok |
-| `WordParserCore/Services/Parsing/StructureProcessor.cs` | Buduje encje domenowe (deleguje do Builders) |
-| `WordParserCore/Services/Parsing/ParsingContext.cs` | Mutowalny stan parsera |
-| `WordParserCore/Services/Parsing/Builders/` | Buildery encji (wzorzec kaskadowy) |
-| `WordParserCore/Services/Parsing/Builders/SystematizingUnitBuilder.cs` | Buduje jednostki systematyzacyjne (Part/Book/Title/Division/Chapter/Subchapter) |
-| `WordParserCore/Services/Classify/ParagraphClassifier.cs` | Logika klasyfikacji (3-warstwowa) |
-| `WordParserCore/Services/Classify/NumberingHint.cs` | Walidacja ciągłości numeracji |
-| `WordParserCore/Helpers/ParagraphExtensions.cs` | Bezpieczne helpery OpenXml (używaj rozszerzenia `.StyleId()`) |
-| `WordParserCore/Helpers/AmendmentStyleDecoder.cs` | Dekoduje style nowelizacji (`Z/*`, `ZZ*`, `Z_*`) |
-| `ModelDto/BaseEntity.cs` | Abstrakcyjna baza dla wszystkich encji domenowych |
-| `ModelDto/EntityNumber.cs` | Model numeru encji (NumericPart, LexicalPart, Superscript) |
-| `WordParserCore.Tests/` | Testy xUnit; artefakty testowe w podkatalogu `Artifacts/` |
+| `src/Saga.Core/LegalDocumentParser.cs` | Publiczny punkt wejścia |
+| `src/Saga.Core/Ingest/SourceFormatDetector.cs` + `DocumentBlockReaderFactory` | Detekcja formatu źródłowego i odczyt bloków (DOCX/PDF/TXT) |
+| `src/Saga.Core/Services/Classify/Document/DocumentClassifier.cs` | Klasyfikacja rodzaju aktu (całego dokumentu) |
+| `src/Saga.Core/ParseResult.cs` i `src/Saga.Core/ParseOptions.cs` | Koperta wyniku parsowania + polityka parsowania |
+| `src/Saga.Core/Services/Parsing/ParserOrchestrator.cs` | Główny potok |
+| `src/Saga.Core/Services/Parsing/StructureProcessor.cs` | Buduje encje domenowe (deleguje do Builders) |
+| `src/Saga.Core/Services/Parsing/ParsingContext.cs` | Mutowalny stan parsera |
+| `src/Saga.Core/Services/Parsing/Builders/` | Buildery encji (wzorzec kaskadowy) |
+| `src/Saga.Core/Services/Parsing/Builders/SystematizingUnitBuilder.cs` | Buduje jednostki systematyzacyjne (Part/Book/Title/Division/Chapter/Subchapter) |
+| `src/Saga.Core/Services/Classify/ParagraphClassifier.cs` | Logika klasyfikacji (3-warstwowa) |
+| `src/Saga.Core/Services/Classify/NumberingHint.cs` | Walidacja ciągłości numeracji |
+| `src/Saga.Core/Helpers/ParagraphExtensions.cs` | Bezpieczne helpery OpenXml (używaj rozszerzenia `.StyleId()`) |
+| `src/Saga.Core/Helpers/AmendmentStyleDecoder.cs` | Dekoduje style nowelizacji (`Z/*`, `ZZ*`, `Z_*`) |
+| `src/Saga.Model/BaseEntity.cs` | Abstrakcyjna baza dla wszystkich encji domenowych |
+| `src/Saga.Model/EntityNumber.cs` | Model numeru encji (NumericPart, LexicalPart, Superscript) |
+| `tests/Saga.Core.Tests/` | Testy xUnit; artefakty testowe w podkatalogu `Artifacts/` |
 
 ## Konwencje
 
@@ -115,16 +115,16 @@ Reguła decyzyjna: twardy wymóg dwóch zgodnych sygnałów dotyczy głównie ro
 - **Komunikaty commitów**: proponuj nazwy commitów po **angielsku** po każdej zmianie (zarówno małej jak i architektonicznej).
 - **Dokumentacja i plany**: wersjonowany katalog `docs/` trzyma wyłącznie dokumenty opisujące **stan i uzasadnienia** — `architecture.md` (jak działa dziś), `adr/` (dlaczego tak — patrz niżej), `backlog.md` (znane luki i prace świadomie odroczone), `ztp-struktura-aktow.md` (kondensat ZTP). Plany przebudowy, analizy i raporty robocze powstają w `docs/internal/` (gitignorowane), nigdy w wersjonowanym `docs/`. Po wykonaniu planu wygaś go trójpodziałem: „dlaczego" i zasady twarde → ADR, niezrealizowane/odroczone → `backlog.md`, etapowanie i definicje ukończenia → usuń (historia jest w `git log`). Każde twierdzenie przepisywane z planu **zweryfikuj w kodzie** — plany opisują stan z dnia ich napisania i po drodze dryfują.
 - **Odniesienia do kodu w dokumentacji**: cytuj **nazwy symboli** (klasa, metoda, właściwość), nie numery linii — numery pękają przy pierwszej edycji pliku i nic tego nie sygnalizuje. Linki markdown do plików są w porządku (pilnuje ich `DocumentationConsistencyTests`), ale bez zakotwiczeń `#L42`.
-- **ADR (`docs/adr/`)**: jeden plik = jedna decyzja, format wg `docs/adr/0000-template.md`, wpis w indeksie `docs/adr/README.md`. Decyzję, którą da się objąć testem, uzbrój strażnikiem w `WordParserCore.Tests/ArchitectureDecisionTests.cs` i wpisz jego nazwę w sekcji „Weryfikacja" — wtedy odwrócenie decyzji wymaga świadomego usunięcia asercji, widocznego w diffie. ADR piszemy tylko dla decyzji, która **miała odrzuconą alternatywę**, jest **trudno odwracalna** albo jest **nieoczywista** (kod wygląda na przekomplikowany, dopóki nie znasz kontekstu); nie dla wyborów bez alternatywy ani dla konwencji kodu — te należą do tego pliku. Zaakceptowanego ADR **nie edytuje się**: zmiana zdania to nowy ADR ze statusem `Supersedes ADR-NNNN`, a stary dostaje `Superseded by ADR-NNNN`. `architecture.md` nie powtarza uzasadnień — trzyma jednozdaniowy skrót i link.
+- **ADR (`docs/adr/`)**: jeden plik = jedna decyzja, format wg `docs/adr/0000-template.md`, wpis w indeksie `docs/adr/README.md`. Decyzję, którą da się objąć testem, uzbrój strażnikiem w `tests/Saga.Core.Tests/ArchitectureDecisionTests.cs` i wpisz jego nazwę w sekcji „Weryfikacja" — wtedy odwrócenie decyzji wymaga świadomego usunięcia asercji, widocznego w diffie. ADR piszemy tylko dla decyzji, która **miała odrzuconą alternatywę**, jest **trudno odwracalna** albo jest **nieoczywista** (kod wygląda na przekomplikowany, dopóki nie znasz kontekstu); nie dla wyborów bez alternatywy ani dla konwencji kodu — te należą do tego pliku. Zaakceptowanego ADR **nie edytuje się**: zmiana zdania to nowy ADR ze statusem `Supersedes ADR-NNNN`, a stary dostaje `Superseded by ADR-NNNN`. `architecture.md` nie powtarza uzasadnień — trzyma jednozdaniowy skrót i link.
 - **Walidacja**: dołączaj obiekty `ValidationMessage` (Info/Warning/Error/Critical) do encji DTO dla akapitów o niepewnej lub naprawionej klasyfikacji.
 
 ## Testy
 
 - Projekt testowy: `WordParserCore.Tests`
 - Framework: xUnit 2.9.3
-- Dokumenty referencyjne DOCX leżą w lokalnym `DocRepo/` (niewersjonowany); `WordParserCore.Tests/Artifacts/` zawiera golden snapshoty oczekiwanych wyników (np. `doc001.snapshot.xml`) — oba katalogi niewersjonowane
+- Dokumenty referencyjne DOCX leżą w lokalnym `DocRepo/` (niewersjonowany); `tests/Saga.Core.Tests/Artifacts/` zawiera golden snapshoty oczekiwanych wyników (np. `doc001.snapshot.xml`) — oba katalogi niewersjonowane
 - Klasy testowe: lista NIE jest tu utrzymywana (dryfowała — brakowało w niej kolejnych klas). Wygeneruj aktualną:
-  `grep -rho -E '^\s*public class \w+' WordParserCore.Tests/*.cs | sed -E 's/.*public class //' | sort`
+  `grep -rho -E '^\s*public class \w+' tests/Saga.Core.Tests/*.cs | sed -E 's/.*public class //' | sort`
 
   Pułapka: `ParsingBuildersTests` to NAZWA PLIKU (`ParsingBuildersTests.cs`), nie klasa testowa — plik zawiera klasy `ArticleBuilderTests`, `ParagraphBuilderTests`, `PointBuilderTests`, `LetterBuilderTests`, `TiretBuilderTests` (filtr `--filter "FullyQualifiedName~ParsingBuildersTests"` zwraca 0 testów; filtruj po nazwie klasy, np. `ArticleBuilderTests`).
 - Uruchomienie testów konkretnej klasy: `--filter "FullyQualifiedName~NazwaKlasy"`

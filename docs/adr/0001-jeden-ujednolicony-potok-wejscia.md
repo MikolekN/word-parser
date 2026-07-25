@@ -12,7 +12,7 @@ Parser przyjmował wyłącznie DOCX napisany na specjalistycznym szablonie RCL (
 
 ## Decyzja
 
-Wprowadzono reprezentację pośrednią `WordParserCore/Ingest/` (`DocumentBlock`, `BlockLayoutInfo`,
+Wprowadzono reprezentację pośrednią `src/Saga.Core/Ingest/` (`DocumentBlock`, `BlockLayoutInfo`,
 `BlockSourceLocation`). Każdy format ma adapter (`IDocumentBlockReader`) produkujący
 `IReadOnlyList<DocumentBlock>`; dalej istnieje **jeden** potok budowy modelu. Styl Word jest w nim
 jednym z sygnałów klasyfikacji, a nie warunkiem działania.

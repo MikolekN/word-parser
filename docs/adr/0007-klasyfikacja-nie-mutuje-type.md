@@ -12,7 +12,7 @@ pokusa: skoro znamy rodzaj aktu, wpiszmy go w `Type`.
 ## Decyzja
 
 Wynik klasyfikacji jest zapisywany wyłącznie w `LegalDocument.Classification` — w prywatnym
-`Parse(blocks, options, format)` w [`LegalDocumentParser`](../../WordParserCore/LegalDocumentParser.cs).
+`Parse(blocks, options, format)` w [`LegalDocumentParser`](../../src/Saga.Core/LegalDocumentParser.cs).
 `Type` pozostaje pod kontrolą wywołującego i nie jest ruszany przez potok.
 
 ## Odrzucone alternatywy

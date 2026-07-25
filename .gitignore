@@ -24,9 +24,9 @@ bin/
 **/.git.bak/
 
 # === Per-projektowe .gitignore (nie potrzebne w monorepo) ===
-ModelDto/.gitignore
-WordParser/.gitignore
-WordParserCore/.gitignore
+src/Saga.Model/.gitignore
+src/Saga.Cli/.gitignore
+src/Saga.Core/.gitignore
 WordParserApi/.gitignore
 
 # === Pozostałe ===
@@ -49,8 +49,8 @@ schema/.upstream.txt
 tools/sync-schema-pg.sh
 
 # === Lokalne artefakty testowe (nie wersjonowane) ===
-WordParserCore.Tests/Artifacts/*.docx
-WordParserCore.Tests/Artifacts/*.xml
+tests/Saga.Core.Tests/Artifacts/*.docx
+tests/Saga.Core.Tests/Artifacts/*.xml
 
 # === Projekty zawieszone ===
 WordParserApi/

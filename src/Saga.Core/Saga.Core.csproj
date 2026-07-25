@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="WordParserCore.Tests" />
+    <InternalsVisibleTo Include="Saga.Core.Tests" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../ModelDto/ModelDto.csproj" />
+    <ProjectReference Include="../Saga.Model/Saga.Model.csproj" />
   </ItemGroup>
 
 </Project>

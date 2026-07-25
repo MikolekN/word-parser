@@ -8,7 +8,7 @@ do zbudowania hierarchii encji w modelu obiektowym.
 
 ## Krok 1 — Punkt wejścia: `LegalDocumentParser.Parse`
 
-**Plik**: `WordParserCore/LegalDocumentParser.cs`
+**Plik**: `src/Saga.Core/LegalDocumentParser.cs`
 
 Kanoniczny punkt wejścia jest **uniwersalny** — przyjmuje DOCX/PDF (z warstwą tekstową)/TXT
 i zwraca kopertę `ParseResult`, nie sam `LegalDocument`:
@@ -69,7 +69,7 @@ wywołujących; deleguje do `ProcessBlock`.
 
 ## Krok 2 — Przetwarzanie bloku: `ParserOrchestrator.ProcessBlock`
 
-**Plik**: `WordParserCore/Services/Parsing/ParserOrchestrator.cs`
+**Plik**: `src/Saga.Core/Services/Parsing/ParserOrchestrator.cs`
 
 Metoda operuje na `DocumentBlock` — format-agnostycznej reprezentacji pośredniej (patrz Krok 1),
 wspólnej dla DOCX/PDF/TXT. `ProcessParagraph(Paragraph, context)` jest cienkim adapterem
@@ -135,7 +135,7 @@ kroki orkiestratora (patrz Krok 4).
 
 ## Krok 3 — Klasyfikacja akapitu: `ParagraphClassifier`
 
-**Plik**: `WordParserCore/Services/Classify/ParagraphClassifier.cs`
+**Plik**: `src/Saga.Core/Services/Classify/ParagraphClassifier.cs`
 
 Klasyfikator jest monolityczną implementacją `IParagraphClassifier` łączącą
 wiele sygnałów: styl Word, syntaktyka (regex) i ciągłość numeracji. Konflikty
@@ -216,7 +216,7 @@ Kary konfigurowane przez `ConfidencePenaltyConfig`:
 
 ## Krok 4 — Budowanie struktury: `StructureProcessor.Process`
 
-**Plik**: `WordParserCore/Services/Parsing/StructureProcessor.cs`
+**Plik**: `src/Saga.Core/Services/Parsing/StructureProcessor.cs`
 
 Klasa wewnętrzna `internal sealed`. Sygnatura:
 `Process(ParsingContext context, ClassificationResult classification, string text, string? sourceStyleId = null, BlockLayoutInfo? layout = null)`.
@@ -304,7 +304,7 @@ Encje są też anotowane diagnostycznie przez
 
 ## Krok 5 — Buildery encji (wzorzec kaskadowy) i jednostki systematyzacyjne
 
-**Pliki**: `WordParserCore/Services/Parsing/Builders/`
+**Pliki**: `src/Saga.Core/Services/Parsing/Builders/`
 
 ### Hierarchia builderów jednostek redakcyjnych (od najwyższego do najniższego):
 ```
@@ -411,7 +411,7 @@ Wynik eId: art_5__tir_1
 
 ## Krok 6 — Model danych encji
 
-**Pliki**: `ModelDto/`
+**Pliki**: `src/Saga.Model/`
 
 ### BaseEntity (baza wszystkich encji)
 ```csharp
@@ -557,7 +557,7 @@ Parse(Stream, fileNameHint?, ParseOptions?)
 | `DocumentBlock` / `BlockRole` / `BlockLayoutInfo` | `Ingest/` | Format-agnostyczna reprezentacja pośrednia akapitu |
 | `IDocumentClassifier` / `DocumentClassifier` | `Services/Classify/Document/` | Klasyfikacja rodzaju CAŁEGO dokumentu (ZTP), wywoływana przed budową modelu |
 | `ZtpPatterns` | `Services/Classify/Document/ZtpPatterns.cs` | Wzorce regex sygnałów klasyfikacji dokumentu |
-| `DocumentClassificationResult` / `DocumentSignal` | `ModelDto/` | Wynik klasyfikacji dokumentu (ActType, IsLegalAct, Confidence, Signals) |
+| `DocumentClassificationResult` / `DocumentSignal` | `src/Saga.Model/` | Wynik klasyfikacji dokumentu (ActType, IsLegalAct, Confidence, Signals) |
 | `ParserOrchestrator` | `Services/Parsing/ParserOrchestrator.cs` | Główna pętla + koordynacja — `ProcessBlock(DocumentBlock, context)`; `ProcessParagraph` = adapter OpenXml |
 | `ParsingContext` | `Services/Parsing/ParsingContext.cs` | Mutowalny stan parsowania (w tym jednostki systematyzacyjne i metadane aktu) |
 | `IParagraphClassifier` | `Services/Classify/IParagraphClassifier.cs` | Interfejs klasyfikatora akapitu (DI) |
@@ -588,6 +588,6 @@ Parse(Stream, fileNameHint?, ParseOptions?)
 | `ParsingFactories` | `Services/Parsing/ParsingFactories.cs` | Parsowanie numerów, AttachIntro/WrapUp CommonPart |
 | `LegalReferenceService` | `Services/LegalReferenceService.cs` | Wykrywanie celów nowelizacji |
 | `JournalReferenceService` | `Services/JournalReferenceService.cs` | Parsowanie publikatorów (Dz.U.) |
-| `BaseEntity` | `ModelDto/BaseEntity.cs` | Baza wszystkich encji domenowych |
-| `EntityNumber` | `ModelDto/EntityNumber.cs` | Model numeru encji |
-| `LegalDocument` | `ModelDto/LegalDocument.cs` | Korzeń dokumentu |
+| `BaseEntity` | `src/Saga.Model/BaseEntity.cs` | Baza wszystkich encji domenowych |
+| `EntityNumber` | `src/Saga.Model/EntityNumber.cs` | Model numeru encji |
+| `LegalDocument` | `src/Saga.Model/LegalDocument.cs` | Korzeń dokumentu |
