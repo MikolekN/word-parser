@@ -43,6 +43,11 @@ docs.*.md
 # === Repozytorium dokumentów roboczych ===
 DocRepo/
 
+# === Lokalne lustro zewnętrznej schemy (tylko do odczytu) + narzędzie i metadane ===
+schema-pg/
+schema/.upstream.txt
+tools/sync-schema-pg.sh
+
 # === Lokalne artefakty testowe (nie wersjonowane) ===
 WordParserCore.Tests/Artifacts/*.docx
 WordParserCore.Tests/Artifacts/*.xml

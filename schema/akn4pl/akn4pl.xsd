@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================
+  Plik:       akn4pl.xsd
+  Wersja:     0.1
+  Profil:     Akoma Ntoso dla polskich aktów prawnych (akn4pl)
+  Oparty na:  Akoma Ntoso 3.0 Schema (OASIS LegalDocML TC)
+  Copyright:  OASIS Open (https://www.oasis-open.org)
+  Autorzy oryginału:  Fabio Vitali, Monica Palmirani – Uniwersytet Boloński
+  Licencja oryginału: CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+  Modyfikacje:        Adaptacja dla polskich zasad techniki prawodawczej - Patryk Ciurak, 2026
+  ============================================================
+  PRZYJĘTA STRATEGIA:
+    – Bazowy schemat akomantoso30.xsd włączony (iport) bez zmian.
+    – Poniższy plik definiuje rozszerzenia i typy nieobecne w bazowym AKN.
+    – Ograniczenia i zasady charakterystyczne dla polskiej techniki prawodawczej są wyrażone w osobnym pliku akn4pl-rules.sch (Schematron).
+  ============================================================
+-->
+<xs:schema
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
+        targetNamespace="https://projects.task.gda.pl/caise/NLP/kisi/rcl/akn4pl/1.0"
+        elementFormDefault="qualified">
+
+  <xs:import
+          namespace="https://docs.oasis-open.org/legaldocml/ns/akn/3.0"
+          schemaLocation="akomantoso30.xsd"/>
+
+  <xs:simpleType name="unitTypeEnum">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Typ unitTypeEnum pozwala na wskazanie polskich nazw jednostek systematyzacyjnych i redakcyjnych w aktach prawnych.
+        EN: The unitTypeEnum type specifies Polish names of hierarchical structural units in legal acts.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="część"/>
+      <xs:enumeration value="księga"/>
+      <xs:enumeration value="księga-n"/>
+      <xs:enumeration value="tytuł"/>
+      <xs:enumeration value="tytuł-n"/>
+      <xs:enumeration value="dział"/>
+      <xs:enumeration value="dział-n"/>
+      <xs:enumeration value="rozdział"/>
+      <xs:enumeration value="rozdział-n"/>
+      <xs:enumeration value="oddział"/>
+      <xs:enumeration value="oddział-n"/>
+      <xs:enumeration value="artykuł"/>
+      <xs:enumeration value="pato-artykuł"/>
+      <xs:enumeration value="paragraf"/>
+      <xs:enumeration value="pato-paragraf"/>
+      <xs:enumeration value="paragraf-n"/>
+      <xs:enumeration value="ustęp"/>
+      <xs:enumeration value="pato-ustęp"/>
+      <xs:enumeration value="ustęp-n"/>
+      <xs:enumeration value="punkt"/>
+      <xs:enumeration value="pato-punkt"/>
+      <xs:enumeration value="litera"/>
+      <xs:enumeration value="pato-litera"/>
+      <xs:enumeration value="tiret"/>
+      <xs:enumeration value="pato-tiret"/>
+      <xs:enumeration value="podwójneTiret"/>
+      <xs:enumeration value="pato-podwójneTiret"/>
+      <xs:enumeration value="potrójneTiret"/>
+      <xs:enumeration value="pato-potrójneTiret"/>
+      <xs:enumeration value="poczwórneTiret"/>
+      <xs:enumeration value="pato-poczwórneTiret"/>
+      <xs:enumeration value="pięciokrotneTiret"/>
+      <xs:enumeration value="załącznik"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:attribute name="unitType" type="unitTypeEnum">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Atrybut unitType wskazuje polską nazwę jednostki systematyzacyjnej lub redakcyjnej.
+        EN: The unitType attribute specifies the Polish name of a hierarchical structural unit in a legal act.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+<!--Parametry zdania-->
+  <xs:attribute name="sentNr" type="xs:positiveInteger">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Numer zdania w zakresie danej jednostki redakcyjnej (przede wszystkim artykułu, ustępu bądź paragrafu); służy do identyfikacji kolejnych zdań.
+        EN: Sentence number within a given editorial unit (primarily an article, paragraph, or subsection); used to identify consecutive sentences.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="sentGUID" type="akn:noWhiteSpace">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Globalny unikalny identyfikator zdania.
+        EN: Global unique identifier of the sentence.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="fragNr" type="xs:positiveInteger">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Numer porządkowy fragmentu zdania; służy do oznaczania kolejnych części tego samego zdania w zakresie danej jednostki redakcyjnej (przede wszystkim artykułu, ustępu bądź paragrafu).
+        EN: Ordinal number of a sentence fragment; used to mark consecutive parts of the same sentence within a given editorial unit (primarily an article, paragraph, or subsection).
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="fragGUID" type="akn:noWhiteSpace">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Globalny unikalny identyfikator fragmentu zdania.
+        EN: Global unique identifier of the sentence fragment.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+<!--Koniec parametrów zdania-->
+
+  <xs:element name="neutralRef" type="akn:referenceType">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Odesłanie do innej jednostki redakcyjnej, które nie ma związku z jej uchyleniem bądź modyfikacją.
+        EN: A reference to some other editorial unit or an act that is not connected with repealing or amendment.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- Część poświęcona instrukcjom nowelizacyjnym-->
+  <xs:simpleType name="occurrenceType">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Wskazuje na wystąpienie danego słowa bądź frazy, które ulega nowelizacji bądź uchyleniu.
+        EN: Indicates which occurrence of a given word or phrase is subject to amendment or repeal.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="single"/>
+      <xs:enumeration value="all"/>
+      <xs:enumeration value="first"/>
+      <xs:enumeration value="second"/>
+      <xs:enumeration value="third"/>
+      <xs:enumeration value="last"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:attribute name="occurrence" type="occurrenceType">
+    <xs:annotation>
+      <xs:documentation>
+        PL: Atrybut należący do typy occurenceType.
+        EN: An attribute belonging to the occurenceType.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <!--
+  Poniżej opisano sytuacje, w których zachodzą różnice względem akomanstoso30.xsd bądź
+  dla których stworzono reguły biznesowe w pliku akn4pl10-rules.sch dopuszczające konkretne wartości.
+
+  === Metadane ===
+
+  FRBRthis
+  (typ: valueType) – URI identyfikujący konkretny byt FRBR.
+  Walidacja wzorca URI: patrz akn4pl.sch (reguły: frbr-work-this, frbr-expr-this, frbr-manif-this)
+  #uwaga: reguły trzeba będzie uzupełnić dla aktów prawa miejscowego oraz aktów wewnętrznie obowiązujących
+
+  FRBRuri
+  (typ: valueType) – URI identyfikujący kontener FRBR.
+  Walidacja wzorca URI: patrz akn4pl.sch (reguły: frbr-work-uri, frbr-expr-uri, frbr-manif-uri)
+  #uwaga: reguły trzeba będzie uzupełnić dla aktów prawa miejscowego oraz aktów wewnętrznie obowiązujących
+
+  FRBRdate (typ: rozszerzenie metaopt) – data powiązana z bytem FRBR.
+  Atrybuty:
+    @date : data w formacie xs:date (RRRR-MM-DD) lub xs:dateTime
+    @name : MUSI przyjmować wyłącznie jedną z wartości opisanych w akn4pl10-rules.sch
+  Walidacja wartości @name: patrz akn4pl.sch (reguły: frbr-work-date, frbr-expression-date, frbr-manifestation-date)
+
+  FRBRcountry
+  (typ: valueType) – oznaczenie kraju
+  Jedyna dopuszczalna wartość to PL. Walidacja wartości @value: patrz akn4pl.sch (reguła frbr-work-country)
+
+  FRBRsubtype (typ: valueType) – podtyp dokumentu w ramach kategorii AKN.
+  Atrybut:
+    @value : MUSI przyjmować jedną z dozwolonych wartości akn4pl:
+               "ustawa"          – ustawa
+               "rozporzadzenie"  – rozporządzenie
+               "uchwala"         – uchwała
+               "zarzadzenie"     – zarządzenie
+               "obwieszczenie"   – obwieszczenie (np. tekst jednolity)
+  #Do zastanowienia: wyrok TK
+  #Do przemyślenia: projekty
+  Walidacja wartości @value: patrz akn4pl.sch (reguła: frbr-work-subtype)
+
+  FRBRprescriptive (typ: booleanValueType)
+  W akn4pl jest obowiązkowy.
+  Walidacja obecności: patrz akn4pl.sch (reguła: frbr-work-prescriptive)
+
+  FRBRauthoritative (typ: booleanValueType)
+  W akn4pl jest obowiązkowy, zarówno dla Work jak i Expression.
+  Walidacja obecności: patrz akn4pl.sch (reguły: frbr-work-authoritative, frbr-expr-authoritative)
+
+  publication/@number (typ: string)
+  W profilu akn4pl jest WYMAGANY – każdy akt ogłoszony w polskim dzienniku urzędowym posiada numer pozycji
+  będący jego jednoznacznym identyfikatorem w danym roczniku.
+  Walidacja obecności: patrz akn4pl.sch (reguła: publication-number)
+
+UWAGA: TLC podmioty oraz potem source: powinny być wg https://eli.gov.pl/resource/authority/legal-institution
+
+
+-->
+
+
+
+</xs:schema>

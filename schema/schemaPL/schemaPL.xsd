@@ -10,11 +10,11 @@
 	<!--
       ============================================================
       SCHEMA POLSKIEGO AKTU PRAWNEGO SCHEMAPL
-      Wersja: 0.1.13
+      Wersja: 0.1.21
       Na podstawie plików przygotowanych:
       w 2010 r. przez Szymona Ziolo (RedPill Szymon Ziolo)
       w 2018 r. przez dr. Jarosława Demineta.
-      Kompilacja i dodatkowe zmiany: Patryk Ciurak (2026 r.)
+      Kompilacja i dodatkowe zmiany: dr Patryk Ciurak (2026 r.)
       ============================================================-->
 	<xs:import namespace="http://www.w3.org/1998/Math/MathML" schemaLocation="mathml3.xsd"/>
 	<xs:import namespace="https://projects.task.gda.pl/caise/NLP/kisi/rcl/schemaPL/now" schemaLocation="instrukcje_nowelizacyjne.xsd"/>
@@ -151,7 +151,7 @@
 		<xs:annotation>
 			<xs:documentation>Atrybuty cytatu fragmentu innego aktu prawnego.</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="cudzyslowy">
+		<xs:attribute name="cudzyslowy" use="required">
 			<xs:annotation>
 				<xs:documentation>Czy cytat powinien być wyświetlany w cudzysłowach.</xs:documentation>
 			</xs:annotation>
@@ -187,7 +187,7 @@
 			<xs:simpleType>
 				<xs:restriction base="xs:string">
 					<xs:enumeration value="projektowane"/>
-					<xs:enumeration value="obowiazuje"/>
+					<xs:enumeration value="obowiazuje"/><!--Brak wartości "nieobowiązuje", gdyż przy wytworzeniu tekstu jednolitego uchylone jednostki otrzymują oznaczenie "(uchylony)".-->
 				</xs:restriction>
 			</xs:simpleType>
 		</xs:attribute>
@@ -306,7 +306,6 @@
 				<xs:complexType mixed="true">
 					<xs:group ref="zawartosc-tekstowa-bez-cytatu" minOccurs="0" maxOccurs="unbounded"/>
 					<xs:attribute name="GUID" type="GUIDTyp"/>
-					<xs:attributeGroup ref="uniwersalneELI"/>
 				</xs:complexType>
 			</xs:element>
 			<!--Skrót może obejmować też fragmenty zaczynające się od "zwany/a dalej".-->
@@ -314,7 +313,6 @@
 				<xs:complexType mixed="true">
 					<xs:group ref="zawartosc-tekstowa-bez-cytatu" minOccurs="0" maxOccurs="unbounded"/>
 					<xs:attribute name="GUID" type="GUIDTyp"/>
-					<xs:attributeGroup ref="uniwersalneELI"/>
 				</xs:complexType>
 			</xs:element>
 			<!--odeslanie-tytul stosowane jest w przypadku, gdy prawodawca podaje TYLKO tytul aktu, bez jakichkolwiek danych identyfikacyjnych np. Kodeks karny.-->
@@ -384,8 +382,8 @@
 			<xs:element name="dzial-n" type="DzialNTyp"/>
 			<xs:element name="rozdzial" type="RozdzialTyp"/>
 			<xs:element name="rozdzial-n" type="RozdzialNTyp"/>
-			<xs:element name="oddział" type="OddzialTyp"/>
-			<xs:element name="oddział-n" type="OddzialNTyp"/>
+			<xs:element name="oddzial" type="OddzialTyp"/>
+			<xs:element name="oddzial-n" type="OddzialNTyp"/>
 		</xs:choice>
 	</xs:group>
 
@@ -393,6 +391,7 @@
 		<xs:sequence>
 			<xs:choice minOccurs="0" maxOccurs="unbounded">
 				<xs:element name="organ-wydajacy" type="JednostkaTekstowaTyp"/>
+				<xs:element name="organ-podpisujący" type="JednostkaTekstowaTyp"/>
 				<xs:element name="tekst-w-porozumieniu" type="JednostkaTekstowaTyp"/> <!--Chodzi o zwrot "w porozumieniu z"-->
 				<xs:element name="organ-w-porozumieniu" type="JednostkaTekstowaTyp"/>
 			</xs:choice>
@@ -418,7 +417,7 @@
 			<xs:group ref="formatowanieAkapitu"/>
 		</xs:sequence>
 		<xs:attributeGroup ref="atrybuty-akapitu"/>
-		<xs:attributeGroup ref="uniwersalneELI"/> <!-- Jeśli ELI nie zostanie użyte, jest to celowe.-->
+		<xs:attributeGroup ref="eId"/> <!-- Jeśli ELI nie zostanie użyte, jest to celowe.-->
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -435,7 +434,7 @@
 						</xs:annotation>
 						<xs:simpleType>
 							<xs:restriction base="xs:string">
-								<xs:pattern value="([IVXLCDM]+|[1-9]\d*[a-z]*|[a-z]+)(\[[1-9]\d*[a-z]*\])?"/> <!--Wzór zaktualizowany o możliwość użycia nawiasów kwadratowych wprowadzony nowelizacją ZTP z 1.03.2026 r. Rozpoznaje również liczby rzymskie. Do wpisywania indeksów górnych należy używać <sup></sup>.-->
+								<xs:pattern value="([IVXLCDM]+|[1-9]\d*[a-z]*|[a-z]+)(\[[1-9]\d*[a-z]*\])?"/> <!--Wzór zaktualizowany o możliwość użycia nawiasów kwadratowych wprowadzony nowelizacją ZTP z 1.03.2026 r. Rozpoznaje również liczby rzymskie. Do wpisywania indeksów górnych należy używać nawiasów kwadratowych [ ].-->
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:element>
@@ -460,7 +459,7 @@
 			<xs:group ref="zawartosc-tekstowa-bez-cytatu" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attributeGroup ref="atrybuty-akapitu"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
+		<xs:attributeGroup ref="eId"/>
 	</xs:complexType>
 
 	<xs:complexType name="JednostkaRedakcyjnaTekstowaTyp">
@@ -616,13 +615,13 @@
 		</xs:complexType>
 	</xs:element>
 
-<!--To chyba jest zbędne.
-	<xs:element name="czesc-wspolna-ustep-paragraf-kodeksu" type="JednostkaRedakcyjnaTekstowaTyp">
-		<xs:annotation>
-			<xs:documentation>Część wspólna podsumowująca wyliczenie ustępów ustawy/paragrafów kodeksu.</xs:documentation>
-		</xs:annotation>
-	</xs:element>
--->
+	<!--To chyba jest zbędne.
+        <xs:element name="czesc-wspolna-ustep-paragraf-kodeksu" type="JednostkaRedakcyjnaTekstowaTyp">
+            <xs:annotation>
+                <xs:documentation>Część wspólna podsumowująca wyliczenie ustępów ustawy/paragrafów kodeksu.</xs:documentation>
+            </xs:annotation>
+        </xs:element>
+    -->
 	<xs:element name="czesc-wspolna-punkt" type="JednostkaRedakcyjnaTekstowaTyp">
 		<xs:annotation>
 			<xs:documentation>Część wspólna podsumowująca wyliczenie punktów.</xs:documentation>
@@ -968,7 +967,7 @@
 		</xs:attribute>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 		<xs:attribute name="GUID" type="GUIDTyp" use="optional"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
+		<xs:attributeGroup ref="eId"/>
 	</xs:complexType>
 
 	<xs:complexType name="ZalacznikUzasadnieniaTyp">
@@ -1003,8 +1002,8 @@
 							</xs:complexType>
 						</xs:element>
 					</xs:choice>
-					<xs:attributeGroup ref="uniwersalneELI"/>
-					<xs:attribute name="GUID" type="now:GUIDTyp"/>
+					<xs:attributeGroup ref="eId"/>
+					<xs:attribute name="GUID" type="GUIDTyp"/>
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
@@ -1065,9 +1064,10 @@
 				Cytat w tekście — opakowuje fragment tekstu podlegający zmianie (funkcja="zastap-tekst", "uchyl-tekst") lub wprowadzany (funkcja="nowy-tekst") przez nowelizację tekstową. Para nowGUID ↔ ref-nowGUID spina logicznie stary i nowy tekst.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:sequence>
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
 			<xs:element name="tekst" type="ZawartoscTekstowaBezCytatuTyp"/>
-		</xs:sequence>
+			<xs:element name="zdanie" type="ZdanieTyp"/>
+		</xs:choice>
 		<xs:attributeGroup ref="cytat"/>
 		<xs:attributeGroup ref="now:instr-nowelizacyjne"/>
 	</xs:complexType>
@@ -1094,35 +1094,37 @@
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
 			<xs:group ref="zawartosc-tekstowa-bez-cytatu"/>
 			<xs:element name="cytat-w-tekscie" type="CytatWTekscieTyp"/>
+			<xs:element name="cytat-strukt" type="CytatStruktPelnyTyp"/>
+			<xs:element name="cytat-strukt-pusty" type="CytatStruktPustyTyp"/>
 		</xs:choice>
 		<xs:attribute name="nr"       type="xs:positiveInteger" use="required"/>
 		<xs:attribute name="zdGUID"   type="GUIDTyp"            use="required"/>
 		<xs:attribute name="fragment" type="xs:positiveInteger" use="required"/>
+		<xs:attribute name="fragmentGUID" type="GUIDTyp" use="required"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
-
-	<xs:complexType name="ZdanieRefTyp" mixed="true">
-		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:group ref="zawartosc-tekstowa-bez-cytatu"/>
-			<xs:element name="cytat-w-tekscie" type="CytatWTekscieTyp"/>
-		</xs:choice>
-		<xs:attribute name="ref-nr"      type="xs:positiveInteger" use="required"/>
-		<xs:attribute name="ref-zdGUID"  type="GUIDTyp"            use="required"/>
-		<xs:attribute name="fragment"    type="xs:positiveInteger" use="required"/>
-		<xs:attributeGroup ref="wejscie-w-zycie"/>
-	</xs:complexType>
-
+	<!--
+        <xs:complexType name="ZdanieRefTyp" mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:group ref="zawartosc-tekstowa-bez-cytatu"/>
+                <xs:element name="cytat-w-tekscie" type="CytatWTekscieTyp"/>
+            </xs:choice>
+            <xs:attribute name="ref-nr"      type="xs:positiveInteger" use="required"/>
+            <xs:attribute name="ref-zdGUID"  type="GUIDTyp"            use="required"/>
+            <xs:attribute name="fragment"    type="xs:positiveInteger" use="required"/>
+            <xs:attribute name="fragmentGUID" type="GUIDTyp" use="required"/>
+            <xs:attributeGroup ref="wejscie-w-zycie"/>
+        </xs:complexType>
+    -->
 	<xs:complexType name="ZawartoscTekstowaTyp">
 		<xs:annotation>
 			<xs:documentation>
-				Zawartość elementu p. Wymaga opakowania tekstu w zdanie lub zdanie-ref — tekst bezpośrednio w p jest niedozwolony.
+				Zawartość elementu p. Wymaga opakowania tekstu w zdanie — tekst bezpośrednio w p jest niedozwolony.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:choice minOccurs="1" maxOccurs="unbounded">
 			<xs:element name="zdanie"       type="ZdanieTyp"/>
-			<xs:element name="zdanie-ref"   type="ZdanieRefTyp"/>
-			<xs:element name="cytat-strukt" type="CytatStruktPelnyTyp"/>
-			<xs:element name="cytat-strukt-pusty" type="CytatStruktPustyTyp"/>
+			<!--<xs:element name="zdanie-ref"   type="ZdanieRefTyp"/>-->
 			<xs:element name="cytat-blok"   type="CytatBlokTyp"/>
 		</xs:choice>
 	</xs:complexType>
@@ -1560,11 +1562,14 @@
         ============================================================
     -->
 
+	<xs:attributeGroup name="eId">
+		<xs:attribute name="eId" type="xs:token"/>
+	</xs:attributeGroup>
+
 	<xs:attributeGroup name="uniwersalneELI">
 		<xs:annotation>
 			<xs:documentation>
-				Atrybut ELI jednostki redakcyjnej albo systematyzacyjnej.
-				TODO: Docelowo zastąpić specjalizowanymi grupami (eliArtykul, eliUstep itd.) po ustaleniu ostatecznych wzorców ELI.
+				Atrybut eID jednostki redakcyjnej albo systematyzacyjnej.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="ELI" type="xs:token"/>
@@ -1641,13 +1646,29 @@
 		</xs:sequence>
 	</xs:group>
 
+	<xs:group name="tresc-akapitowa-ustawy-wieloakapitowa">
+		<xs:sequence>
+			<xs:group ref="akapit-w-ustawie" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:choice minOccurs="0">
+				<xs:sequence>
+					<xs:element name="punkt" type="PunktUstawyTyp" minOccurs="2" maxOccurs="unbounded"/>
+					<xs:element ref="czesc-wspolna-punkt" minOccurs="0"/>
+				</xs:sequence>
+				<xs:sequence>
+					<xs:element name="pato-punkt" type="PunktTyp" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="czesc-wspolna-punkt" minOccurs="0"/>
+				</xs:sequence>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+
 	<xs:complexType name="ZawartoscTekstowaUstawaTyp" mixed="true">
 		<xs:annotation>
 			<xs:documentation>Typ elementów p z możliwym cytatem strukturalnym z ustawy lub kodeksu.</xs:documentation>
 		</xs:annotation>
 		<xs:choice minOccurs="1" maxOccurs="unbounded">
 			<xs:element name="zdanie"       type="ZdanieTyp"/>
-			<xs:element name="zdanie-ref"   type="ZdanieRefTyp"/>
+			<!--<xs:element name="zdanie-ref"   type="ZdanieRefTyp"/>-->
 			<xs:element name="cytat-strukt" type="CytatStruktPelnyTyp"/>
 			<xs:element name="cytat-blok"   type="CytatBlokTyp"/>
 		</xs:choice>
@@ -1659,7 +1680,7 @@
 		</xs:annotation>
 		<xs:choice minOccurs="1" maxOccurs="unbounded">
 			<xs:element name="zdanie"       type="ZdanieTyp"/>
-			<xs:element name="zdanie-ref"   type="ZdanieRefTyp"/>
+			<!--<xs:element name="zdanie-ref"   type="ZdanieRefTyp"/>-->
 			<xs:element name="cytat-strukt" type="CytatStruktPelnyTyp"/>
 			<xs:element name="cytat-blok"   type="CytatBlokTyp"/>
 		</xs:choice>
@@ -1667,11 +1688,11 @@
 
 	<xs:complexType name="ZawartoscTekstowaTJTyp" mixed="true">
 		<xs:annotation>
-			<xs:documentation>Typ elementu p w jednostkach tekstu jednolitego. Dopuszcza zdanie i zdanie-ref, ale nie cytaty strukturalne.</xs:documentation>
+			<xs:documentation>Typ elementu p w jednostkach tekstu jednolitego. Dopuszcza zdanie, ale nie cytaty strukturalne.</xs:documentation>
 		</xs:annotation>
 		<xs:choice minOccurs="1" maxOccurs="unbounded">
 			<xs:element name="zdanie" type="ZdanieTyp"/>
-			<xs:element name="zdanie-ref" type="ZdanieRefTyp"/>
+			<!--<xs:element name="zdanie-ref"   type="ZdanieRefTyp"/>-->
 		</xs:choice>
 	</xs:complexType>
 
@@ -1738,7 +1759,7 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp" use="required"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
+		<xs:attributeGroup ref="eId"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1762,7 +1783,6 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1782,7 +1802,7 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp" use="required"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
+		<xs:attributeGroup ref="eId"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1800,7 +1820,6 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1818,7 +1837,7 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp" use="required"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
+		<xs:attributeGroup ref="eId"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1835,7 +1854,6 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1853,7 +1871,7 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp" use="required"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
+		<xs:attributeGroup ref="eId"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1870,7 +1888,6 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1888,7 +1905,7 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp" use="required"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
+		<xs:attributeGroup ref="eId"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1905,7 +1922,6 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1923,7 +1939,7 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp" use="required"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
+		<xs:attributeGroup ref="eId"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1940,7 +1956,6 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp"/>
-		<xs:attributeGroup ref="uniwersalneELI"/>
 		<xs:attributeGroup ref="wejscie-w-zycie"/>
 	</xs:complexType>
 
@@ -1957,7 +1972,7 @@
 						</xs:annotation>
 						<xs:simpleType>
 							<xs:restriction base="xs:string">
-								<xs:pattern value="([IVXLCDM]+|[1-9]\d*[a-z]*|[a-z]+)(\[[1-9]\d*[a-z]*\])?"/> <!--Wzór zaktualizowany o możliwość użycia nawiasów kwadratowych wprowadzony nowelizacją ZTP z 1.03.2026 r. Rozpoznaje również liczby rzymskie. Do wpisywania indeksów górnych należy używać <sup></sup>.-->
+								<xs:pattern value="([IVXLCDM]+|[1-9]\d*[a-z]*|[a-z]+)(\[[1-9]\d*[a-z]*\])?"/> <!--Wzór zaktualizowany o możliwość użycia nawiasów kwadratowych wprowadzony nowelizacją ZTP z 1.03.2026 r. Rozpoznaje również liczby rzymskie. Do wpisywania indeksów górnych należy używać nawiasów kwadratowych [ ].-->
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:element>
@@ -1995,17 +2010,20 @@
 	<xs:complexType name="ArtykulUstawyTyp">
 		<xs:complexContent>
 			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
-				<xs:choice>
-					<xs:sequence>
-						<xs:choice minOccurs="2" maxOccurs="unbounded">
-							<xs:element name="ustep"      type="UstepTyp"/>
-							<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
-						</xs:choice>
-					</xs:sequence>
-					<xs:element name="ustep-n" type="UstepNTyp"/>
-					<xs:element name="pato-ustep-n" type="PatoUstepParagrafKodeksuNTyp"/>
-					<xs:group ref="tresc-akapitowa-ustawy"/>
-				</xs:choice>
+				<xs:sequence>
+					<xs:element name="tytul" type="JednostkaTekstowaTyp" minOccurs="0"/>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice minOccurs="2" maxOccurs="unbounded">
+								<xs:element name="ustep"      type="UstepTyp"/>
+								<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:element name="ustep-n"       type="UstepNTyp"/>
+						<xs:element name="pato-ustep-n"  type="PatoUstepParagrafKodeksuNTyp"/>
+						<xs:group   ref="tresc-akapitowa-ustawy"/>
+					</xs:choice>
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2016,17 +2034,20 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="JednostkaRedakcyjnaNumerowanaTJTyp">
-				<xs:choice>
-					<xs:sequence>
-						<xs:choice minOccurs="2" maxOccurs="unbounded">
-							<xs:element name="ustep" type="UstepTJTyp"/>
-							<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
-						</xs:choice>
-					</xs:sequence>
+				<xs:sequence>
+					<xs:element name="tytul" type="JednostkaTekstowaTyp" minOccurs="0"/>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice minOccurs="2" maxOccurs="unbounded">
+								<xs:element name="ustep" type="UstepTJTyp"/>
+								<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
 					<xs:element name="ustep-n" type="UstepNTJTyp"/>
 					<xs:element name="pato-ustep-n" type="PatoUstepParagrafKodeksuNTyp"/>
 					<xs:group ref="tresc-akapitowa-TJ"/>
-				</xs:choice>
+					</xs:choice>
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2034,17 +2055,20 @@
 	<xs:complexType name="ArtykulKodeksuTyp">
 		<xs:complexContent>
 			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
-				<xs:choice>
-					<xs:sequence>
-						<xs:choice minOccurs="2" maxOccurs="unbounded">
-							<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTyp"/>
-							<xs:element name="pato-paragraf-kodeksu" type="PatoUstepParagrafKodeksuTyp"/>
-						</xs:choice>
-					</xs:sequence>
-					<xs:element name="paragraf-kodeksu-n" type="ParagrafKodeksuNTyp"/>
-					<xs:element name="pato-paragraf-kodeksu-n" type="PatoUstepParagrafKodeksuNTyp"/>
-					<xs:group ref="tresc-akapitowa"/> <!--UWAGA: tu jest użyta grupa tresc-akapitowa zamiast tresc-akapitowa ustawy prawdopodobnie ze względu na brak trzymania się zasad techniki prawodawczej przez komisje kodyfikacyjne pracujące nad kodeksami. Do przemyślenia: czy ujednolicić do tresc-akapitowa-ustawy? Innym następstwem jest brak dostępu do instrukcji nowelizacyjnych na poziomie punktu.-->
-				</xs:choice>
+				<xs:sequence>
+					<xs:element name="tytul" type="JednostkaTekstowaTyp" minOccurs="0"/>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice minOccurs="2" maxOccurs="unbounded">
+								<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTyp"/>
+								<xs:element name="pato-paragraf-kodeksu" type="PatoUstepParagrafKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:element name="paragraf-kodeksu-n" type="ParagrafKodeksuNTyp"/>
+						<xs:element name="pato-paragraf-kodeksu-n" type="PatoUstepParagrafKodeksuNTyp"/>
+						<xs:group ref="tresc-akapitowa"/> <!--UWAGA: tu jest użyta grupa tresc-akapitowa zamiast tresc-akapitowa ustawy prawdopodobnie ze względu na brak trzymania się zasad techniki prawodawczej przez komisje kodyfikacyjne pracujące nad kodeksami. Do przemyślenia: czy ujednolicić do tresc-akapitowa-ustawy? Innym następstwem jest brak dostępu do instrukcji nowelizacyjnych na poziomie punktu.-->
+					</xs:choice>
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2052,17 +2076,20 @@
 	<xs:complexType name="ArtykulKodeksuTJTyp">
 		<xs:complexContent>
 			<xs:extension base="JednostkaRedakcyjnaNumerowanaTJTyp">
-				<xs:choice>
-					<xs:sequence>
-						<xs:choice minOccurs="2" maxOccurs="unbounded">
-							<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTJTyp"/>
-							<xs:element name="pato-paragraf-kodeksu" type="PatoUstepParagrafKodeksuTyp"/>
-						</xs:choice>
-					</xs:sequence>
-					<xs:element name="paragraf-kodeksu-n" type="ParagrafKodeksuTJTyp"/>
-					<xs:element name="pato-paragraf-kodeksu-n" type="PatoUstepParagrafKodeksuNTyp"/>
-					<xs:group ref="tresc-akapitowa-TJ"/>
-				</xs:choice>
+				<xs:sequence>
+					<xs:element name="tytul" type="JednostkaTekstowaTyp" minOccurs="0"/>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice minOccurs="2" maxOccurs="unbounded">
+								<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTJTyp"/>
+								<xs:element name="pato-paragraf-kodeksu" type="PatoUstepParagrafKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:element name="paragraf-kodeksu-n" type="ParagrafKodeksuNTJTyp"/>
+						<xs:element name="pato-paragraf-kodeksu-n" type="PatoUstepParagrafKodeksuNTyp"/>
+						<xs:group ref="tresc-akapitowa-TJ"/>
+					</xs:choice>
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2073,25 +2100,28 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
-				<xs:choice>
-					<xs:sequence>
-						<xs:choice minOccurs="2" maxOccurs="unbounded">
-							<xs:element name="ustep" type="UstepTyp"/>
-							<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
-						</xs:choice>
-					</xs:sequence>
-					<xs:sequence>
-						<xs:choice minOccurs="2" maxOccurs="unbounded">
-							<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTyp"/>
-							<xs:element name="pato-paragraf-kodeksu" type="PatoUstepParagrafKodeksuTyp"/>
-						</xs:choice>
-					</xs:sequence>
-					<xs:element name="ustep-n" type="UstepNTyp"/>
-					<xs:element name="paragraf-kodeksu-n" type="ParagrafKodeksuNTyp"/>
-					<xs:element name="pato-ustep-n" type="PatoUstepParagrafKodeksuNTyp"/>
-					<xs:element name="pato-paragraf-kodeksu-n" type="PatoUstepParagrafKodeksuNTyp"/>
-					<xs:group ref="tresc-akapitowa"/>
-				</xs:choice>
+				<xs:sequence>
+					<xs:element name="tytul" type="JednostkaTekstowaTyp" minOccurs="0"/>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice minOccurs="2" maxOccurs="unbounded">
+								<xs:element name="ustep" type="UstepTyp"/>
+								<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:sequence>
+							<xs:choice minOccurs="2" maxOccurs="unbounded">
+								<xs:element name="paragraf-kodeksu" type="ParagrafKodeksuTyp"/>
+								<xs:element name="pato-paragraf-kodeksu" type="PatoUstepParagrafKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:element name="ustep-n" type="UstepNTyp"/>
+						<xs:element name="paragraf-kodeksu-n" type="ParagrafKodeksuNTyp"/>
+						<xs:element name="pato-ustep-n" type="PatoUstepParagrafKodeksuNTyp"/>
+						<xs:element name="pato-paragraf-kodeksu-n" type="PatoUstepParagrafKodeksuNTyp"/>
+						<xs:group ref="tresc-akapitowa"/>
+					</xs:choice>
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2099,17 +2129,20 @@
 	<xs:complexType name="ParagrafRozporzadzeniaTyp">
 		<xs:complexContent>
 			<xs:extension base="JednostkaRedakcyjnaNumerowanaTyp">
-				<xs:choice>
-					<xs:sequence>
-						<xs:choice minOccurs="2" maxOccurs="unbounded">
-							<xs:element name="ustep" type="UstepTyp"/>
-							<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
-						</xs:choice>
-					</xs:sequence>
-					<xs:element name="ustep-n" type="UstepNTyp"/>
-					<xs:element name="pato-ustep-n" type="PatoUstepParagrafKodeksuNTyp"/>
-					<xs:group ref="tresc-akapitowa-rozporzadzenia"/>
-				</xs:choice>
+				<xs:sequence>
+					<xs:element name="tytul" type="JednostkaTekstowaTyp" minOccurs="0"/>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice minOccurs="2" maxOccurs="unbounded">
+								<xs:element name="ustep" type="UstepTyp"/>
+								<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:element name="ustep-n" type="UstepNTyp"/>
+						<xs:element name="pato-ustep-n" type="PatoUstepParagrafKodeksuNTyp"/>
+						<xs:group ref="tresc-akapitowa-rozporzadzenia"/>
+					</xs:choice>
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2120,18 +2153,20 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="JednostkaRedakcyjnaNumerowanaTJTyp">
-				<xs:choice>
-					<xs:sequence>
-						<xs:choice minOccurs="2" maxOccurs="unbounded">
-							<xs:element name="ustep" type="UstepTJTyp"/>
-							<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
-						</xs:choice>
-					</xs:sequence>
-					<xs:element name="ustep-n" type="UstepNTJTyp"/>
-					<xs:element name="pato-ustep-n" type="PatoUstepParagrafKodeksuNTyp"/>
-					<xs:group ref="tresc-akapitowa-TJ"/>
-				</xs:choice>
-
+				<xs:sequence>
+					<xs:element name="tytul" type="JednostkaTekstowaTyp" minOccurs="0"/>
+					<xs:choice>
+						<xs:sequence>
+							<xs:choice minOccurs="2" maxOccurs="unbounded">
+								<xs:element name="ustep" type="UstepTJTyp"/>
+								<xs:element name="pato-ustep" type="PatoUstepParagrafKodeksuTyp"/>
+							</xs:choice>
+						</xs:sequence>
+						<xs:element name="ustep-n" type="UstepNTJTyp"/>
+						<xs:element name="pato-ustep-n" type="PatoUstepParagrafKodeksuNTyp"/>
+						<xs:group ref="tresc-akapitowa-TJ"/>
+					</xs:choice>
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2144,10 +2179,10 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<xs:complexType name="UstepNTyp"> <!--Ustęp niejawny, który występuje w artykułach, które rozpoczynają się treścią i dalej mają wyliczenie punktowe.-->
+	<xs:complexType name="UstepNTyp">
 		<xs:complexContent>
 			<xs:extension base="JednostkaRedakcyjnaTyp">
-				<xs:group ref="tresc-akapitowa-ustawy"/>
+				<xs:group ref="tresc-akapitowa-ustawy-wieloakapitowa"/>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2485,7 +2520,7 @@
 			<xs:element name="tresc" type="JednostkaRedakcyjnaTekstowaTyp"/>
 		</xs:sequence>
 		<xs:attribute name="GUID"   type="GUIDTyp"/>
-		<xs:attribute name="ELI"  type="xs:anyURI"/>
+		<xs:attribute name="eID"  type="xs:anyURI"/>
 	</xs:complexType>
 
 	<xs:complexType name="ZarzutyTyp">
@@ -2517,7 +2552,7 @@
 			<!-- Klasyfikacja wyniku — opcjonalna, może być wywnioskowana z treści -->
 		</xs:sequence>
 		<xs:attribute name="GUID" type="GUIDTyp"/>
-		<xs:attribute name="ELI"  type="xs:anyURI"/>
+		<xs:attributeGroup ref="eId"/>
 	</xs:complexType>
 
 	<!-- Pojedynczy punkt postanowienia (1), 2), ...) -->
@@ -2529,7 +2564,7 @@
 			<xs:element name="tresc" type="JednostkaTekstowaTyp"/>
 		</xs:sequence>
 		<xs:attribute name="GUID"   type="GUIDTyp"/>
-		<xs:attribute name="ELI"  type="xs:anyURI"/>
+		<xs:attributeGroup ref="eId"/>
 	</xs:complexType>
 
 	<xs:complexType name="PostanowienieDodatkoweTyp">
@@ -2570,11 +2605,11 @@
 		</xs:sequence>
 	</xs:complexType>
 
-<!--
-============================================================
-SEKCJA: UZASADNIENIE
-============================================================
--->
+	<!--
+    ============================================================
+    SEKCJA: UZASADNIENIE
+    ============================================================
+    -->
 	<xs:complexType name="SekcjaUzasadnieniaTyp">
 		<xs:sequence>
 
@@ -3041,115 +3076,115 @@ SEKCJA: UZASADNIENIE
 	<!--
         Rodzaj jednostki jest zgodny ze słownikiem https://eli.gov.pl/resource/authority/resource-type
     -->
-
-	<xs:simpleType name="MetadaneJednostkaRedakcyjnaTyp">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="JR_ART">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">artykuł</xs:documentation>
-					<xs:appinfo><label>artykuł</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_USTEP">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">ustęp</xs:documentation>
-					<xs:appinfo><label>ustęp</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_PKT">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">punkt</xs:documentation>
-					<xs:appinfo><label>punkt</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_LIT">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">litera</xs:documentation>
-					<xs:appinfo><label>litera</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_TIR">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">tiret</xs:documentation>
-					<xs:appinfo><label>tiret</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<!--Uwaga: podwójny, potrójny, poczwórny i pięciokrotny tiret są odstępstwem od ELI, ale występują w polskich aktach prawnych.-->
-			<xs:enumeration value="JR_TIR2">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">podwójny tiret</xs:documentation>
-					<xs:appinfo><label>podwójny tiret</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_TIR3">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">potrójny tiret</xs:documentation>
-					<xs:appinfo><label>potrójny tiret</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_TIR4">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">poczwórny tiret</xs:documentation>
-					<xs:appinfo><label>poczwórny tiret</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_TIR5">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">pięciokrotny tiret</xs:documentation>
-					<xs:appinfo><label>pięciokrotny tiret</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<!--Koniec odstępstwa-->
-			<xs:enumeration value="JR_PARAGRAF_KOD">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">paragraf (kodeks)</xs:documentation>
-					<xs:appinfo><label>paragraf (kodeks)</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_PARAGRAF_ROZP">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">paragraf (rozporządzenie)</xs:documentation>
-					<xs:appinfo><label>paragraf (rozporządzenie)</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_ROZDZIAL">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">rozdział</xs:documentation>
-					<xs:appinfo><label>rozdział</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_DZIAL">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">dział</xs:documentation>
-					<xs:appinfo><label>dział</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_TYTUL">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">tytuł</xs:documentation>
-					<xs:appinfo><label>tytuł</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_CZESC">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">część</xs:documentation>
-					<xs:appinfo><label>część</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_KSIEGA">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">księga</xs:documentation>
-					<xs:appinfo><label>księga</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="JR_ODDZIAL">
-				<xs:annotation>
-					<xs:documentation xml:lang="pl">oddział</xs:documentation>
-					<xs:appinfo><label>oddział</label></xs:appinfo>
-				</xs:annotation>
-			</xs:enumeration>
-		</xs:restriction>
-	</xs:simpleType>
+	<!--
+        <xs:simpleType name="MetadaneJednostkaRedakcyjnaTyp">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="JR_ART">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="pl">artykuł</xs:documentation>
+                        <xs:appinfo><label>artykuł</label></xs:appinfo>
+                    </xs:annotation>
+                </xs:enumeration>
+                <xs:enumeration value="JR_USTEP">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="pl">ustęp</xs:documentation>
+                        <xs:appinfo><label>ustęp</label></xs:appinfo>
+                    </xs:annotation>
+                </xs:enumeration>
+                <xs:enumeration value="JR_PKT">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="pl">punkt</xs:documentation>
+                        <xs:appinfo><label>punkt</label></xs:appinfo>
+                    </xs:annotation>
+                </xs:enumeration>
+                <xs:enumeration value="JR_LIT">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="pl">litera</xs:documentation>
+                        <xs:appinfo><label>litera</label></xs:appinfo>
+                    </xs:annotation>
+                </xs:enumeration>
+                <xs:enumeration value="JR_TIR">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="pl">tiret</xs:documentation>
+                        <xs:appinfo><label>tiret</label></xs:appinfo>
+                    </xs:annotation>
+                </xs:enumeration>-->
+	<!--Uwaga: podwójny, potrójny, poczwórny i pięciokrotny tiret są odstępstwem od ELI, ale występują w polskich aktach prawnych.-->
+	<!--<xs:enumeration value="JR_TIR2">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">podwójny tiret</xs:documentation>
+            <xs:appinfo><label>podwójny tiret</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_TIR3">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">potrójny tiret</xs:documentation>
+            <xs:appinfo><label>potrójny tiret</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_TIR4">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">poczwórny tiret</xs:documentation>
+            <xs:appinfo><label>poczwórny tiret</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_TIR5">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">pięciokrotny tiret</xs:documentation>
+            <xs:appinfo><label>pięciokrotny tiret</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>-->
+	<!--Koniec odstępstwa-->
+	<!--<xs:enumeration value="JR_PARAGRAF_KOD">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">paragraf (kodeks)</xs:documentation>
+            <xs:appinfo><label>paragraf (kodeks)</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_PARAGRAF_ROZP">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">paragraf (rozporządzenie)</xs:documentation>
+            <xs:appinfo><label>paragraf (rozporządzenie)</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_ROZDZIAL">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">rozdział</xs:documentation>
+            <xs:appinfo><label>rozdział</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_DZIAL">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">dział</xs:documentation>
+            <xs:appinfo><label>dział</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_TYTUL">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">tytuł</xs:documentation>
+            <xs:appinfo><label>tytuł</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_CZESC">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">część</xs:documentation>
+            <xs:appinfo><label>część</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_KSIEGA">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">księga</xs:documentation>
+            <xs:appinfo><label>księga</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+    <xs:enumeration value="JR_ODDZIAL">
+        <xs:annotation>
+            <xs:documentation xml:lang="pl">oddział</xs:documentation>
+            <xs:appinfo><label>oddział</label></xs:appinfo>
+        </xs:annotation>
+    </xs:enumeration>
+</xs:restriction>
+</xs:simpleType>-->
 	<!--
       Status obowiązywania aktu wg słownika ISAP
     -->
@@ -3236,17 +3271,23 @@ SEKCJA: UZASADNIENIE
     -->
 	<!-- Data częściowa z opcjonalnym wskazaniem jednostki redakcyjnej w formacie ELI -->
 	<xs:complexType name="DataCzesciowaTyp">
-		<xs:simpleContent>
-			<xs:extension base="DataOpcjTyp">
-				<xs:attribute name="jednostka" type="xs:anyURI" use="required">
-					<xs:annotation>
-						<xs:documentation>
-							Szczególna data, która dotyczy konkretnej jednostki redakcyjnej. Jednostka identyfikowana przez podanie ELI (URI) jednostki redakcyjnej.
-						</xs:documentation>
-					</xs:annotation>
-				</xs:attribute>
-			</xs:extension>
-		</xs:simpleContent>
+		<xs:annotation>
+			<xs:documentation>
+				Szczególna data, która dotyczy konkretnej jednostki redakcyjnej, w tym data mocy wstecznej. Jednostka identyfikowana przez podanie eId/URI jednostki redakcyjnej.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Jednostka" type="xs:anyURI" minOccurs="0"/>
+			<xs:element name="Data" type="DataOpcjTyp" minOccurs="1"/>
+			<xs:element name="Jednostka-w-zakresie" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						Wskazanie jednostki z fragmentu tekstu zmieniającego (cytatu strukturalnego), w stosunku do której prawodawca przyjął inną datę, np. używając zwrotu "w zakresie".
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Uwagi-redakcyjne" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
 	</xs:complexType>
 
 	<!-- Poprzednie tytuły aktu -->
@@ -3263,23 +3304,22 @@ SEKCJA: UZASADNIENIE
 		</xs:sequence>
 	</xs:complexType>
 
-	<!-- Pojedynczy poziom jednostki redakcyjnej -->
+	<!-- Pojedynczy poziom jednostki redakcyjnej
 	<xs:complexType name="PoziomJednostkiTyp">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<!-- oznaczenie: "3", "2a", "4" -->
 				<xs:attribute name="typ" type="MetadaneJednostkaRedakcyjnaTyp" use="required"/>
 			</xs:extension>
 		</xs:simpleContent>
-	</xs:complexType>
+	</xs:complexType>-->
 
-	<!-- Uporządkowana lista poziomów -->
+	<!-- Uporządkowana lista poziomów
 	<xs:complexType name="LokalizacjaTyp">
 		<xs:sequence>
 			<xs:element name="Poziom" type="PoziomJednostkiTyp" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
-
+-->
 	<!--
       Pojedyncze relacje do innego aktu prawnego
       Właściwości ELI: eli:based_on, eli:amends, eli:amended_by,
@@ -3287,10 +3327,16 @@ SEKCJA: UZASADNIENIE
                        eli:has_related_work
     -->
 	<xs:complexType name="RelacjaAktuTyp">
+		<xs:annotation>
+			<xs:documentation>
+				Fragment opisujący relację danego aktu z innym aktem za pomocą: ELI innego aktu w relacji, eId - jednostka redakcyjna relacji, DataRelacji - data, z którą powstała relacja, Tytul - tytuł aktu w relacji.
+			</xs:documentation>
+		</xs:annotation>
 		<xs:all>
 			<xs:element name="ELI" type="xs:anyURI"/>
+			<xs:element name="eId" type="xs:string" minOccurs="0"/>
 			<xs:element name="DataRelacji" type="DataOpcjTyp"/>
-			<xs:element name="Lokalizacja" type="LokalizacjaTyp" minOccurs="0"/>
+			<!--<xs:element name="Lokalizacja" type="LokalizacjaTyp" minOccurs="0"/>-->
 			<xs:element name="Tytul" type="xs:string" minOccurs="0"/>
 		</xs:all>
 	</xs:complexType>
@@ -3410,6 +3456,7 @@ SEKCJA: UZASADNIENIE
 							<xs:element name="Uwagi" type="TekstZeSpacjamiTyp" minOccurs="0"/>
 							<xs:element name="Podpis" type="PodpisElektronicznyTyp" minOccurs="0"/>
 						</xs:all>
+						<!--GUID został dodany na wypadek, gdyby chciano wprowadzić inny sposób identyfikacji niż eliURI. Obecnie nie ma listy z GUIDami dla organów analogicznej do eliURI.-->
 						<xs:attribute name="GUID" type="GUIDMetaTyp"/>
 						<xs:attribute name="rola" type="RolaOrganTyp"/>
 						<xs:attribute name="eliURI" type="xs:anyURI"/>
@@ -3491,7 +3538,7 @@ SEKCJA: UZASADNIENIE
                  eli:type_document
                  Słownik: https://eli.gov.pl/resource/authority/resource-type
                  API: type -->
-			<xs:element name="Rodzaj" type="RodzajAktuTyp" />
+			<xs:element name="Rodzaj" type="RodzajAktuTyp"/>
 
 			<!-- TytulyPoprzednie — historia tytułów aktu (przed nowelizacją)
                  API: previousTitle -->
@@ -3532,6 +3579,20 @@ SEKCJA: UZASADNIENIE
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="DataWejsciaWZycieCzesciowa" type="DataCzesciowaTyp" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<!-- DataMocyWstecznej — wsteczna data wejścia w życie aktu; brak odpowiednika w ELI oraz w API -->
+			<xs:element name="DatyMocyWstecznej" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Wskazana przez prawodawcę wsteczna data wejścia w życie poszczególnych jednostek bądź całego aktu. Jeżeli nie określono wyraźnie jednostki, DataMocyWstecznej dotyczy całego aktu.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DataMocyWstecznej" type="DataCzesciowaTyp" maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -3663,13 +3724,13 @@ SEKCJA: UZASADNIENIE
 			<xs:pattern value="md:Tytul|md:Rodzaj|md:RodzajTJ|md:PrzedmiotTJ"/>
 			<xs:pattern value="md:TytulyPoprzednie/md:TytulPoprzedni"/>
 			<!-- Blok 3: Daty -->
-			<xs:pattern value="md:DataOgloszenia|md:DataWydania|md:DataWejsciaWSycie|md:DataObowiazywaniaOd"/>
+			<xs:pattern value="md:DataOgloszenia|md:DataWydania|md:DataWejsciaWZycie|md:DataObowiazywaniaOd"/>
 			<xs:pattern value="md:DataUchylenia|md:DataWygasniecia|md:DataStanuPrawnego|md:DataZmiany"/>
 			<xs:pattern value="md:DataWydaniaTJ|md:ELITJ"/>
 			<!-- Blok 4: Status -->
 			<xs:pattern value="md:Status|md:CzyObowiazuje"/>
 			<!-- Blok 5: Organy -->
-			<xs:pattern value="md:Instytucja"/>
+			<!--<xs:pattern value="md:Instytucja"/>-->
 			<xs:pattern value="md:Organy/md:Organ\[@GUID='[\da-fA-F]{8}(-[\da-fA-F]{4}){3}-[\da-fA-F]{12}'\]/md:Nazwa"/>
 			<xs:pattern value="md:Organy/md:Organ\[@GUID='[\da-fA-F]{8}(-[\da-fA-F]{4}){3}-[\da-fA-F]{12}'\]/md:OrganPodpisujacy"/>
 			<xs:pattern value="md:Organy/md:Organ\[@GUID='[\da-fA-F]{8}(-[\da-fA-F]{4}){3}-[\da-fA-F]{12}'\]/md:OsobaPodpisujaca"/>

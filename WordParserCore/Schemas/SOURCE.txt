@@ -1,1 +1,0 @@
-Source repo: https://projects.task.gda.pl/caise/NLP/kisi/rcl/akn4pl.git @ 127d316229219ad080464f84e9420a96450016b3
