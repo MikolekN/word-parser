@@ -21,3 +21,10 @@ stanu, a ten należy do architecture.md.
 
 Co z tego wynika: koszty, ograniczenia, rzeczy które stały się niemożliwe, miejsca w kodzie
 utrzymywane specjalnie po to. Także to, co trzeba pilnować przy zmianach.
+
+## Weryfikacja
+
+Nazwy testów, które **spadną**, jeśli decyzja zostanie odwrócona — dzięki temu jej cofnięcie wymaga
+świadomego usunięcia asercji, widocznego w diffie. Strażników pisze się w
+`WordParserCore.Tests/ArchitectureDecisionTests.cs`, chyba że istnieje już test w naturalnym miejscu.
+Jeśli decyzji nie da się objąć testem, napisz to wprost i wskaż, co ją pilnuje.

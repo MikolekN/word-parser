@@ -32,3 +32,8 @@ błędy do naprawienia przy okazji.
 
 Konsekwencja dla przeglądów kodu: propozycja „ustawmy tu styl zastępczy, będzie prościej" jest
 odrzucana z tego ADR, bez ponownej dyskusji.
+
+## Weryfikacja
+
+- `PlainTextBlockReaderTests.Read_PlainTextBlocks_HaveNoStyleId`
+- `ArchitectureDecisionTests.Adr0002_PdfBlocks_NeverCarryStyleId`

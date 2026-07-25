@@ -35,3 +35,9 @@ naprawiony w tym samym commicie (jedyne call site'y to CLI i Web).
 Każdy nowy konsument musi świadomie sięgnąć po `Result.Document` i obsłużyć `null` — to celowe
 tarcie, wymuszające decyzję zamiast jej pominięcia. Wynik klasyfikacji jest kopiowany do
 `LegalDocument.Classification`, ale nie zmienia `Type` (ADR-0007).
+
+## Weryfikacja
+
+- `ParseFacadeTests.NonAct_DefaultPolicy_SkipsModelButReportsClassification` — nie-akt zwraca wynik
+  z raportem i `Document == null`, bez wyjątku.
+- `ParseFacadeTests.NonAct_AlwaysParse_BuildsModel` — wywołujący może przełamać decyzję polityką.

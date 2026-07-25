@@ -34,3 +34,8 @@ Wersja przypięta w `WordParserCore.csproj` (0.1.15). Oś Y w PdfPig rośnie do 
 linii wymaga sortowania malejąco po baseline — nieoczywistość opłacona w `PdfLineExtractor`.
 
 Brak OCR jest osobną decyzją: ADR-0005.
+
+## Weryfikacja
+
+- `ArchitectureDecisionTests.Adr0004_NoAgplPdfLibraryReferenced` — żaden projekt nie referuje
+  biblioteki iText/iTextSharp.

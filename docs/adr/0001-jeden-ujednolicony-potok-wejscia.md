@@ -42,3 +42,12 @@ stanowiły siatkę bezpieczeństwa przebudowy.
 Wcięcia są przenoszone w twipach (DOCX natywnie, PDF przeliczany z pozycji X). Mapowanie
 „wcięcie → poziom hierarchii" należy do warstwy klasyfikacji, nie do adaptera: adapter zgadujący
 poziom ukryłby błąd przeliczenia w miejscu bez dostępu do kontekstu listy.
+
+## Weryfikacja
+
+- `ArchitectureDecisionTests.Adr0001_ModelDto_DoesNotDependOnParserOrIntermediateRepresentation` —
+  pilnuje, że `ModelDto` nie sięga do parsera, IR ani OpenXml.
+- `ParserEquivalenceTests` — pilnuje, że ten sam akt podany różnymi formatami daje równoważny model;
+  to test sensu istnienia wspólnego potoku.
+
+Samego zakazu „drugiego parsera" test nie obejmuje — pilnuje go rewizja zmian.

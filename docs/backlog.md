@@ -14,13 +14,14 @@ stylach szablonu i nie mają odpowiednika w rozpoznawaniu z samej treści.
 
 | Luka | Stan faktyczny | Dlaczego odłożone |
 |---|---|---|
-| **Część wspólna (WrapUp) bez stylu** | Wykrywana wyłącznie przez styl `CZ_WSP_*` ([ParagraphClassifier.cs:132-135](../WordParserCore/Services/Classify/ParagraphClassifier.cs#L132-L135)); `IsWrapUpByText` tylko potwierdza lub obniża pewność. W gałęzi bezstylowej „– tekst" nadal klasyfikuje się jako Tiret. | Nie da się rozstrzygnąć samym tekstem: prawdziwe tirety bywają pisane półpauzą, więc treść nie różnicuje tiretu od części wspólnej. Potrzebny sygnał układu (wcięcie na wysokości wprowadzenia do wyliczenia, § 58 ZTP) albo kontekst otwartych list — a `ClassificationInput` to dziś rekord `(Text, StyleId)` i layout do klasyfikatora nie dochodzi (trafia osobnym parametrem tylko do `StructureProcessor.GetTiretDepth`). |
+| **Część wspólna (WrapUp) bez stylu** | Wykrywana wyłącznie przez styl `CZ_WSP_*` (gałąź `styleType == "WRAPUP"` w [`ParagraphClassifier.Classify`](../WordParserCore/Services/Classify/ParagraphClassifier.cs)); `IsWrapUpByText` tylko potwierdza lub obniża pewność. W gałęzi bezstylowej „– tekst" nadal klasyfikuje się jako Tiret. | Nie da się rozstrzygnąć samym tekstem: prawdziwe tirety bywają pisane półpauzą, więc treść nie różnicuje tiretu od części wspólnej. Potrzebny sygnał układu (wcięcie na wysokości wprowadzenia do wyliczenia, § 58 ZTP) albo kontekst otwartych list — a `ClassificationInput` to dziś rekord `(Text, StyleId)` i layout do klasyfikatora nie dochodzi (trafia osobnym parametrem tylko do `StructureProcessor.GetTiretDepth`). |
 | **Głębokość tiretu bez sygnału** | Dwa poziomy priorytetu: styl (`2TIR`/`3TIR`/`TIR`) → wcięcie z `ParsingContext.OpenTiretIndents` (tolerancja ±120 twips, cap 3). Brak obu (czysty TXT) → zawsze poziom 1. | TXT nie niesie wcięć w sposób wiarygodny. Świadomie wybrano deterministyczne „poziom 1" zamiast heurystyki na interpunkcji. |
 | **Nowelizacje zagnieżdżone (`ZZ/`)** | Trigger wykryty wewnątrz otwartego cytatu jest tylko flagowany (`QuoteBalanceTracker.MarkNestedTrigger`) — zagnieżdżony obiekt `Amendment` nie jest budowany. | Wymaga rekurencyjnego zbierania w cytacie; bez stylów nie ma sygnału zamknięcia wewnętrznego poziomu. |
-| **`CommonPartOf` w nowelizacji** | Dostępne wyłącznie z mapy stylów ([AmendmentStyleDecoder.cs:79](../WordParserCore/Helpers/AmendmentStyleDecoder.cs#L79), ~240 wpisów `StyleLibraryMapper`). Bez stylu — nierozpoznawane. | Informacja „część wspólna czego" jest w szablonie zakodowana w nazwie stylu i nie ma odpowiednika w treści. |
+| **`CommonPartOf` w nowelizacji** | Dostępne wyłącznie z mapy stylów (właściwość `AmendmentStyleInfo.CommonPartOf` w [`AmendmentStyleDecoder`](../WordParserCore/Helpers/AmendmentStyleDecoder.cs), ~240 wpisów `StyleLibraryMapper`). Bez stylu — nierozpoznawane. | Informacja „część wspólna czego" jest w szablonie zakodowana w nazwie stylu i nie ma odpowiednika w treści. |
 
-Miejsca oznaczone w kodzie: `[Fact(Skip = "Etap 6 …")]` w
-[ParserEquivalenceTests.cs:97](../WordParserCore.Tests/ParserEquivalenceTests.cs#L97) oraz testy
+Miejsca oznaczone w kodzie: `[Fact(Skip = "Etap 6 …")]` na
+`ParserEquivalenceTests.ActWithWrapUpAndSystematizingUnits_DocxAndTxt_AreEquivalent`
+([plik](../WordParserCore.Tests/ParserEquivalenceTests.cs)) oraz testy
 charakteryzujące w `ParagraphClassifierStylelessTests` (utrwalają obecne, częściowo błędne wyniki —
 zmiana któregokolwiek wymaga jawnej aktualizacji z uzasadnieniem ZTP).
 

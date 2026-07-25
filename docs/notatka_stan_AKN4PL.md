@@ -52,7 +52,7 @@ Biblioteka `ModelDto` implementuje obiektowy model reprezentacji struktury aktu 
 Article → Paragraph (IsImplicit) → Point → Letter → Tiret → DoubleTiret
 ```
 
-> **Erratum (2026-07-25):** Klasa `DoubleTiret` **nie istnieje** i nigdy nie istniała w modelu. Podwójne tirety są modelowane jako zagnieżdżona lista `Tiret.Tirets: List<Tiret>` w tej samej klasie `Tiret` (`ModelDto/EditorialUnits/Tiret.cs:26`) — zgodnie z `CLAUDE.md`. 6. poziom hierarchii to zagnieżdżenie `Tiret` w `Tiret`, nie osobna klasa.
+> **Erratum (2026-07-25):** Klasa `DoubleTiret` **nie istnieje** i nigdy nie istniała w modelu. Podwójne tirety są modelowane jako zagnieżdżona lista `Tiret.Tirets: List<Tiret>` w tej samej klasie `Tiret` (`ModelDto/EditorialUnits/Tiret.cs`) — zgodnie z `CLAUDE.md`. 6. poziom hierarchii to zagnieżdżenie `Tiret` w `Tiret`, nie osobna klasa.
 
 **Hierarchia systematyzacyjna (kompletna, 6 poziomów):**
 ```

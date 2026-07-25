@@ -12,8 +12,8 @@ sygnałów słabych: umowa albo statut wewnętrzny ma jednostki `§`, datę i fr
 
 ## Decyzja
 
-Wprowadzono warunek konieczny `hasBackbone`
-([DocumentClassifier.cs:49](../../WordParserCore/Services/Classify/Document/DocumentClassifier.cs#L49)).
+Wprowadzono warunek konieczny `hasBackbone` w
+[`DocumentClassifier.Classify`](../../WordParserCore/Services/Classify/Document/DocumentClassifier.cs).
 Dokument bez co najmniej jednego silnego sygnału strukturalnego — nagłówka rodzaju aktu, formuły
 kompetencyjnej, komend nowelizacyjnych albo formuły wejścia w życie — jest klasyfikowany jako
 nie-akt niezależnie od liczby punktów.
@@ -35,3 +35,9 @@ to świadomy koszt. Wywołujący ma wyjście: `ParseOptions.Policy = AlwaysParse
 
 Dodanie nowego rodzaju aktu do klasyfikatora wymaga dołożenia jego sygnału **do zbioru
 backbone'owego**, nie tylko do punktacji; inaczej nowy rodzaj nigdy nie przejdzie klasyfikacji.
+
+## Weryfikacja
+
+- `DocumentClassifierTests.Classify_ContractWithSectionSigns_IsNotAnAct` — najtrudniejszy negatyw:
+  umowa z jednostkami `§`, datą i wyliczeniami.
+- `DocumentClassifierTests.Classify_PressArticleCitingStatute_IsNotAnAct` — tekst cytujący ustawę.

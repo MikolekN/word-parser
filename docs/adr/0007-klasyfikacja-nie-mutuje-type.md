@@ -11,9 +11,9 @@ pokusa: skoro znamy rodzaj aktu, wpiszmy go w `Type`.
 
 ## Decyzja
 
-Wynik klasyfikacji jest zapisywany wyłącznie w `LegalDocument.Classification`
-([LegalDocumentParser.cs:85](../../WordParserCore/LegalDocumentParser.cs#L85)). `Type` pozostaje pod
-kontrolą wywołującego i nie jest ruszany przez potok.
+Wynik klasyfikacji jest zapisywany wyłącznie w `LegalDocument.Classification` — w prywatnym
+`Parse(blocks, options, format)` w [`LegalDocumentParser`](../../WordParserCore/LegalDocumentParser.cs).
+`Type` pozostaje pod kontrolą wywołującego i nie jest ruszany przez potok.
 
 ## Odrzucone alternatywy
 
@@ -36,3 +36,8 @@ jest dopuszczalna i nie jest błędem — to dwa różne stwierdzenia o dokumenc
 
 Gdyby kiedyś powstał wymóg „model ma znać swój rodzaj", właściwą drogą jest jawna metoda po stronie
 wywołującego (np. `ApplyClassification()`), a nie cicha mutacja w `Parse`.
+
+## Weryfikacja
+
+- `ArchitectureDecisionTests.Adr0007_RecognizedActKind_DoesNotOverwriteDocumentType` — rozporządzenie
+  rozpoznane przez klasyfikator nie zmienia `Document.Type`.

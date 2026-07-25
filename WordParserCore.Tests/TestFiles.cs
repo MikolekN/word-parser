@@ -36,6 +36,27 @@ namespace WordParserCore.Tests
 			=> Path.Combine(GetTestProjectRoot(), "Artifacts", fileName);
 
 		/// <summary>
+		/// Korzeń repozytorium (katalog z WordParser.sln) — potrzebny testom weryfikującym
+		/// dokumentację, która odwołuje się do plików w innych projektach.
+		/// </summary>
+		public static string GetRepositoryRoot()
+		{
+			var dir = new DirectoryInfo(AppContext.BaseDirectory);
+			while (dir != null && !File.Exists(Path.Combine(dir.FullName, "WordParser.sln")))
+			{
+				dir = dir.Parent;
+			}
+
+			if (dir == null)
+			{
+				throw new DirectoryNotFoundException(
+					"Nie znaleziono korzenia repozytorium (WordParser.sln) powyżej katalogu wyjściowego testów.");
+			}
+
+			return dir.FullName;
+		}
+
+		/// <summary>
 		/// Ścieżka dokumentu referencyjnego w lokalnym repozytorium dokumentów (DocRepo/).
 		/// </summary>
 		public static string GetReferenceDocPath(string fileName)

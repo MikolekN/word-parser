@@ -34,3 +34,9 @@ to znany kompromis, nie przeoczenie.
 Gdyby OCR miał kiedyś wejść w zakres, właściwym miejscem jest osobny preprocesor przed adapterem
 (PDF-skan → PDF z warstwą), nie modyfikacja `PdfBlockReader` — adapter ma zostać czytnikiem, nie
 rozpoznawaczem obrazu.
+
+## Weryfikacja
+
+- `PdfBlockReaderTests.ScannedPdf_NoTextLayer_ThrowsScannedPdfException`
+- `PdfBlockReaderTests.HeaderOnlyTextLayer_AfterFiltering_ThrowsScannedPdfException` — skan z samym
+  nagłówkiem strony też jest skanem, mimo niepustej warstwy tekstowej.
