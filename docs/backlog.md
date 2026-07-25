@@ -4,8 +4,8 @@ Rzeczy, o których wiemy, że ich nie ma. Każdy punkt był rozważony i odłoż
 to nie lista życzeń ani „to do", tylko rejestr świadomych dziur, żeby nikt nie odkrywał ich
 od nowa i nie brał za błąd czegoś, co jest decyzją.
 
-Stan zweryfikowany w kodzie 2026-07-25. Uzasadnienia decyzji projektowych: [architecture.md](architecture.md),
-sekcja 13. Reguły ZTP stojące za tymi punktami: [ztp-struktura-aktow.md](ztp-struktura-aktow.md).
+Stan zweryfikowany w kodzie 2026-07-25. Uzasadnienia decyzji projektowych: [docs/adr/](adr/README.md).
+Reguły ZTP stojące za tymi punktami: [ztp-struktura-aktow.md](ztp-struktura-aktow.md).
 
 ## 1. Gałąź bezstylowa (DOCX bez szablonu / PDF / TXT)
 

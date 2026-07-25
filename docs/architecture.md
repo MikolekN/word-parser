@@ -850,63 +850,26 @@ WordParserCore/
 
 ---
 
-## 13. Decyzje architektoniczne i ich uzasadnienia
+## 13. Decyzje architektoniczne
 
-Rozstrzygnięcia podjęte przy przebudowie na uniwersalne wejście (DOCX bez szablonu / PDF / TXT).
-Zapisane, bo z samego kodu nie wynika, **dlaczego** tak — a każde z nich kusi, żeby zrobić inaczej.
-Znane luki i prace odłożone: [backlog.md](backlog.md).
+Uzasadnienia decyzji — wraz z odrzuconymi alternatywami i konsekwencjami — żyją w osobnych plikach
+w [docs/adr/](adr/README.md). Tutaj tylko skrót z odesłaniem; ta sekcja nie jest miejscem na „dlaczego".
 
-**13.1 Jeden ujednolicony potok, nie ścieżka per format.** Wszystkie formaty schodzą się do
-`DocumentBlock[]`, a styl Word jest tylko jednym z sygnałów klasyfikacji. Odrzucono wariant
-„osobny parser dla PDF" — dwa potoki rozjechałyby się w regułach ZTP, a testy regresji straciłyby
-wspólny punkt odniesienia.
+| ADR | Decyzja |
+|---|---|
+| [0001](adr/0001-jeden-ujednolicony-potok-wejscia.md) | Wszystkie formaty schodzą się do `DocumentBlock[]` — jeden potok, nie ścieżka per format. Stąd też: IR nie trafia do `ModelDto`, wcięcia w twipach, `ProcessParagraph` utrzymywany jako adapter. |
+| [0002](adr/0002-adaptery-nie-udaja-styleid.md) | Adaptery PDF/TXT nie zgadują `styleId` — brak stylu zostaje brakiem i obniża pewność karą, zamiast udawać sygnał szablonu. |
+| [0003](adr/0003-backbone-warunkiem-uznania-za-akt.md) | Bez silnego sygnału strukturalnego (`hasBackbone`) dokument nie jest aktem, choćby przekroczył próg punktowy. |
+| [0004](adr/0004-pdfpig-zamiast-itext.md) | PdfPig (Apache-2.0) do odczytu PDF; iText odrzucony — AGPL rozciągnąłby wymóg udostępnienia źródeł na usługę sieciową. |
+| [0005](adr/0005-pdf-tylko-warstwa-tekstowa.md) | PDF wyłącznie z warstwą tekstową; skan odrzucany `ScannedPdfException`, OCR poza zakresem projektu. |
+| [0006](adr/0006-nie-akt-nie-jest-bledem.md) | Nie-akt to `ParseResult` z raportem klasyfikacji, nie wyjątek; decyzja „czy parsować" należy do wywołującego (`ParseOptions.Policy`). |
+| [0007](adr/0007-klasyfikacja-nie-mutuje-type.md) | Rozpoznany rodzaj aktu ląduje w `Classification`; `LegalDocument.Type` pozostaje pod kontrolą wywołującego. |
 
-**13.2 Adaptery PDF/TXT nie udają `styleId` — zasada twarda.** Kusząca droga na skróty (wystarczy
-„zgadnąć" `ART`/`UST` i cały istniejący potok działa) zabetonowałaby błędy zgadywania jako
-pewny sygnał stylowy, bez możliwości odróżnienia ich od prawdziwego szablonu. `StyleId` jest `null`
-dla PDF/TXT i tak ma zostać; brak stylu obniża pewność przez `StyleAbsentPenalty`, co jest
-sygnałem prawdziwym.
+### Rozstrzygnięcia bez osobnego ADR
 
-**13.3 Reprezentacja pośrednia (`Ingest/`) jest kontraktem wewnętrznym, nie modelem wyjściowym.**
-`DocumentBlock`/`BlockLayoutInfo` celowo NIE trafiły do `ModelDto` — inaczej graf zależności
-otworzyłby się na szczegóły odczytu formatu, a DTO przestałoby być czystym wynikiem.
+**Pierwszy nagłówek rodzaju aktu wygrywa.** Załącznik do obwieszczenia o tekście jednolitym zawiera
+własną linię „USTAWA", więc sygnały tytułowe liczone są tylko ze strefy tytułowej (pierwsze bloki),
+a kolejny nagłówek jest ignorowany z sygnałem informacyjnym `IgnoredSecondaryHeader`. Bez tego każdy
+tekst jednolity klasyfikowałby się jako ustawa.
 
-**13.4 Twips jako jednostka kanoniczna układu.** `BlockLayoutInfo` przechowuje wcięcia w twipach
-(DOCX natywnie, PDF przeliczany z pozycji X), a mapowanie „wcięcie → poziom hierarchii" należy do
-warstwy klasyfikacji, nie do adaptera. Adapter, który zgadywałby poziom, ukryłby błąd przeliczenia
-w miejscu bez dostępu do kontekstu listy.
-
-**13.5 PdfPig (Apache-2.0), nie iText.** iText jest na AGPL, a RCL wystawia usługę sieciową
-(`WordParserWeb`) — AGPL rozciągnąłby wymóg udostępnienia źródeł na całość usługi. Uwaga
-praktyczna: pakiet NuGet nazywa się `PdfPig`; „UglyToad.PdfPig" to obcy fork, nie ta biblioteka.
-
-**13.6 PDF wyłącznie z warstwą tekstową.** Skany są odrzucane (`ScannedPdfException`) na podstawie
-progów gęstości znaków i udziału `U+FFFD`; OCR jest poza zakresem projektu. Cicha akceptacja skanu
-dałaby model zbudowany ze śmieci, a to gorsze niż jawna odmowa.
-
-**13.7 Nie-akt nie jest błędem.** Parser zwraca `ParseResult` z raportem klasyfikacji, a decyzja
-„czy mimo wszystko parsować" należy do wywołującego (`ParseOptions.Policy`:
-`ParseWhenLegalAct` / `AlwaysParse` / `ClassifyOnly`; CLI `--force`, Web „Parsuj mimo wszystko").
-Wyjątek na nie-akcie odebrałby wywołującemu tę decyzję.
-
-**13.8 Klasyfikacja nie mutuje `LegalDocument.Type`.** Rozpoznany rodzaj aktu ląduje wyłącznie
-w `LegalDocument.Classification` ([LegalDocumentParser.cs:85](../WordParserCore/LegalDocumentParser.cs#L85)),
-a `Type` pozostaje pod kontrolą wywołującego. Nadpisywanie `Type` wynikiem heurystyki zmieniłoby
-zachowanie istniejących konsumentów modelu bez ich wiedzy.
-
-**13.9 `hasBackbone` — warunek konieczny uznania za akt.** Nawet przy sumie punktów ≥ progu
-dokument bez silnego sygnału strukturalnego (nagłówek rodzaju aktu, formuła kompetencyjna, komendy
-nowelizacyjne albo formuła wejścia w życie) jest klasyfikowany jako nie-akt
-([DocumentClassifier.cs:49](../WordParserCore/Services/Classify/Document/DocumentClassifier.cs#L49)).
-Bez tego warunku umowa, regulamin czy statut wewnętrzny — z jednostkami `§`, datą i przedmiotem —
-fałszywie przekraczały próg.
-
-**13.10 Pierwszy nagłówek rodzaju aktu wygrywa.** Załącznik do obwieszczenia o tekście jednolitym
-zawiera własną linię „USTAWA", więc sygnały tytułowe liczone są tylko ze strefy tytułowej
-(pierwsze bloki), a kolejny nagłówek jest ignorowany z sygnałem informacyjnym
-(`IgnoredSecondaryHeader`). Inaczej każdy tekst jednolity klasyfikowałby się jako ustawa.
-
-**13.11 `ProcessParagraph` zostaje jako cienki adapter nad `ProcessBlock`.** Sygnatura przyjmująca
-`Word.Paragraph` jest utrzymywana celowo, mimo że potok jej nie potrzebuje — kilkanaście klas
-testowych buduje wejście helperem `CreateParagraph(text, styleId)`. Usunięcie adaptera wymusiłoby
-przepisanie tych testów, czyli utratę siatki bezpieczeństwa dokładnie wtedy, gdy jest potrzebna.
+Znane luki i prace świadomie odroczone: [backlog.md](backlog.md).
