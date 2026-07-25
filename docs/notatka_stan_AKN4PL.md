@@ -52,6 +52,8 @@ Biblioteka `ModelDto` implementuje obiektowy model reprezentacji struktury aktu 
 Article → Paragraph (IsImplicit) → Point → Letter → Tiret → DoubleTiret
 ```
 
+> **Erratum (2026-07-25):** Klasa `DoubleTiret` **nie istnieje** i nigdy nie istniała w modelu. Podwójne tirety są modelowane jako zagnieżdżona lista `Tiret.Tirets: List<Tiret>` w tej samej klasie `Tiret` (`ModelDto/EditorialUnits/Tiret.cs:26`) — zgodnie z `CLAUDE.md`. 6. poziom hierarchii to zagnieżdżenie `Tiret` w `Tiret`, nie osobna klasa.
+
 **Hierarchia systematyzacyjna (kompletna, 6 poziomów):**
 ```
 Part → Book → Title → Division → Chapter → Subchapter → [Articles]
@@ -69,6 +71,8 @@ Part → Book → Title → Division → Chapter → Subchapter → [Articles]
 | `CommonPart` | Część wspólna intro/wrapUp przy Paragraph/Point/Letter |
 | `ValidationMessage` | Komunikaty diagnostyczne: Info/Warning/Error/Critical |
 | `LegalActType` | Enum: Statute, Regulation, Code, Bill, Ordinance, RegulatoryImpactAssessment |
+
+> **Erratum (2026-07-25):** Enum `LegalActType` ma dziś **11 wartości** — commit `3ce7c3e` (2026-07-17) dodał `Announcement` (obwieszczenie), `Resolution` (uchwała), `ExecutiveOrder` (zarządzenie) i `LocalLegalAct` (akt prawa miejscowego), obok wcześniej dodanego `AmendingStatute` (ustawa zmieniająca). Zob. też erratum w sekcji III.1 (luka „Niepełny `LegalActType`”).
 
 **Format eId** generowany przez `BaseEntity.Id`: `art_5__ust_2__pkt_3__lit_a__tir_1`
 (podwójny podkreślnik jako separator poziomów, zgodnie z implementacją w `BaseEntity.cs`).
@@ -103,6 +107,10 @@ Part → Book → Title → Division → Chapter → Subchapter → [Articles]
 | **Brak identyfikatorów FRBR** | AKN wymaga `FRBRuri`, `FRBRthis`, `FRBRdate`, `FRBRauthor` w metadanych; EAP ma `ELI` jako namiastkę; ModelDto — brak | Średni |
 | **Niepełny `LegalActType`** | Brak: `Announcement` (obwieszczenie), `Resolution` (uchwała), `Order` (zarządzenie), `LocalLaw` (prawo miejscowe), `JudicialDecision` | Niski |
 | **Brak atrybutów typograficznych** | Pominięte celowo jako warstwa prezentacji — należy potwierdzić to założenie | Niski |
+
+> **Erratum (2026-07-25):** Weryfikacja bieżącego stanu kodu wobec dwóch powyższych wierszy:
+> - **„Brak struktury metadanych dokumentu”**: `LegalDocument` uzyskał od czasu notatki pola `ActDate` (commit `3d39b17`) oraz `Classification` (commit `1350300`). Realna pozostała luka metadanych ogranicza się do: **ELI URI, organu wydającego i sygnatury**.
+> - **„Niepełny `LegalActType`”**: enum rozszerzono do 11 wartości (commit `3ce7c3e`, 2026-07-17) o `Announcement`, `Resolution`, `ExecutiveOrder`, `LocalLegalAct` oraz `AmendingStatute`. Z wymienionej listy luk pozostaje wyłącznie **`JudicialDecision`** (orzeczenie TK) — nieobjęte jeszcze przez enum.
 
 ### 3.2. Luki EAP (format RCL) względem AKN
 

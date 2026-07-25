@@ -139,7 +139,9 @@ Null dla odesłań wewnętrznych. Dla zewnętrznych:
 
 ### Journal — publikator
 
-Jeden obiekt per rok publikacji. Spójne z istniejącym `JournalInfo` w modelu WordParser.
+Jeden obiekt per rok publikacji. Model inspirowany istniejącym `JournalInfo` w modelu WordParser — **nie jest z nim tożsamy**.
+
+**Uwaga (stan obecny vs. planowane rozszerzenie)**: obecny `ModelDto/JournalInfo.cs` zawiera wyłącznie pola `Publisher` (`PublisherType`: `DziennikUstaw` / `MonitorPolski`), `Year`, `Positions`, `SourceString`. Pola `number`, `page`, `isConsolidated`, `amendments` oraz wariant `"DUrzUE"` w tabeli poniżej są planowanym rozszerzeniem tego modelu — nie istnieją jeszcze w kodzie.
 
 ```json
 {
@@ -154,16 +156,16 @@ Jeden obiekt per rok publikacji. Spójne z istniejącym `JournalInfo` w modelu W
 }
 ```
 
-| Pole | Typ | Wymagane | Opis |
-|------|-----|----------|------|
-| `type` | enum | tak | `"DU"` (Dz.U.) / `"DUrzUE"` (Dz.Urz.UE) |
-| `year` | int | tak | Rok publikacji |
-| `positions` | array of int | tak | Numery pozycji (Dz.U.) |
-| `number` | int? | nie | Numer dziennika (starszy format PL: "Nr 119"; format UE: "L 2025/1106") |
-| `page` | int? | nie | Numer strony (format UE: "str. 1") |
-| `isConsolidated` | bool | tak | Czy tekst jednolity ("t.j.") |
-| `sourceString` | string | tak | Dosłowny fragment tekstu z publikatorem |
-| `amendments` | string? | nie | Np. `"z późn. zm."` jeśli występuje |
+| Pole | Typ | Wymagane | Opis | W `JournalInfo` |
+|------|-----|----------|------|-----------------|
+| `type` | enum | tak | `"DU"` (Dz.U.) / `"DUrzUE"` (Dz.Urz.UE — **nowy**, `PublisherType` ma dziś tylko `DziennikUstaw`/`MonitorPolski`) | częściowo (nowy wariant) |
+| `year` | int | tak | Rok publikacji | tak |
+| `positions` | array of int | tak | Numery pozycji (Dz.U.) | tak |
+| `number` | int? | nie | Numer dziennika (starszy format PL: "Nr 119"; format UE: "L 2025/1106") | nie (nowe, planowane) |
+| `page` | int? | nie | Numer strony (format UE: "str. 1") | nie (nowe, planowane) |
+| `isConsolidated` | bool | tak | Czy tekst jednolity ("t.j.") | nie (nowe, planowane) |
+| `sourceString` | string | tak | Dosłowny fragment tekstu z publikatorem | tak |
+| `amendments` | string? | nie | Np. `"z późn. zm."` jeśli występuje | nie (nowe, planowane) |
 
 **Wieloletni publikator**: "Dz. U. z 2025 r. poz. 825, 1014 i 1080 oraz z 2026 r. poz. 26" → dwa obiekty `Journal`:
 ```json

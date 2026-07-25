@@ -1,6 +1,6 @@
 # Plan przebudowy: uniwersalne wejście parsera (DOCX bez szablonu, PDF, TXT) + klasyfikacja aktu wg ZTP
 
-> **Status: W REALIZACJI** — Etapy 0–5 ukończone. Etap 5 (2026-07-17): adapter TXT (`PlainTextBlockReader` — detekcja kodowania BOM/UTF-8 strict/CP1250, `TextNormalizer`, `BlockAssembler` z segmentacją i dehyfenacją) + wydzielenie `LegalDocumentParser.ParseBlocks` + rama ekwiwalencji (`ModelEquivalenceComparer`, `ParserEquivalenceTests` — TXT vs bloki DOCX dają równoważny model; luki bezstylowe jako Skip z numerem etapu). Addytywne, snapshot bez zmian. CP1250 dostępne z shared framework net10 (pakiet zbędny). Etap 4 (2026-07-17): `DocumentClassifier` + `ZtpPatterns` (Załącznik A) + typy wyniku w ModelDto (`DocumentClassificationResult`, `DocumentSignal`, `DocumentSignalKind`) + rozszerzenie `LegalActType` o 5 rodzajów. Punktacja dwufazowa (strefa tytułowa + korpus), progi, pułapka obwieszczenia, remapy AmendingStatute/LocalLegalAct; niewpięty w `Parse` (addytywny), snapshot bez zmian; 15 testów (pozytywy wszystkich rodzajów + negatywy). Etap 0 (2026-07-16): siatka bezpieczeństwa — snapshot doc001, testy charakteryzujące gałąź bezstylową, CLI `--dump`; plus naprawa zastanej czerwonej bazy (4 testy en-dash). Etap 1 (2026-07-16): reprezentacja pośrednia `Ingest/` + przepięcie DOCX. Etap 2 (2026-07-17): ujednolicenie kanału indeksu górnego `^`→`[x]` — snapshot doc001 bez diffu (dokument referencyjny nie zawiera jednostek z indeksem). Etap 3 (2026-07-17): `DocxBlockReader.ExtractLayout` wypełnia `BlockLayoutInfo` (wcięcia twips, wyrównanie, pogrubienie/kursywa/rozmiar jako dominanta ważona znakami) — addytywne, nikt jeszcze nie czyta layoutu, snapshot bez diffu; `DocxBlockReaderTests`. Plan opracowany 2026-07-16, skorygowany po adwersaryjnej weryfikacji kondensatu ZTP.
+> **Status: W REALIZACJI** — Etapy 0–10 ukończone (plan zrealizowany w całości; Etap 6a odroczony, patrz niżej). Etap 10: `LegalDocumentParser.Parse`→`ParseResult` z wpiętym `DocumentClassifier` + CLI (`--format`/`--force`/`--dump`) i integracja Web; commit 1350300. Etap 9: adapter PDF `PdfBlockReader` (PdfPig 0.1.15); commit e3de312. Etap 8: nowelizacje bez stylów Z/* — `QuoteBalanceTracker` wpięty w `AmendmentCollector` + `AmendmentCommandParser` wpięty w `AmendmentFinalizer`; commit 9ba8ea3. Etap 7: głębokość tiretu z wcięcia (`GetTiretDepth`) + metadane aktu (`DocumentMetadataCollector`); commit 3d39b17. Etap 6b: jednostki systematyzacyjne — `SystematizingUnitBuilder`; commit 88b8cdb. **Etap 6a ODROCZONY**: WrapUp bez stylu w gałęzi bezstylowej wymaga sygnału layoutu i nie da się go domknąć samym tekstem — patrz sekcja 5(c)/(d) niżej. Etap 5 (2026-07-17): adapter TXT (`PlainTextBlockReader` — detekcja kodowania BOM/UTF-8 strict/CP1250, `TextNormalizer`, `BlockAssembler` z segmentacją i dehyfenacją) + wydzielenie `LegalDocumentParser.ParseBlocks` + rama ekwiwalencji (`ModelEquivalenceComparer`, `ParserEquivalenceTests` — TXT vs bloki DOCX dają równoważny model; luki bezstylowe jako Skip z numerem etapu). Addytywne, snapshot bez zmian. CP1250 dostępne z shared framework net10 (pakiet zbędny). Etap 4 (2026-07-17): `DocumentClassifier` + `ZtpPatterns` (Załącznik A) + typy wyniku w ModelDto (`DocumentClassificationResult`, `DocumentSignal`, `DocumentSignalKind`) + rozszerzenie `LegalActType` o 5 rodzajów. Punktacja dwufazowa (strefa tytułowa + korpus), progi, pułapka obwieszczenia, remapy AmendingStatute/LocalLegalAct; niewpięty w `Parse` (addytywny), snapshot bez zmian; 15 testów (pozytywy wszystkich rodzajów + negatywy). Etap 0 (2026-07-16): siatka bezpieczeństwa — snapshot doc001, testy charakteryzujące gałąź bezstylową, CLI `--dump`; plus naprawa zastanej czerwonej bazy (4 testy en-dash). Etap 1 (2026-07-16): reprezentacja pośrednia `Ingest/` + przepięcie DOCX. Etap 2 (2026-07-17): ujednolicenie kanału indeksu górnego `^`→`[x]` — snapshot doc001 bez diffu (dokument referencyjny nie zawiera jednostek z indeksem). Etap 3 (2026-07-17): `DocxBlockReader.ExtractLayout` wypełnia `BlockLayoutInfo` (wcięcia twips, wyrównanie, pogrubienie/kursywa/rozmiar jako dominanta ważona znakami) — addytywne, nikt jeszcze nie czyta layoutu, snapshot bez diffu; `DocxBlockReaderTests`. Plan opracowany 2026-07-16, skorygowany po adwersaryjnej weryfikacji kondensatu ZTP. Status zaktualizowany 2026-07-25.
 > Podstawa merytoryczna: „Zasady techniki prawodawczej" — tekst jednolity Dz. U. z 2026 r. poz. 300 ([docs/ZTP-2026-300.md](ZTP-2026-300.md)); kondensat reguł dla parsera: [docs/ztp-struktura-aktow.md](ztp-struktura-aktow.md).
 
 ## Kontekst
@@ -67,7 +67,7 @@ Nowy namespace `WordParserCore.Ingest` (IR to wewnętrzny kontrakt potoku, nie m
 ## 3. Przebudowa szwu i koperta wyniku
 
 - **`ParserOrchestrator.ProcessBlock(DocumentBlock, ParsingContext)`** = przeniesione ciało `ProcessParagraph`; `ProcessParagraph(Word.Paragraph, …)` zostaje jako cienki adapter — 17 klas testowych działa bez zmian.
-- **`ClassificationInput`** + addytywne `Layout`/`Source`/`ListContext` (init-only, zero wpływu na istniejące testy).
+- **`ClassificationInput`**: w praktyce pozostał rekordem tylko `(string Text, string? StyleId)` — addytywne pola `Layout`/`Source`/`ListContext` z pierwotnego szkicu NIE zostały do niego dodane. Layout trafia osobnym parametrem `BlockLayoutInfo?` bezpośrednio do `StructureProcessor.GetTiretDepth` (`StructureProcessor.cs:486`), z pominięciem `ClassificationInput`.
 - **`ParseResult`** (WordParserCore, root): `{ DocumentClassificationResult Classification; LegalDocument? Document; SourceFormat SourceFormat; int BlockCount }`. **`ParseOptions`**: `Policy ∈ {ParseWhenLegalAct (default), AlwaysParse, ClassifyOnly}` — decyzja „parsuj mimo wszystko" żyje tu.
 - **`LegalDocumentParser`**: nowe kanoniczne `ParseResult Parse(Stream, string? fileNameHint = null, ParseOptions? = null)` i `ParseResult Parse(IReadOnlyList<DocumentBlock>, ParseOptions?)`; do Etapu 10 stare `Parse(string)`/`Parse(WordprocessingDocument)` → `LegalDocument` pozostają fasadami bez zmiany kontraktu; w Etapie 10 `Parse(string)` przechodzi na `ParseResult` (source-break naprawiany w tym samym PR — call site'y tylko CLI/Web), `Parse(WordprocessingDocument)` dostaje `[Obsolete]` (nigdy `error: true`).
 - **CLI**: `WordParser <plik> [--format docx|pdf|txt] [--force]`; `--docx` zachowany jako alias (z legacy backupem pliku; nowe ścieżki bez backupu — parser czyta read-only); raport klasyfikacji na konsolę; nie-akt bez `--force` → exit code 2; catch nowych wyjątków.
@@ -99,9 +99,9 @@ public sealed class DocumentSignal
 }
 ```
 
-`DocumentSignalKind` (enum): `ActKindHeader, IssuingOrganHeader, ActDateLine, ActSubjectLine, AmendingTitle, ConsolidatedTextTitle, LegalBasisFormula, EnactmentFormula, ConsolidatedTextFormula, DominantUnitArticle, DominantUnitSection, NumberingContinuity, EntryIntoForce, JournalCitation, RepealedMarker, AmendmentCommands, PenalProvisions, LocalGovernmentOrgan, VoivodeshipJournal, WordStyleHint, AmbiguousType, NoTextLayer, InsufficientSignals`.
+`DocumentSignalKind` (enum, faktyczny zestaw z `ModelDto/DocumentSignalKind.cs`): `NoTextLayer, ActKindHeader, IgnoredSecondaryHeader, ActDate, ActSubject, AmendingTitle, ConsolidatedTextTitle, ConsolidatedTextFormula, EnactmentFormula, LegalBasis, BaseUnitDominance, NumberingContinuity, EntryIntoForce, RepealedMarkers, AmendmentCommands, VoivodeshipJournal, LocalGovernmentOrgan, MarshalOfSejmIssuer, FootnoteDensity, WordStyleHint, AmbiguousType`. Różnice wobec wcześniejszego szkicu: `ActDateLine`→`ActDate`, `ActSubjectLine`→`ActSubject`, `LegalBasisFormula`→`LegalBasis`, `RepealedMarker`→`RepealedMarkers` (l.mn.); `DominantUnitArticle`/`DominantUnitSection` scalone w jedną wartość `BaseUnitDominance`; dodane `IgnoredSecondaryHeader`/`MarshalOfSejmIssuer`/`FootnoteDensity`; USUNIĘTE (nigdy niezaimplementowane) `IssuingOrganHeader`, `JournalCitation`, `PenalProvisions`, `InsufficientSignals`.
 
-Rozszerzenie **`LegalActType`** (na końcu enum — wartości istniejących bez zmian): `AmendingStatute, Announcement, Resolution, ExecutiveOrder, LocalLegalAct` + uzupełnienie switchy w `LegalActTypeExtensions` (`GetMainUnitLabel`: nowe → `"§"` poza AmendingStatute→`"art."`; `ToFriendlyString` po polsku). Addytywnie: `LegalDocument.Classification`, `LegalDocument.ActDate` (DateOnly?).
+Rozszerzenie **`LegalActType`** (na końcu enum — wartości istniejących bez zmian): `AmendingStatute, Announcement, Resolution, ExecutiveOrder, LocalLegalAct` + uzupełnienie switchy w `LegalActTypeExtensions` (`GetMainUnitLabel`: nowe → `"§"` poza AmendingStatute→`"art."`; `ToFriendlyString` po polsku). Addytywnie: `LegalDocument.Classification`, `LegalDocument.ActDate` (faktyczny typ: `DateTime?`, nie `DateOnly?` — `ModelDto/LegalDocument.cs:72`).
 
 **Serwis** `WordParserCore/Services/Classify/Document/`: `IDocumentClassifier.Classify(IReadOnlyList<DocumentBlock>)`; wzorce współdzielone w `internal static class ZtpPatterns` (używane też przez `DocumentMetadataCollector`). Dwufazowo: **(A)** strefa tytułowa = pierwsze 25 niepustych bloków; **(B)** statystyka całego korpusu.
 
@@ -117,15 +117,17 @@ Rozszerzenie **`LegalActType`** (na końcu enum — wartości istniejących bez 
 | S10 | „Na podstawie art. …" + „zarządza się\|uchwala się\|postanawia się, co następuje:" | +20 (czasownik różnicuje: zarządza→Regulation/ExecutiveOrder, uchwala/postanawia→Resolution); sama podstawa bez formuły +10 |
 | S11 | formuła obwieszczenia TJ (art. 16 ustawy o ogłaszaniu aktów normatywnych) | +30 → Announcement |
 | S12 | dominacja jednostki podstawowej: ≥3 bloki i ≥80% jednego wzorca (`^Art\.` vs `^§`) | +20 |
-| S13 | ciągłość numeracji jednostki podstawowej od PIERWSZEGO napotkanego numeru (TJ nie zaczynają od 1!), ≤10% przerw | +10 |
+| S13 | ciągłość numeracji jednostki podstawowej: sprawdza WYŁĄCZNIE, czy PIERWSZY napotkany numer jednostki podstawowej to dokładnie 1 (TJ nie zaczynają od 1!) — bez liczenia przerw i bez progu 10%, reguła prostsza niż w pierwotnym szkicu (`DocumentClassifier.cs:283-286`) | +10 |
 | S14 | formuła wejścia w życie § 45 | +10 ogólny, +10 typ z podmiotu zdania |
 | S15 | markery „(uchylony)"/„(utracił moc)" ≥2 | +10 → Announcement |
 | S16 | „wprowadza się następujące zmiany:" lub ≥2 triggery modyfikacji (wzorzec obejmuje warianty „W ustawie/rozporządzeniu/uchwale/zarządzeniu" — § 132/141/143) | +15; ustawia `IsAmending`; przy liderze Statute → AmendingStatute (pozostałe typy zachowują swój typ, tylko flaga) |
 | S17 | `Dz. Urz. Woj.` +20 / organ JST w strefie tytułowej +25 | → LocalLegalAct |
 | S18 | styl Word (`OZN_RODZ_AKTU` +10, `DATA_AKTU`/`TYTUŁ_AKTU` +5) | styl = jeden z sygnałów |
-| S19 | sygnał UJEMNY: sygnatury przepisów karnych / kar administracyjnych („podlega karze …", „administracyjnej karze pieniężnej") | −15 → Regulation (rozporządzenie nie może zawierać przepisów karnych ani o karach administracyjnych — § 117) |
+| S19 | **NIEZREALIZOWANE (backlog)**: sygnał UJEMNY: sygnatury przepisów karnych / kar administracyjnych („podlega karze …", „administracyjnej karze pieniężnej") | −15 → Regulation (rozporządzenie nie może zawierać przepisów karnych ani o karach administracyjnych — § 117); brak odpowiadającego wzorca w `DocumentClassifier`/`ZtpPatterns` |
 
-**Progi decyzyjne**: <3 bloki lub śr. długość <10 znaków → nie-akt z sygnałem `NoTextLayer` (Confidence 95); `winner < 40` → **NIE-AKT** (`ActType=null`, `Confidence = Clamp(90−winner, 40, 90)`, sygnał `InsufficientSignals`); `winner ≥ 40` → akt, `Confidence = winner`; przewaga nad drugim <15 → −10 + sygnał `AmbiguousType`. Interpretacja dla wywołującego: ≥75 wysoka, 40–74 średnia (parsować z raportem), <40 nie parsować.
+**Progi decyzyjne**: <3 bloki lub śr. długość <10 znaków → nie-akt z sygnałem `NoTextLayer` (Confidence 95); `winner < 40` → **NIE-AKT** (`ActType=null`, `Confidence = Clamp(90−winner, 40, 90)`); `winner ≥ 40` → akt, `Confidence = winner`; przewaga nad drugim <15 → −10 + sygnał `AmbiguousType`. Interpretacja dla wywołującego: ≥75 wysoka, 40–74 średnia (parsować z raportem), <40 nie parsować.
+
+**Warunek konieczny nieudokumentowany w pierwotnym szkicu — `hasBackbone`** (`DocumentClassifier.Decide`, `DocumentClassifier.cs:295-331`): nawet gdy `winner ≥ 40`, dokument bez silnego sygnału strukturalnego (backbone: nagłówek rodzaju aktu, formuła kompetencyjna, komendy nowelizacyjne lub formuła wejścia w życie) jest mimo to klasyfikowany jako NIE-AKT — sam zbiór słabych sygnałów (numeracja §, data, przedmiot) nie wystarcza, inaczej umowa/regulamin/statut wewnętrzny fałszywie przekraczałyby próg.
 
 **Pułapka obwieszczenia**: załącznik TJ zawiera linię „USTAWA" — sygnały tytułowe liczone tylko z pierwszych 25 bloków, pierwszy nagłówek wygrywa (drugi ignorowany z sygnałem informacyjnym). Dodatkowy sygnał TJ: gęstość odnośników `[N)]` (kanał `[x]`) ≥3 → +5 Announcement.
 
@@ -133,11 +135,11 @@ Rozszerzenie **`LegalActType`** (na końcu enum — wartości istniejących bez 
 
 - **(a) Jednostki systematyzacyjne**: nowe wartości `ParagraphKind` (na końcu: `PartUnit, BookUnit, TitleUnit, DivisionUnit, ChapterUnit, SubchapterUnit, UnitHeading, ActKindHeader, ActDateLine, ActSubjectLine`); regexy (Załącznik A) sprawdzane w `MatchRegex` PRZED ArticlePattern. Wzorzec dwuwierszowy: `ParsingContext.PendingHeadingTarget` — następny niepasujący akapit od wielkiej litery = tytuł jednostki; brak → `ValidationMessage(Warning, „Jednostka systematyzacyjna bez tytułu (§ 60 ZTP)")`. Nowy `SystematizingUnitBuilder` (Builders/) + `RomanNumeralConverter` (Helpers/); `ParsingContext.Subchapter` dostaje internal setter; pierwsza jawna jednostka przejmuje istniejący niejawny węzeł (`IsImplicit=false`) — drzewo golden doc001 bez jednostek systematyzacyjnych identyczne. Mapowania stylów `CZKSIGA…`/`TYTDZOZN…`/`ROZDZODDZOZN…`/`UNIT_PRZEDM`/`OZNRODZAKTU…`/`DATAAKTU…`/`TYTUAKTU…`/`NIEARTTEKST…` w `GetStyleType`.
 - **(b) Metadane aktu**: `DocumentMetadataCollector` (maszyna stanów Kind→Organ/Date→Subject), karmiony z `HandleUnknown` w `StructureProcessor`; wypełnia `LegalDocument.Title`/`ActDate`; wzorce z `ZtpPatterns`.
-- **(c) WrapUp bez stylu**: `ClassificationInput.ListContext` (`ListContextHint`: otwarte listy pkt/lit/tir, `PreviousEndsWithColon`, `PreviousLastChar`, `OpenTiretDepth`); decyzja gdy `TiretPattern`/`IsWrapUpByText` pasuje i brak stylu: (1) poprzednik kończy się `:` → Tiret; (2) otwarty tiret + tekst kończy się `,` → Tiret; (3) otwarta lista + poprzedni element kończył się `,`, `;` ALBO był BEZ interpunkcji końcowej (ostatni punkt/tiret przed częścią wspólną nie ma terminatora — § 57 ust. 3 i 6; brak terminatora to silny predyktor części wspólnej) + bieżący kończy `,`, `;` lub `.` (część wspólna po tiretach może kończyć się przecinkiem — § 57 ust. 6) + zaczyna się małą literą → **WrapUp** z karą `ContextOverridePenalty` (Confidence 100−20−10=70); kolejność sprawdzania: warunek (2) przed (3), więc przy otwartym tirecie tekst zakończony `,` pozostaje Tiretem; (4) sygnał wcięcia gdy Layout dostępny; (5) domyślnie Tiret (zachowanie dzisiejsze). `TiretPattern` rozszerzony o półpauzę: `^[-–]+\s+`. `TryGetWrapUpTarget` z fallbackiem kontekstowym (stos tiretów→Letter→Point) + `ValidationMessage(Info)`.
-- **(d) Głębokość tiretu**: `GetTiretDepth(styleId, layout, context)` — priorytet: styl 2TIR/3TIR → wcięcie (`ParsingContext.TiretIndentByDepth`, tolerancja ±120 twips, cap 3) → heurystyka kontekstowa (poprzedni tiret kończy `:` → głębokość+1) + `ValidationMessage(Info)`.
+- **(c) WrapUp bez stylu — ODROCZONE (Etap 6a)**: plan zakładał `ClassificationInput.ListContext` (`ListContextHint`: otwarte listy pkt/lit/tir, `PreviousEndsWithColon`, `PreviousLastChar`, `OpenTiretDepth`) z decyzją wieloetapową ((1) poprzednik kończy się `:` → Tiret; (2) otwarty tiret + tekst kończy się `,` → Tiret; (3) otwarta lista + poprzedni element bez terminatora/z `,`/`;` + bieżący kończy `,`/`;`/`.` + zaczyna się małą literą → WrapUp z karą `ContextOverridePenalty`; (4) sygnał wcięcia; (5) domyślnie Tiret). **Stan faktyczny: NIE zaimplementowane.** `ClassificationInput` jest rekordem `(string Text, string? StyleId)` — nie ma pola `ListContext` ani `Layout`/`Source`. WrapUp jest nadal wykrywany WYŁĄCZNIE przez styl (`ParagraphClassifier.cs:132-135`, gałąź `styleType == "WRAPUP"`); w gałęzi bezstylowej „– tekst" nadal błędnie klasyfikuje się jako Tiret. Backlog na przyszły etap.
+- **(d) Głębokość tiretu**: `GetTiretDepth(styleId, layout, context)` (`StructureProcessor.cs:486-502`) ma faktycznie tylko DWA poziomy priorytetu — styl (2TIR/3TIR/TIR) → wcięcie (`context.OpenTiretIndents`, tolerancja ±120 twips/`TiretIndentTolerance`, cap 3/`MaxTiretDepth`); brak sygnału (np. czysty TXT) → domyślnie poziom 1. Nieudokumentowana w pierwotnym szkicu „heurystyka kontekstowa (poprzedni tiret kończy `:` → głębokość+1)" NIE istnieje w kodzie.
 - **(e) Nowelizacje bez Z/***: `QuoteBalanceTracker` (bilans „ U+201E vs " U+201D/U+0022; `Arm()` gdy pierwszy zbierany blok zaczyna się od „; `Armed && Depth==0 && ClosedAtEnd` → flush nowelizacji) — tłumi też fałszywe triggery wewnątrz cytatów; `AmendmentCommandParser` (Załącznik B) → `AmendmentTargetKind` z tokenu jednostki, **instrument z poziomu właściciela triggera** (§ 94: owner Point→`Z/`, Letter→`Z_LIT/`, Tiret gł.1→`Z_TIR/`, gł.2→`Z_2TIR/`); wynik jako źródło o niższym priorytecie niż mapa stylów w `AmendmentFinalizer`. Nieosiągalne bez stylów (flagowane `ValidationMessage(Warning)`): zagnieżdżone `ZZ/` (trigger przy Depth>0 — tylko flaga, bez budowy zagnieżdżonego Amendment), `CommonPartOf`, głębokość tiretu w cytowanej treści. Komendy obsługiwane w obu wariantach jednostki bazowej (`art.` i `§`) oraz z rzeczownikami „W ustawie/rozporządzeniu/uchwale/zarządzeniu" (§ 132/141/143) — `UnitToken` w Załączniku B już zawiera `§`.
 - **(f) Fix superscriptu**: `EntityNumberService.Parse` — regex `^(?<base>.*?)(?:\^(?<sup>\w+)|\[(?<sup>\w+)\])\s*\.?\s*$` (oba kanały; dwie grupy o tej samej nazwie w alternatywie są legalne w .NET); `FormatToString` emituje `[x]` (zgodnie z TODO w kodzie i § 89 ust. 6 ZTP); wzorce numerów klasyfikatora rozszerzone o `(?:\[\d+\])?`. `NumberingHint` bez zmian (ten sam NumericPart).
-- Nowe pola `ConfidencePenaltyConfig` (init-only, domyślne nie zmieniają arytmetyki): `ContextOverridePenalty=20`, `IndentMismatchPenalty=10`, `IndentMatchBonus=5`, `MissingUnitHeadingPenalty=15`, `QuoteImbalancePenalty=15`. Premie raportowane jako `ClassificationPenalty` z ujemnym Value (doprecyzować XML-doc).
+- **NIEZREALIZOWANE**: pierwotny szkic zakładał nowe pola `ConfidencePenaltyConfig` (`ContextOverridePenalty=20`, `IndentMismatchPenalty=10`, `IndentMatchBonus=5`, `MissingUnitHeadingPenalty=15`, `QuoteImbalancePenalty=15`) — te 5 pól NIE istnieje w kodzie. Faktyczne (i jedyne) pola `ConfidencePenaltyConfig`: `StyleAbsentPenalty=10`, `SyntaxAbsentPenalty=15`, `StyleSyntaxConflictPenalty=25`, `NumberingBreakPenalty=10`.
 
 ---
 
@@ -153,7 +155,8 @@ Każdy etap = osobny PR. **Bramka każdego PR**: `dotnet test` zielone + snapsho
 | 3 | A | **LayoutHints z DOCX** (nikt ich jeszcze nie czyta) | snapshot identyczny; `DocxBlockReaderTests` |
 | 4 | A | **DocumentClassifier** (typy ModelDto, ZtpPatterns, punktacja; NIEwpięty w Parse) | `DocumentClassifierTests` zielone; snapshot identyczny |
 | 5 | A | **Adapter TXT + rama ekwiwalencji**: `PlainTextBlockReader`, wspólna normalizacja (NBSP, CRLF, cudzysłowy, U+00AD); `ParserEquivalenceTests` z lukami jako `Skip` (= jawny backlog etapów 6–8) | prosty akt w TXT ≡ wariant DOCX-szablon |
-| 6 | Z | **WrapUp (6a) + jednostki systematyzacyjne (6b)**: wpięcie `IsWrapUpByText` w gałąź bezstylową; nowe `ParagraphKind` + audyt WSZYSTKICH switchy (test refleksyjny `Enum.GetValues`); `SystematizingUnitBuilder` | snapshot identyczny (ścieżka stylowa nietknięta); skipy ekwiwalencji odblokowane |
+| 6a | Z | **WrapUp (ODROCZONY)**: wpięcie `IsWrapUpByText` w gałąź bezstylową przez `ClassificationInput.ListContext` — NIE zaimplementowane; `ClassificationInput` nie ma pola `ListContext`, WrapUp nadal wykrywany WYŁĄCZNIE przez styl (`ParagraphClassifier.cs:132-135`) | odroczone — wymaga sygnału layoutu, nie da się domknąć samym tekstem |
+| 6b | Z | **Jednostki systematyzacyjne (UKOŃCZONY)**: nowe `ParagraphKind` + audyt WSZYSTKICH switchy (test refleksyjny `Enum.GetValues`); `SystematizingUnitBuilder` | commit 88b8cdb; snapshot identyczny (ścieżka stylowa nietknięta) |
 | 7 | Z | **Głębokość tiretu z wcięcia + metadane + zaostrzenie LetterPattern** (regex-only: małe litery bez polskich znaków + kontekst wyliczenia) | snapshot identyczny; testy charakteryzujące zaktualizowane jawnie |
 | 8 | Z | **Nowelizacje bez stylu** (najwyższe ryzyko): QuoteBalanceTracker + AmendmentCommandParser | ekwiwalencja aktu zmieniającego DOCX-szablon ≡ TXT |
 | 9 | A | **Adapter PDF** (PdfPig) | `PdfTextExtractorTests`; ekwiwalencja PDF ≡ TXT |
@@ -309,33 +312,45 @@ internal static readonly Regex SubchapterUnitPattern = new(@"^(?:ODDZIAŁ|Oddzia
 
 # Załącznik B — wzorce `AmendmentCommandParser` (odtwarzanie semantyki nowelizacji z tekstu)
 
+> Poniżej faktyczny kształt zaimplementowany w `WordParserCore/Services/Parsing/AmendmentCommandParser.cs` (Etap 8, commit 9ba8ea3) — zastępuje wcześniejszy szkic tego załącznika (pola `ParentPath`/`AnchorNumber` oraz wzorce `ParentSegmentPattern`/`QuoteClosePattern` z tego szkicu NIE zostały zaimplementowane; nie istnieją w kodzie).
+
 ```csharp
-internal sealed record AmendmentCommand(
-    AmendmentOperationType Operation,
-    string? TargetUnitToken,   // "art."|"§"|"ust."|"pkt"|"lit."|"tiret"
-    string? TargetNumber,
-    IReadOnlyList<(string Unit, string Number)> ParentPath,  // segmenty "w art. 5 w ust. 2"
-    string? AnchorNumber);     // "po art. 5a dodaje się art. 5b" → anchor 5a
+public enum AmendmentCommandKind
+{
+    Change,        // „… otrzymuje brzmienie:" — zmiana brzmienia (cytowana treść następuje po komendzie)
+    Add,           // „po art. X dodaje się art. Xa w brzmieniu:" — dodanie jednostki (cytowana treść następuje)
+    Repeal,        // „uchyla się …" — uchylenie (bez treści)
+    ReplaceWords,  // „wyrazy „X" zastępuje się wyrazami „Y"" — komenda kompletna w jednym akapicie
+}
 
-private const string UnitToken = @"(?<unit>art\.|§|ust\.|pkt|lit\.|tiret)";
+public sealed record AmendmentCommand
+{
+    public required AmendmentCommandKind Kind { get; init; }
+    public AmendmentTargetKind TargetKind { get; init; } = AmendmentTargetKind.Unknown;
+    public string? TargetNumber { get; init; }
+    public string? OldWording { get; init; }          // ReplaceWords: brzmienie zastępowane
+    public string? NewWording { get; init; }          // ReplaceWords: brzmienie zastępujące
+    public string? MatchedCommandText { get; init; }  // pełny dopasowany tekst komendy
+    public int? TargetOrdinalValue { get; init; }     // wartość liczbowa oznaczenia: cyfrowa lub z liczebnika porządkowego nijakiego
+}
 
-private static readonly Regex ParentSegmentPattern = new(
-    @"[Ww]\s+(?<unit>art\.|§|ust\.|pkt|lit\.)\s*(?<num>\d+[a-z]*(?:\[\d+\])?|[a-z]{1,5})", RegexOptions.Compiled);
-private static readonly Regex ChangeCommandPattern = new(
-    $@"{UnitToken}\s*(?<num>\d+[a-z]*(?:\[\d+\])?|[a-z]{{1,5}})?\s+otrzymuj[eą]\s+brzmienie\s*:",
+// Token jednostki + opcjonalne oznaczenie: cyfrowe, literowe lub liczebnik porządkowy nijaki
+// („tiret trzecie" — forma kanoniczna § 57 ust. 6 ZTP); formy mnogie w alternatywie jednostki.
+private const string UnitToken =
+    @"(?<unit>art\.|§|ust\.|pkt|lit\.|tirety|tiret|zdani[ea])\s*(?<no>\d+[a-zA-Z]*(?:[-–]\d+[a-zA-Z]*)?|[a-z]{1,2}\b|\p{Ll}+\b)?";
+
+internal static readonly Regex ChangeCommandPattern = new(
+    UnitToken + @"[^\p{L}]*(?:i\s+\d+[a-zA-Z]*\s*)?otrzymuj[eą]\s+brzmienie\s*:",
     RegexOptions.Compiled | RegexOptions.IgnoreCase);
-private static readonly Regex AddCommandPattern = new(
-    $@"[Pp]o\s+{UnitToken}\s*(?<anchor>\d+[a-z]*|[a-z]{{1,5}})\s+dodaje\s+się\s+(?<newUnit>art\.|§|ust\.|pkt|lit\.|tiret)\s*(?<newNum>\d+[a-z]*(?:\s*[-–i,]\s*\d*[a-z]*)*)\s+w\s+brzmieniu\s*:",
+internal static readonly Regex AddCommandPattern = new(
+    @"dodaje\s+się\s+" + UnitToken, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+internal static readonly Regex RepealCommandPattern = new(
+    @"uchyla\s+się\s+" + UnitToken, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+internal static readonly Regex ReplaceWordsPattern = new(
+    @"wyraz(?:y|ów|em)?\s+[„""](?<old>[^„”“""]*)[”“""]\s+zastępuje\s+się\s+(?:[^„”“""]{0,80}?)wyraz(?:ami|em|y)?\s+[„""](?<new>[^„”“""]*)[”"]",
     RegexOptions.Compiled | RegexOptions.IgnoreCase);
-private static readonly Regex RepealCommandPattern = new(
-    $@"uchyla\s+się\s+{UnitToken}\s*(?<nums>[\d\w,\si–\-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-private static readonly Regex ReplaceWordsPattern = new(
-    @"(?:użyte\s+w\s+.+?\s+)?wyraz(?:y|u|ów)?\s+[„“].+?[”"]\s+zastępuje\s+się\s+wyraz(?:ami|em)\s+[„“].+?[”"]",
-    RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-// Delimitacja treści (QuoteBalanceTracker): bilans „ (U+201E) vs ” (U+201D) / " (U+0022);
-// zamknięcie bloku treści: koniec cytatu + interpunkcja komendy (";" między zmianami, "." na końcu, "," przed częścią wspólną)
-private static readonly Regex QuoteClosePattern = new(@"[""”]\s*[;,.]?\s*$", RegexOptions.Compiled);
 ```
 
-Mapowania: `TargetUnitToken` → `AmendmentTargetKind` (art./§→Article, ust.→Paragraph, pkt→Point, lit.→Letter, tiret→Tiret); instrument z zagnieżdżenia § 94 = funkcja właściciela triggera (Point→`Z/`, Letter→`Z_LIT/`, Tiret gł.1→`Z_TIR/`, gł.2→`Z_2TIR/`); `ParentPath` z segmentów „w …" zasila `ParentContext`. Wynik wpinany w `AmendmentFinalizer.Finalize` jako źródło o niższym priorytecie niż dekodowanie stylów.
+Kolejność sprawdzania w `Parse`: ReplaceWords → Repeal → Add → Change (komenda „dodaje się … w brzmieniu:" zawiera też frazę zmiany, więc Add musi być sprawdzone przed Change). Mapowanie `unit`→`AmendmentTargetKind`: `art.`/`§`→Article, `ust.`→Paragraph, `pkt`→Point, `lit.`→Letter, `tiret`/`tirety`→Tiret, `zdanie`/`zdania`→Fragment. Wynik wpinany w `AmendmentFinalizer` jako źródło o niższym priorytecie niż dekodowanie stylów (`StyleLibraryMapper.AmendmentStyleInfoMap`).
+
+**Kontekst nadrzędny** („w art. 5 w ust. 2 …", odpowiednik dawnego pola `ParentPath`) świadomie NIE jest częścią tego parsera — pozostaje domeną istniejącego `LegalReferenceService` (`DetectedAmendmentTargets`); komentarz w kodzie, `AmendmentCommandParser.cs:58-60`. Ten parser dokłada wyłącznie to, czego tam brakuje (m.in. jednostkę „tiret").

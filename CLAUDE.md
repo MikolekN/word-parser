@@ -20,7 +20,7 @@ dotnet test WordParserCore.Tests/WordParserCore.Tests.csproj
 # Uruchomienie pojedynczej klasy testowej
 dotnet test WordParserCore.Tests/WordParserCore.Tests.csproj --filter "FullyQualifiedName~EIdTests"
 
-# Build wydania + Docker (inkrementuje build.number, wypycha do lokalnego rejestru)
+# Build wydania + Docker (obraz WordParserWeb/Dockerfile, tag = skrócony hash commita gita + 'latest', push do rejestru; inkrementacja build.number jest ZAKOMENTOWANA i nieużywana)
 ./build.sh
 ```
 
@@ -36,7 +36,7 @@ WordParserApi (zawieszony) ──► WordParserCore ──► ModelDto
 ```
 
 - `ModelDto` — czyste DTO, bez logiki biznesowej
-- `WordParserCore` — cała logika silnika parsowania; zależy od `DocumentFormat.OpenXml` i `Serilog`
+- `WordParserCore` — cała logika silnika parsowania; zależy od `DocumentFormat.OpenXml`, `Serilog` i `PdfPig` 0.1.15 (adapter PDF: `WordParserCore/Ingest/Pdf/` — `PdfBlockReader`, `PdfLineExtractor`, `PageArtifactFilter`)
 - `WordParser` — cienka nakładka CLI
 - `WordParserWeb` — aktywna aplikacja webowa ASP.NET 10 (renderowanie HTML dokumentów)
 - `WordParserApi` — zawieszony; nie rozwijaj tego projektu
@@ -58,11 +58,12 @@ Part → Book → Title → Division → Chapter → Subchapter → [Articles]
 
 ### Potok parsowania (`WordParserCore/Services/Parsing/`)
 
-Punkt wejścia: `LegalDocumentParser.Parse(filePath)` → wywołuje `ParserOrchestrator`
+Punkt wejścia: `LegalDocumentParser.Parse(...)` przyjmuje `Stream` lub ścieżkę pliku i zwraca kopertę `ParseResult` (`WordParserCore/ParseResult.cs`), nie bezpośrednio `LegalDocument` → wewnętrznie wywołuje `ParserOrchestrator`
 
 Etapy potoku:
+0. Detekcja formatu przez `SourceFormatDetector` (`WordParserCore/Ingest/SourceFormatDetector.cs`) i odczyt bloków przez `DocumentBlockReaderFactory`/`IDocumentBlockReader` (adaptery DOCX/PDF/TXT, katalog `WordParserCore/Ingest/`), następnie klasyfikacja CAŁEGO dokumentu (rodzaj aktu) przez `DocumentClassifier` (`WordParserCore/Services/Classify/Document/DocumentClassifier.cs`), sterowana `ParseOptions.Policy` (`WordParserCore/ParseOptions.cs`); dopiero potem budowa modelu przez `ParserOrchestrator`
 1. `ParagraphClassifier` (w `Services/Classify/`) — klasyfikuje każdy akapit przy użyciu 3 warstw (patrz niżej)
-2. `StructureProcessor` — buduje encje domenowe delegując do klas `*Builder` (`ArticleBuilder`, `ParagraphBuilder`, `PointBuilder`, `LetterBuilder`, `TiretBuilder`, `AmendmentBuilder`) — wzorzec kaskadowy; buildery niższego poziomu zapewniają istnienie encji nadrzędnych
+2. `StructureProcessor` — buduje encje domenowe delegując do klas `*Builder` (`ArticleBuilder`, `ParagraphBuilder`, `PointBuilder`, `LetterBuilder`, `TiretBuilder`, `AmendmentBuilder`, `SystematizingUnitBuilder` — buduje jednostki systematyzacyjne Part/Book/Title/Division/Chapter/Subchapter) — wzorzec kaskadowy; buildery niższego poziomu zapewniają istnienie encji nadrzędnych
 3. `AmendmentStateManager` / `AmendmentCollector` / `AmendmentFinalizer` — wykrywają wyzwalacze nowelizacji, buforują treść, finalizują obiekty `Amendment`
 4. `NumberingHint` (w `Services/Classify/`) + `ParagraphClassifier` — walidują ciągłość numeracji podczas klasyfikacji; kara `NumberingBreakPenalty` obniża Confidence
 5. Stan przechowywany jest w `ParsingContext` przez cały czas parsowania; `ValidationReporter` zbiera komunikaty walidacji
@@ -75,13 +76,13 @@ Klasyfikacja akapitów musi być odporna na błędy. Zawsze stosuj wszystkie trz
 2. **Syntaktyczna** — wzorce regex dla `Art.`, `§`, `ust.`, `pkt`, `lit.`, znaczników tiretu. Oceniaj treść niezależnie od stylu.
 3. **Semantyczna** — spójność hierarchii. Wstawiaj jednostki niejawne, gdy brakuje poziomu.
 
-Reguła decyzyjna: wymagaj co najmniej 2 zgodnych sygnałów; gdy styl konfliktuje z treścią, preferuj treść. Rejestruj decyzje naprawcze przez Serilog.
+Reguła decyzyjna: twardy wymóg dwóch zgodnych sygnałów dotyczy głównie rozpoznania Artykułu — sam styl bez sygnatury tekstowej daje `Unknown` (`ParagraphClassifier.cs:291-296`); pozostałe jednostki dopuszczają pojedynczy sygnał kosztem obniżonej Confidence (kary `StyleAbsentPenalty`/`SyntaxAbsentPenalty`). Gdy styl konfliktuje z treścią, preferuj treść (`DefaultConflictResolver`). Rejestruj decyzje naprawcze przez Serilog.
 
 ### System nowelizacji
 
 - Słowa kluczowe wyzwalające: „otrzymuje brzmienie:", „dodaje się", „uchyla się"
 - Style akapitów nowelizacji używają prefiksów `Z/*`, `ZZ*`, `Z_*` (dekodowane przez `AmendmentStyleDecoder`)
-- Typy: Modification, Insertion, Repeal
+- Typy (`ModelDto/AmendmentOperationType.cs`): Modification, Insertion, Repeal — dotyczą udanej klasyfikacji; czwarta wartość Error oznacza błąd przetwarzania
 - Wieloetapowy cykl życia: Wykrycie → Zbieranie (`AmendmentCollector`) → Finalizacja (`AmendmentFinalizer`)
 
 ## Kluczowe pliki
@@ -89,10 +90,14 @@ Reguła decyzyjna: wymagaj co najmniej 2 zgodnych sygnałów; gdy styl konfliktu
 | Plik | Rola |
 |---|---|
 | `WordParserCore/LegalDocumentParser.cs` | Publiczny punkt wejścia |
+| `WordParserCore/Ingest/SourceFormatDetector.cs` + `DocumentBlockReaderFactory` | Detekcja formatu źródłowego i odczyt bloków (DOCX/PDF/TXT) |
+| `WordParserCore/Services/Classify/Document/DocumentClassifier.cs` | Klasyfikacja rodzaju aktu (całego dokumentu) |
+| `WordParserCore/ParseResult.cs` i `WordParserCore/ParseOptions.cs` | Koperta wyniku parsowania + polityka parsowania |
 | `WordParserCore/Services/Parsing/ParserOrchestrator.cs` | Główny potok |
 | `WordParserCore/Services/Parsing/StructureProcessor.cs` | Buduje encje domenowe (deleguje do Builders) |
 | `WordParserCore/Services/Parsing/ParsingContext.cs` | Mutowalny stan parsera |
 | `WordParserCore/Services/Parsing/Builders/` | Buildery encji (wzorzec kaskadowy) |
+| `WordParserCore/Services/Parsing/Builders/SystematizingUnitBuilder.cs` | Buduje jednostki systematyzacyjne (Part/Book/Title/Division/Chapter/Subchapter) |
 | `WordParserCore/Services/Classify/ParagraphClassifier.cs` | Logika klasyfikacji (3-warstwowa) |
 | `WordParserCore/Services/Classify/NumberingHint.cs` | Walidacja ciągłości numeracji |
 | `WordParserCore/Helpers/ParagraphExtensions.cs` | Bezpieczne helpery OpenXml (używaj rozszerzenia `.StyleId()`) |
@@ -114,6 +119,8 @@ Reguła decyzyjna: wymagaj co najmniej 2 zgodnych sygnałów; gdy styl konfliktu
 
 - Projekt testowy: `WordParserCore.Tests`
 - Framework: xUnit 2.9.3
-- Artefakty testowe (przykładowe pliki DOCX, oczekiwane wyniki) znajdują się w `WordParserCore.Tests/Artifacts/`
-- Klasy testowe: `EIdTests`, `AmendmentFinalizerTests`, `AmendmentBuilderTests`, `AmendmentCollectorTests`, `AmendmentStyleDecoderTests`, `ParagraphClassifierTests`, `NumberingHintTests`, `ParsingBuildersTests`, `ParserOrchestratorAmendmentTests`, `ParserOrchestratorCommonPartTests`, `LegalReferenceServiceTests`, `JournalReferenceServiceTests`, `ContentStrippingTests`, `GetFullTextTests`, `SentenceSplittingTests`, `IntroCommonPartTests`, `ReferenceActTests`
+- Dokumenty referencyjne DOCX leżą w lokalnym `DocRepo/` (niewersjonowany); `WordParserCore.Tests/Artifacts/` zawiera golden snapshoty oczekiwanych wyników (np. `doc001.snapshot.xml`) — oba katalogi niewersjonowane
+- Klasy testowe: `EIdTests`, `AmendmentFinalizerTests`, `AmendmentBuilderTests`, `AmendmentCollectorTests`, `AmendmentStyleDecoderTests`, `ParagraphClassifierTests`, `NumberingHintTests`, `ParserOrchestratorAmendmentTests`, `ParserOrchestratorCommonPartTests`, `LegalReferenceServiceTests`, `JournalReferenceServiceTests`, `ContentStrippingTests`, `GetFullTextTests`, `SentenceSplittingTests`, `IntroCommonPartTests`, `ReferenceActTests`, `LegalDocumentSnapshotTests`, `DocumentClassifierTests`, `SourceFormatDetectorTests`, `DocxBlockReaderTests`, `PdfBlockReaderTests`, `PlainTextBlockReaderTests`, `SystematizingUnitTests`, `TiretDepthTests`, `AmendmentCommandParserTests`, `AmendmentTextualBoundaryTests`, `DocumentMetadataCollectorTests`, `EntityNumberServiceTests`, `LetterDesignationTests`, `ParagraphClassifierStylelessTests`, `ParseFacadeTests`, `ParserEquivalenceTests`
+
+  Uwaga: `ParsingBuildersTests` to NAZWA PLIKU (`ParsingBuildersTests.cs`), nie klasa testowa — plik zawiera klasy `ArticleBuilderTests`, `ParagraphBuilderTests`, `PointBuilderTests`, `LetterBuilderTests`, `TiretBuilderTests` (filtr `--filter "FullyQualifiedName~ParsingBuildersTests"` zwraca 0 testów; filtruj po nazwie klasy, np. `ArticleBuilderTests`)
 - Uruchomienie testów konkretnej klasy: `--filter "FullyQualifiedName~NazwaKlasy"`
