@@ -19,11 +19,12 @@
 <xs:schema
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
+        xmlns:akn4pl="https://projects.task.gda.pl/caise/NLP/kisi/rcl/akn4pl/1.0"
         targetNamespace="https://projects.task.gda.pl/caise/NLP/kisi/rcl/akn4pl/1.0"
         elementFormDefault="qualified">
 
   <xs:import
-          namespace="https://docs.oasis-open.org/legaldocml/ns/akn/3.0"
+          namespace="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
           schemaLocation="akomantoso30.xsd"/>
 
   <xs:simpleType name="unitTypeEnum">
@@ -70,7 +71,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:attribute name="unitType" type="unitTypeEnum">
+  <xs:attribute name="unitType" type="akn4pl:unitTypeEnum">
     <xs:annotation>
       <xs:documentation>
         PL: Atrybut unitType wskazuje polską nazwę jednostki systematyzacyjnej lub redakcyjnej.
@@ -144,7 +145,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:attribute name="occurrence" type="occurrenceType">
+  <xs:attribute name="occurrence" type="akn4pl:occurrenceType">
     <xs:annotation>
       <xs:documentation>
         PL: Atrybut należący do typy occurenceType.
