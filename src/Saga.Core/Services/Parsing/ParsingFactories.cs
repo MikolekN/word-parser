@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Saga.Model;
+using Saga.Core.Helpers;
 using Saga.Core.Services.Classify;
 using Saga.Model.EditorialUnits;
 using DtoArticle = Saga.Model.EditorialUnits.Article;
@@ -53,7 +54,8 @@ namespace Saga.Core.Services.Parsing
 		/// Dzieli tekst na segmenty (zdania). Podział następuje w miejscu,
 		/// gdzie po kropce i spacji pojawia się wielka litera, z wyjątkami:
 		/// - "RRRR r." (rok) - nie jest punktem podziału
-		/// - "Dz. U." (czasopismo) - nie jest punktem podziału
+		/// - oznaczenie dziennika urzędowego (§ 162 ust. 2 ZTP: "Dz. U.", "Dz. Urz. UE",
+		///   "Dz. Urz. Woj. …", "M.P.", "M.S.G." itd.) - nie jest punktem podziału
 		/// </summary>
 		public static List<TextSegment> SplitIntoSentences(string text)
 		{
@@ -81,13 +83,15 @@ namespace Saga.Core.Services.Parsing
 		/// <summary>
 		/// Dzieli tekst na zdania z uwzględnieniem wyjątków:
 		/// - Nie dzieli po "RRRR r." (rok)
-		/// - Nie dzieli po "Dz. U." (czasopismo)
+		/// - Nie dzieli wewnątrz oznaczenia dziennika urzędowego ("Dz. U.", "Dz. Urz. …", "M.P.", "M.S.G.")
 		/// </summary>
 		private static List<string> SplitBySentenceWithExceptions(string text)
 		{
 			var result = new List<string>();
 			if (string.IsNullOrWhiteSpace(text))
 				return result;
+
+			var journalDesignations = JournalDesignationRecognizer.FindAll(text);
 
 			int startIndex = 0;
 			for (int i = 0; i < text.Length - 1; i++)
@@ -109,7 +113,7 @@ namespace Saga.Core.Services.Parsing
 					}
 
 					// Jest wielka litera, ale sprawdź wyjątki
-					if (IsRokException(text, i) || IsDzUException(text, i))
+					if (IsRokException(text, i) || JournalDesignationRecognizer.Covers(journalDesignations, i))
 					{
 						// To jest wyjątek - nie dziel tutaj
 						continue;
@@ -136,7 +140,7 @@ namespace Saga.Core.Services.Parsing
 		/// </summary>
 		private static bool IsRokException(string text, int dotIndex)
 		{
-			// Szukamy wzorca: cyfra cyfra cyfra cyfra spacja r . 
+			// Szukamy wzorca: cyfra cyfra cyfra cyfra spacja r .
 			// tj. "RRRR r."
 			if (dotIndex < 7) return false;
 
@@ -156,73 +160,6 @@ namespace Saga.Core.Services.Parsing
 
 			// Powinna być dokładnie 4 cyfry na rok
 			return digitCount == 4;
-		}
-
-		/// <summary>
-		/// Sprawdza czy kropka na pozycji `dotIndex` jest częścią wyrażenia "Dz. U."
-		/// </summary>
-		private static bool IsDzUException(string text, int dotIndex)
-		{
-			// Szukamy wyrażenia "Dz. U." gdzie dotIndex to pozycja kropki
-			// Przypadki:
-			// - "Dz. U. z..." gdzie dotIndex = pozycja kropki po "Dz"
-			// - "Dz.U. z..." gdzie dotIndex = pozycja kropki po "Dz"
-			// - Lub dotIndex może być później, np. na "U."
-			
-			// Jeśli pozycja wskazuje na "Dz.", sprawdź czy następuje "U"
-			if (dotIndex > 0 && (text[dotIndex - 1] == 'z' || text[dotIndex - 1] == 'Z'))
-			{
-				// Mamy "z.", tj. koniec "Dz."
-				// Patrzym czy wcześniej jest "D"
-				if (dotIndex >= 2 && (text[dotIndex - 2] == 'D' || text[dotIndex - 2] == 'd'))
-				{
-					// Mamy "Dz."
-					// Patrzym czy dalej jest " U" lub " u"
-					int nextPos = dotIndex + 1;
-					while (nextPos < text.Length && text[nextPos] == ' ')
-						nextPos++;
-					
-					if (nextPos < text.Length && (text[nextPos] == 'U' || text[nextPos] == 'u'))
-					{
-						// Dalej jest "U", czyli mamy "Dz. U" - to wyjątek
-						return true;
-					}
-				}
-			}
-
-			// Sprawdzenie dla "U."
-			if (dotIndex > 0 && (text[dotIndex - 1] == 'U' || text[dotIndex - 1] == 'u'))
-			{
-				// Mamy "U."
-				// Patrzym czy wcześniej jest "Dz. " lub "Dz."
-				int searchPos = dotIndex - 2;
-				
-				// Pomiń spacje
-				while (searchPos >= 0 && text[searchPos] == ' ')
-					searchPos--;
-				
-				// Sprawdzenie czy jest "."
-				if (searchPos >= 0 && text[searchPos] == '.')
-				{
-					searchPos--;
-					// Sprawdzenie czy jest 'z' lub 'Z'
-					if (searchPos >= 0 && (text[searchPos] == 'z' || text[searchPos] == 'Z'))
-					{
-						searchPos--;
-						// Pomiń spacje
-						while (searchPos >= 0 && text[searchPos] == ' ')
-							searchPos--;
-						
-						// Sprawdzenie czy jest 'D' lub 'd'
-						if (searchPos >= 0 && (text[searchPos] == 'D' || text[searchPos] == 'd'))
-						{
-							return true;
-						}
-					}
-				}
-			}
-
-			return false;
 		}
 
 		/// <summary>
